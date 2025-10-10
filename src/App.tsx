@@ -15,6 +15,9 @@ import Contact from "./pages/Contact";
 import Cart from "./pages/Cart";
 import OrderConfirmation from "./pages/OrderConfirmation";
 import NotFound from "./pages/NotFound";
+import Login from "./pages/Login";
+import AdminLogin from "./pages/AdminLogin";
+import Account from "./pages/Account";
 import { AdminLayout } from "./components/admin/AdminLayout";
 import { Dashboard } from "./pages/admin/Dashboard";
 import { Products } from "./pages/admin/Products";
@@ -33,16 +36,21 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          {/* Auth routes (no header/footer) */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/account" element={<Account />} />
+
           {/* Admin routes */}
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="products" element={<Products />} />
-          <Route path="orders" element={<Orders />} />
-          <Route path="invoices" element={<Invoices />} />
-          <Route path="shipments" element={<Shipments />} />
-          <Route path="reports" element={<Reports />} />
-          <Route path="users" element={<Users />} />
-        </Route>
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="products" element={<Products />} />
+            <Route path="orders" element={<Orders />} />
+            <Route path="invoices" element={<Invoices />} />
+            <Route path="shipments" element={<Shipments />} />
+            <Route path="reports" element={<Reports />} />
+            <Route path="users" element={<Users />} />
+          </Route>
 
           {/* Public routes with Header/Footer */}
           <Route path="*" element={

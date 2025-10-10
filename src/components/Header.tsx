@@ -3,6 +3,8 @@ import { ShoppingCart, User } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
 import { Badge } from '@/components/ui/badge';
+import { supabase } from '@/integrations/supabase/client';
+import { useState, useEffect } from 'react';
 import logo from '@/assets/logo-wydeline-white.png';
 
 export const Header = () => {
@@ -11,6 +13,21 @@ export const Header = () => {
   const { getItemCount } = useCart();
   const location = useLocation();
   const cartCount = getItemCount();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Check auth status
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsAuthenticated(!!session);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsAuthenticated(!!session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -59,6 +76,7 @@ export const Header = () => {
             {language === 'fr' ? 'EN' : 'FR'}
           </button>
           <button
+            onClick={() => navigate(isAuthenticated ? '/account' : '/login')}
             className="text-white hover:text-luxury-beige transition-colors"
             aria-label="Account"
           >
