@@ -1,11 +1,15 @@
 import { Link, useLocation } from 'react-router-dom';
 import { ShoppingCart, User } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useCart } from '@/contexts/CartContext';
+import { Badge } from '@/components/ui/badge';
 import logo from '@/assets/logo-wydeline-white.png';
 
 export const Header = () => {
   const { t, language, setLanguage } = useLanguage();
+  const { getItemCount } = useCart();
   const location = useLocation();
+  const cartCount = getItemCount();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -60,10 +64,18 @@ export const Header = () => {
             <User size={20} />
           </button>
           <button
-            className="text-white hover:text-luxury-beige transition-colors"
+            className="text-white hover:text-luxury-beige transition-colors relative"
             aria-label="Shopping cart"
           >
             <ShoppingCart size={20} />
+            {cartCount > 0 && (
+              <Badge 
+                variant="default" 
+                className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs bg-luxury-beige text-luxury-dark"
+              >
+                {cartCount}
+              </Badge>
+            )}
           </button>
         </div>
       </nav>
