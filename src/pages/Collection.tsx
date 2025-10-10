@@ -23,7 +23,7 @@ const Collection = () => {
   return (
     <main className="min-h-screen pt-24 pb-16">
       <div className="container mx-auto px-6">
-        <h1 className="text-4xl md:text-5xl font-bold text-center mb-16">
+        <h1 className="text-4xl md:text-5xl font-medium text-center mb-16">
           {t.nav.collection}
         </h1>
 

@@ -21,7 +21,7 @@ const Home = () => {
           <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent" />
         </div>
         <div className="relative z-10 container mx-auto px-6 text-white">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 animate-fade-in">
+          <h1 className="text-5xl md:text-7xl font-medium mb-6 animate-fade-in">
             {t.hero.title}
           </h1>
           <p className="text-xl md:text-2xl mb-8 max-w-2xl animate-fade-in" style={{ animationDelay: '0.2s' }}>
@@ -47,21 +47,21 @@ const Home = () => {
       {/* Values Section */}
       <section className="min-h-screen snap-start bg-luxury-cream py-24">
         <div className="container mx-auto px-6">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-20">{t.values.title}</h2>
+          <h2 className="text-4xl md:text-5xl font-medium text-center mb-20">{t.values.title}</h2>
           
           <div className="grid md:grid-cols-3 gap-12 max-w-6xl mx-auto">
             <div className="text-center">
-              <h3 className="text-2xl font-semibold mb-4">{t.values.excellence.title}</h3>
+              <h3 className="text-2xl font-medium mb-4">{t.values.excellence.title}</h3>
               <p className="text-muted-foreground leading-relaxed">{t.values.excellence.text}</p>
             </div>
             
             <div className="text-center">
-              <h3 className="text-2xl font-semibold mb-4">{t.values.elegance.title}</h3>
+              <h3 className="text-2xl font-medium mb-4">{t.values.elegance.title}</h3>
               <p className="text-muted-foreground leading-relaxed">{t.values.elegance.text}</p>
             </div>
             
             <div className="text-center">
-              <h3 className="text-2xl font-semibold mb-4">{t.values.comfort.title}</h3>
+              <h3 className="text-2xl font-medium mb-4">{t.values.comfort.title}</h3>
               <p className="text-muted-foreground leading-relaxed">{t.values.comfort.text}</p>
             </div>
           </div>

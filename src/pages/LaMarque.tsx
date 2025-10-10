@@ -7,7 +7,7 @@ const LaMarque = () => {
   return (
     <main className="min-h-screen pt-24 pb-16">
       <div className="container mx-auto px-6">
-        <h1 className="text-4xl md:text-5xl font-bold text-center mb-16">
+        <h1 className="text-4xl md:text-5xl font-medium text-center mb-16">
           {t.brand.title}
         </h1>
 
@@ -23,7 +23,7 @@ const LaMarque = () => {
 
           {/* Raison d'être */}
           <section>
-            <h2 className="text-3xl font-semibold mb-6">{t.brand.reason}</h2>
+            <h2 className="text-3xl font-medium mb-6">{t.brand.reason}</h2>
             <p className="text-lg text-muted-foreground leading-relaxed mb-4">
               {t.brand.reasonText}
             </p>
@@ -35,7 +35,7 @@ const LaMarque = () => {
 
           {/* Mission */}
           <section>
-            <h2 className="text-3xl font-semibold mb-6">{t.brand.mission}</h2>
+            <h2 className="text-3xl font-medium mb-6">{t.brand.mission}</h2>
             <p className="text-lg text-muted-foreground leading-relaxed mb-4">
               {t.brand.missionText}
             </p>
@@ -47,21 +47,21 @@ const LaMarque = () => {
 
           {/* Values */}
           <section className="bg-luxury-cream rounded-lg p-8 md:p-12">
-            <h2 className="text-3xl font-semibold mb-8 text-center">{t.values.title}</h2>
+            <h2 className="text-3xl font-medium mb-8 text-center">{t.values.title}</h2>
             
             <div className="space-y-8">
               <div>
-                <h3 className="text-xl font-semibold mb-3">{t.values.excellence.title}</h3>
+                <h3 className="text-xl font-medium mb-3">{t.values.excellence.title}</h3>
                 <p className="text-muted-foreground leading-relaxed">{t.values.excellence.text}</p>
               </div>
 
               <div>
-                <h3 className="text-xl font-semibold mb-3">{t.values.elegance.title}</h3>
+                <h3 className="text-xl font-medium mb-3">{t.values.elegance.title}</h3>
                 <p className="text-muted-foreground leading-relaxed">{t.values.elegance.text}</p>
               </div>
 
               <div>
-                <h3 className="text-xl font-semibold mb-3">{t.values.comfort.title}</h3>
+                <h3 className="text-xl font-medium mb-3">{t.values.comfort.title}</h3>
                 <p className="text-muted-foreground leading-relaxed">{t.values.comfort.text}</p>
               </div>
             </div>
