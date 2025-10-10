@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ShoppingCart, User } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import logo from '@/assets/logo-wydeline-white.png';
 
 export const Header = () => {
+  const navigate = useNavigate();
   const { t, language, setLanguage } = useLanguage();
   const { getItemCount } = useCart();
   const location = useLocation();
@@ -64,6 +65,7 @@ export const Header = () => {
             <User size={20} />
           </button>
           <button
+            onClick={() => navigate('/panier')}
             className="text-white hover:text-luxury-beige transition-colors relative"
             aria-label="Shopping cart"
           >
