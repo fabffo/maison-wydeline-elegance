@@ -47,16 +47,15 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        sidebar: {
-          DEFAULT: "hsl(var(--sidebar-background))",
-          foreground: "hsl(var(--sidebar-foreground))",
-          primary: "hsl(var(--sidebar-primary))",
-          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
-          accent: "hsl(var(--sidebar-accent))",
-          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
-          border: "hsl(var(--sidebar-border))",
-          ring: "hsl(var(--sidebar-ring))",
+        luxury: {
+          cream: "hsl(var(--luxury-cream))",
+          beige: "hsl(var(--luxury-beige))",
+          brown: "hsl(var(--luxury-brown))",
+          dark: "hsl(var(--luxury-dark))",
         },
+      },
+      fontFamily: {
+        sans: ['Red Hat Text', 'sans-serif'],
       },
       borderRadius: {
         lg: "var(--radius)",
