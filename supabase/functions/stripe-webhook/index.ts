@@ -48,25 +48,33 @@ serve(async (req) => {
         return new Response("Order not found", { status: 404 });
       }
 
-      // Update order status
+      // Update order status to A_PREPARER (ready to prepare)
       const { error: updateError } = await supabase
         .from("orders")
-        .update({ status: "PAID" })
+        .update({ status: "A_PREPARER" })
         .eq("id", order.id);
 
       if (updateError) throw updateError;
 
-      // Decrement stock
-      const { data: orderItems } = await supabase
-        .from("order_items")
-        .select("*")
-        .eq("order_id", order.id);
+      // Reserve stock for the order
+      const { error: stockError } = await supabase.rpc('reserve_stock_for_order', { 
+        _order_id: order.id 
+      });
 
-      if (orderItems) {
-        // Note: Stock decrement would require fetching products from products.json
-        // and updating it, which is complex for static JSON files
-        // In production, you'd want products in the database
-        console.log("Stock decrement needed for:", orderItems);
+      if (stockError) {
+        console.error("Stock reservation error:", stockError);
+      }
+
+      // Notify admins about new order
+      const { error: notifyError } = await supabase.rpc('notify_admins', {
+        _type: 'ORDER_CREATED',
+        _title: 'Nouvelle commande',
+        _message: `Une nouvelle commande nécessite votre attention`,
+        _reference_id: order.id
+      });
+
+      if (notifyError) {
+        console.error("Notification error:", notifyError);
       }
 
       // Generate invoice
@@ -79,6 +87,14 @@ serve(async (req) => {
         });
 
       if (invoiceError) throw invoiceError;
+
+      // Notify admins about invoice generation
+      await supabase.rpc('notify_admins', {
+        _type: 'INVOICE_GENERATED',
+        _title: 'Facture générée',
+        _message: `Facture ${invoiceNumber} créée`,
+        _reference_id: order.id
+      });
 
       console.log("Invoice created:", invoiceNumber);
     }

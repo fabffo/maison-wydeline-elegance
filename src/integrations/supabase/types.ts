@@ -49,6 +49,39 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          read: boolean | null
+          reference_id: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          read?: boolean | null
+          reference_id?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          read?: boolean | null
+          reference_id?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string
@@ -135,6 +168,189 @@ export type Database = {
         }
         Relationships: []
       }
+      product_variants: {
+        Row: {
+          alert_threshold: number | null
+          created_at: string
+          id: string
+          product_id: string
+          size: number
+          stock_quantity: number
+          updated_at: string
+        }
+        Insert: {
+          alert_threshold?: number | null
+          created_at?: string
+          id?: string
+          product_id: string
+          size: number
+          stock_quantity?: number
+          updated_at?: string
+        }
+        Update: {
+          alert_threshold?: number | null
+          created_at?: string
+          id?: string
+          product_id?: string
+          size?: number
+          stock_quantity?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_variants_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          category: string
+          color: string | null
+          created_at: string
+          description: string | null
+          id: string
+          material: string | null
+          name: string
+          price: number
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id: string
+          material?: string | null
+          name: string
+          price: number
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          material?: string | null
+          name?: string
+          price?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      shipments: {
+        Row: {
+          carrier: string | null
+          created_at: string
+          delivery_date: string | null
+          id: string
+          notes: string | null
+          order_id: string
+          shipment_date: string | null
+          tracking_number: string | null
+          updated_at: string
+        }
+        Insert: {
+          carrier?: string | null
+          created_at?: string
+          delivery_date?: string | null
+          id?: string
+          notes?: string | null
+          order_id: string
+          shipment_date?: string | null
+          tracking_number?: string | null
+          updated_at?: string
+        }
+        Update: {
+          carrier?: string | null
+          created_at?: string
+          delivery_date?: string | null
+          id?: string
+          notes?: string | null
+          order_id?: string
+          shipment_date?: string | null
+          tracking_number?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shipments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stock_movements: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          movement_type: string
+          notes: string | null
+          product_id: string
+          quantity_change: number
+          reference_id: string | null
+          size: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          movement_type: string
+          notes?: string | null
+          product_id: string
+          quantity_change: number
+          reference_id?: string | null
+          size: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          movement_type?: string
+          notes?: string | null
+          product_id?: string
+          quantity_change?: number
+          reference_id?: string | null
+          size?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_movements_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -144,9 +360,42 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      notify_admins: {
+        Args: {
+          _message: string
+          _reference_id: string
+          _title: string
+          _type: string
+        }
+        Returns: undefined
+      }
+      reserve_stock_for_order: {
+        Args: { _order_id: string }
+        Returns: undefined
+      }
+      sync_products_from_json: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
-      order_status: "PENDING" | "PAID" | "CANCELLED" | "REFUNDED"
+      app_role: "ADMIN" | "BACKOFFICE" | "USER"
+      order_status:
+        | "PENDING"
+        | "PAID"
+        | "CANCELLED"
+        | "REFUNDED"
+        | "A_PREPARER"
+        | "EXPEDIE"
+        | "LIVRE"
+        | "RETOUR"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -274,7 +523,17 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      order_status: ["PENDING", "PAID", "CANCELLED", "REFUNDED"],
+      app_role: ["ADMIN", "BACKOFFICE", "USER"],
+      order_status: [
+        "PENDING",
+        "PAID",
+        "CANCELLED",
+        "REFUNDED",
+        "A_PREPARER",
+        "EXPEDIE",
+        "LIVRE",
+        "RETOUR",
+      ],
     },
   },
 } as const
