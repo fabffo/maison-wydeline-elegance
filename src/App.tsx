@@ -21,6 +21,7 @@ import { Products } from "./pages/admin/Products";
 import { Orders } from "./pages/admin/Orders";
 import { Invoices } from "./pages/admin/Invoices";
 import { Shipments } from "./pages/admin/Shipments";
+import { Reports } from "./pages/admin/Reports";
 import { Users } from "./pages/admin/Users";
 
 const queryClient = new QueryClient();
@@ -33,14 +34,15 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           {/* Admin routes */}
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="products" element={<Products />} />
-            <Route path="orders" element={<Orders />} />
-            <Route path="invoices" element={<Invoices />} />
-            <Route path="shipments" element={<Shipments />} />
-            <Route path="users" element={<Users />} />
-          </Route>
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="products" element={<Products />} />
+          <Route path="orders" element={<Orders />} />
+          <Route path="invoices" element={<Invoices />} />
+          <Route path="shipments" element={<Shipments />} />
+          <Route path="reports" element={<Reports />} />
+          <Route path="users" element={<Users />} />
+        </Route>
 
           {/* Public routes with Header/Footer */}
           <Route path="*" element={
