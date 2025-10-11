@@ -6,8 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { AlertTriangle, Download, Upload, Pencil } from 'lucide-react';
+import { AlertTriangle, Download, Upload, Pencil, ArrowLeft } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 
 export const Stocks = () => {
   const [products, setProducts] = useState<any[]>([]);
@@ -16,7 +17,11 @@ export const Stocks = () => {
   const [editingVariant, setEditingVariant] = useState<string | null>(null);
   const [editValue, setEditValue] = useState('');
   const [importDialogOpen, setImportDialogOpen] = useState(false);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { toast } = useToast();
+  
+  const selectedProductId = searchParams.get('product');
 
   useEffect(() => {
     fetchStocks();
@@ -145,12 +150,32 @@ export const Stocks = () => {
     return <div className="flex items-center justify-center h-64">Chargement...</div>;
   }
 
+  const displayedProducts = selectedProductId 
+    ? products.filter(p => p.id === selectedProductId)
+    : products;
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
+          {selectedProductId && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/admin/products')}
+              className="mb-2"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Retour aux produits
+            </Button>
+          )}
           <h1 className="text-3xl font-bold mb-2">Gestion des stocks</h1>
-          <p className="text-muted-foreground">Import/Export des stocks par taille</p>
+          <p className="text-muted-foreground">
+            {selectedProductId 
+              ? `Stocks pour ${displayedProducts[0]?.name || 'le produit sélectionné'}`
+              : 'Import/Export des stocks par taille'
+            }
+          </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={exportToCSV}>
@@ -183,7 +208,7 @@ export const Stocks = () => {
         </div>
       </div>
 
-      {products.map((product) => {
+      {displayedProducts.map((product) => {
         const productVariants = variants.filter(v => v.product_id === product.id);
         const lowStockCount = productVariants.filter(v => v.stock_quantity < v.alert_threshold).length;
 

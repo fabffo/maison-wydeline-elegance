@@ -135,7 +135,7 @@ export const Products = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => navigate('/admin/stocks')}
+                      onClick={() => navigate(`/admin/stocks?product=${product.id}`)}
                     >
                       <Eye className="h-4 w-4 mr-2" />
                       Voir les stocks
