@@ -96,11 +96,7 @@ serve(async (req) => {
       },
     });
 
-    // Update order with payment intent ID
-    await supabase
-      .from("orders")
-      .update({ stripe_payment_intent_id: session.payment_intent as string })
-      .eq("id", order.id);
+    console.log("Checkout session created:", session.id, "for order:", order.id);
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

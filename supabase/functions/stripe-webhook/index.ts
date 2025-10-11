@@ -27,20 +27,29 @@ serve(async (req) => {
 
     console.log("Webhook event:", event.type);
 
-    if (event.type === "payment_intent.succeeded") {
-      const paymentIntent = event.data.object as Stripe.PaymentIntent;
-      console.log("Payment succeeded:", paymentIntent.id);
+    if (event.type === "checkout.session.completed") {
+      const session = event.data.object as Stripe.Checkout.Session;
+      console.log("Checkout session completed:", session.id);
 
       const supabase = createClient(
         Deno.env.get("SUPABASE_URL") ?? "",
         Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
       );
 
+      // Get order ID from metadata
+      const orderId = session.metadata?.orderId;
+      if (!orderId) {
+        console.error("No orderId in session metadata");
+        return new Response(JSON.stringify({ error: "No orderId in metadata" }), { status: 400 });
+      }
+
+      console.log("Processing order:", orderId);
+
       // Find the order
       const { data: order, error: orderError } = await supabase
         .from("orders")
         .select("*")
-        .eq("stripe_payment_intent_id", paymentIntent.id)
+        .eq("id", orderId)
         .maybeSingle();
 
       if (orderError) {
@@ -49,11 +58,21 @@ serve(async (req) => {
       }
 
       if (!order) {
-        console.error("Order not found for payment intent:", paymentIntent.id);
+        console.error("Order not found:", orderId);
         return new Response(JSON.stringify({ error: "Order not found" }), { status: 404 });
       }
 
       console.log("Order found:", order.id);
+
+      // Update order with payment intent ID
+      const { error: updatePaymentError } = await supabase
+        .from("orders")
+        .update({ stripe_payment_intent_id: session.payment_intent as string })
+        .eq("id", order.id);
+
+      if (updatePaymentError) {
+        console.error("Error updating payment intent:", updatePaymentError);
+      }
 
       // Update order status to A_PREPARER (ready to prepare)
       const { error: updateError } = await supabase
