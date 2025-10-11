@@ -194,9 +194,10 @@ export const AdminLayout = () => {
         <header className="bg-card border-b p-4 flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold">Administration</h2>
-            <p className="text-sm text-muted-foreground">
-              Connecté en tant que <Badge variant="secondary">{role}</Badge>
-            </p>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span>Connecté en tant que</span>
+              <Badge variant="secondary">{role}</Badge>
+            </div>
           </div>
           <Popover>
             <PopoverTrigger asChild>

@@ -103,20 +103,18 @@ export const Header = () => {
           >
             {language === 'fr' ? 'EN' : 'FR'}
           </button>
-          {isAuthenticated && userProfile ? (
+          {isAuthenticated && userProfile?.first_name ? (
             <HoverCard>
               <HoverCardTrigger asChild>
                 <button
                   onClick={() => navigate('/account')}
-                  className="text-white hover:text-luxury-beige transition-colors flex flex-col items-center"
+                  className="text-white hover:text-luxury-beige transition-colors flex flex-col items-center gap-0.5"
                   aria-label="Account"
                 >
                   <User size={20} />
-                  {userProfile.first_name && (
-                    <span className="text-xs mt-0.5">
-                      {userProfile.first_name} {userProfile.last_name || ''}
-                    </span>
-                  )}
+                  <span className="text-[10px] leading-tight whitespace-nowrap">
+                    {userProfile.first_name} {userProfile.last_name}
+                  </span>
                 </button>
               </HoverCardTrigger>
               <HoverCardContent className="w-auto">
