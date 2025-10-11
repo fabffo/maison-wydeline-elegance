@@ -7,6 +7,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { useState, useEffect } from 'react';
 import logo from '@/assets/logo-wydeline-white.png';
 import { useUserRole } from '@/hooks/useUserRole';
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from '@/components/ui/hover-card';
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -15,21 +20,42 @@ export const Header = () => {
   const location = useLocation();
   const cartCount = getItemCount();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userProfile, setUserProfile] = useState<{ first_name?: string; last_name?: string } | null>(null);
   const { hasRole } = useUserRole();
 
   useEffect(() => {
     // Check auth status
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsAuthenticated(!!session);
+      if (session) {
+        fetchUserProfile(session.user.id);
+      }
     });
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsAuthenticated(!!session);
+      if (session) {
+        fetchUserProfile(session.user.id);
+      } else {
+        setUserProfile(null);
+      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
+
+  const fetchUserProfile = async (userId: string) => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('first_name, last_name')
+      .eq('id', userId)
+      .single();
+    
+    if (data) {
+      setUserProfile(data);
+    }
+  };
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -77,13 +103,42 @@ export const Header = () => {
           >
             {language === 'fr' ? 'EN' : 'FR'}
           </button>
-          <button
-            onClick={() => navigate(isAuthenticated ? '/account' : '/login')}
-            className="text-white hover:text-luxury-beige transition-colors"
-            aria-label="Account"
-          >
-            <User size={20} />
-          </button>
+          {isAuthenticated && userProfile ? (
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <button
+                  onClick={() => navigate('/account')}
+                  className="text-white hover:text-luxury-beige transition-colors flex flex-col items-center"
+                  aria-label="Account"
+                >
+                  <User size={20} />
+                  {userProfile.first_name && (
+                    <span className="text-xs mt-0.5">
+                      {userProfile.first_name} {userProfile.last_name || ''}
+                    </span>
+                  )}
+                </button>
+              </HoverCardTrigger>
+              <HoverCardContent className="w-auto">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium">
+                    {userProfile.first_name} {userProfile.last_name}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Cliquez pour accéder à votre compte
+                  </p>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
+          ) : (
+            <button
+              onClick={() => navigate(isAuthenticated ? '/account' : '/login')}
+              className="text-white hover:text-luxury-beige transition-colors"
+              aria-label="Account"
+            >
+              <User size={20} />
+            </button>
+          )}
           {hasRole('BACKOFFICE') && (
             <button
               onClick={() => navigate('/admin')}

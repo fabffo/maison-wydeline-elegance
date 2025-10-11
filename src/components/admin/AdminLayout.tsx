@@ -4,14 +4,15 @@ import {
   LayoutDashboard, 
   Package, 
   ShoppingCart, 
-  FileText, 
   Truck, 
+  FileText, 
   Users,
   Bell,
   LogOut,
   Menu,
   X,
-  BarChart3
+  BarChart3,
+  Home
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUserRole } from '@/hooks/useUserRole';
@@ -168,7 +169,15 @@ export const AdminLayout = () => {
           ))}
         </nav>
 
-        <div className="p-4 border-t">
+        <div className="p-4 border-t space-y-2">
+          <Button
+            variant="ghost"
+            className="w-full justify-start"
+            onClick={() => navigate('/collection')}
+          >
+            <Home className="h-5 w-5 mr-3" />
+            {sidebarOpen && 'Retour au site'}
+          </Button>
           <Button
             variant="ghost"
             className="w-full justify-start"

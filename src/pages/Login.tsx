@@ -17,6 +17,8 @@ export default function Login() {
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
   const [signupConfirm, setSignupConfirm] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
 
   useEffect(() => {
     // Redirect if already logged in
@@ -70,7 +72,7 @@ export default function Login() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!signupEmail || !signupPassword || !signupConfirm) {
+    if (!signupEmail || !signupPassword || !signupConfirm || !firstName || !lastName) {
       toast({
         title: 'Erreur',
         description: 'Veuillez remplir tous les champs',
@@ -105,6 +107,10 @@ export default function Login() {
       password: signupPassword,
       options: {
         emailRedirectTo: redirectUrl,
+        data: {
+          first_name: firstName,
+          last_name: lastName,
+        },
       },
     });
 
@@ -181,6 +187,32 @@ export default function Login() {
 
               <TabsContent value="signup">
                 <form onSubmit={handleSignup} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="first-name">Prénom</Label>
+                      <Input
+                        id="first-name"
+                        type="text"
+                        placeholder="Jean"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        required
+                        disabled={loading}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="last-name">Nom</Label>
+                      <Input
+                        id="last-name"
+                        type="text"
+                        placeholder="Dupont"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        required
+                        disabled={loading}
+                      />
+                    </div>
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="signup-email">Email</Label>
                     <Input
