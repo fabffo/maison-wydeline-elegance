@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ShoppingCart, User } from 'lucide-react';
+import { ShoppingCart, User, Settings } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
 import { Badge } from '@/components/ui/badge';
@@ -81,6 +81,14 @@ export const Header = () => {
             aria-label="Account"
           >
             <User size={20} />
+          </button>
+          <button
+            onClick={() => navigate('/admin/login')}
+            className="text-white hover:text-luxury-beige transition-colors"
+            aria-label="Back-Office"
+            title="Accès Back-Office"
+          >
+            <Settings size={20} />
           </button>
           <button
             onClick={() => navigate('/panier')}
