@@ -60,6 +60,8 @@ const ProductDetail = () => {
 
   const availableSizes = product.sizes.filter((size) => product.stock[size.toString()] > 0);
   const hasStock = availableSizes.length > 0;
+  const totalStock = product.sizes.reduce((sum, size) => sum + (product.stock[size.toString()] || 0), 0);
+  const lowStockThreshold = 3;
 
   return (
     <main className="min-h-screen pt-24 pb-16">
@@ -112,6 +114,14 @@ const ProductDetail = () => {
               </div>
             )}
 
+            {!hasStock && (
+              <div className="bg-destructive/10 text-destructive px-4 py-3 rounded-lg">
+                <p className="font-medium">
+                  {product.preorder ? '📦 Disponible en précommande' : '⚠️ Rupture de stock'}
+                </p>
+              </div>
+            )}
+
             <div className="prose prose-sm">
               <h3 className="font-medium text-base">{t.product.description}</h3>
               <p className="text-muted-foreground">{product.description}</p>
@@ -133,6 +143,7 @@ const ProductDetail = () => {
               stock={product.stock}
               selectedSize={selectedSize}
               onSizeSelect={setSelectedSize}
+              lowStockThreshold={lowStockThreshold}
             />
 
             {hasStock ? (
@@ -146,7 +157,7 @@ const ProductDetail = () => {
               </Button>
             ) : (
               <Button disabled className="w-full" size="lg">
-                {t.product.outOfStock}
+                {product.preorder ? 'Précommande' : t.product.outOfStock}
               </Button>
             )}
           </div>

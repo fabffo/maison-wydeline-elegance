@@ -12,7 +12,8 @@ import {
   Menu,
   X,
   BarChart3,
-  Home
+  Home,
+  Star
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUserRole } from '@/hooks/useUserRole';
@@ -26,6 +27,7 @@ const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/admin' },
   { icon: Package, label: 'Produits', path: '/admin/products' },
   { icon: Package, label: 'Stocks', path: '/admin/stocks' },
+  { icon: Star, label: 'Vitrine', path: '/admin/featured' },
   { icon: ShoppingCart, label: 'Commandes', path: '/admin/orders' },
   { icon: FileText, label: 'Factures', path: '/admin/invoices' },
   { icon: Truck, label: 'Livraisons', path: '/admin/shipments' },

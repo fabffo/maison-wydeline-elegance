@@ -173,6 +173,7 @@ export type Database = {
           alert_threshold: number | null
           created_at: string
           id: string
+          low_stock_threshold: number | null
           product_id: string
           size: number
           stock_quantity: number
@@ -182,6 +183,7 @@ export type Database = {
           alert_threshold?: number | null
           created_at?: string
           id?: string
+          low_stock_threshold?: number | null
           product_id: string
           size: number
           stock_quantity?: number
@@ -191,6 +193,7 @@ export type Database = {
           alert_threshold?: number | null
           created_at?: string
           id?: string
+          low_stock_threshold?: number | null
           product_id?: string
           size?: number
           stock_quantity?: number
@@ -212,7 +215,13 @@ export type Database = {
           color: string | null
           created_at: string
           description: string | null
+          featured_area: string | null
+          featured_end_at: string | null
+          featured_label: string | null
+          featured_priority: number | null
+          featured_start_at: string | null
           id: string
+          is_featured: boolean | null
           material: string | null
           name: string
           price: number
@@ -223,7 +232,13 @@ export type Database = {
           color?: string | null
           created_at?: string
           description?: string | null
+          featured_area?: string | null
+          featured_end_at?: string | null
+          featured_label?: string | null
+          featured_priority?: number | null
+          featured_start_at?: string | null
           id: string
+          is_featured?: boolean | null
           material?: string | null
           name: string
           price: number
@@ -234,7 +249,13 @@ export type Database = {
           color?: string | null
           created_at?: string
           description?: string | null
+          featured_area?: string | null
+          featured_end_at?: string | null
+          featured_label?: string | null
+          featured_priority?: number | null
+          featured_start_at?: string | null
           id?: string
+          is_featured?: boolean | null
           material?: string | null
           name?: string
           price?: number

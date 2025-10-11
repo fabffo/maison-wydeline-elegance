@@ -22,6 +22,7 @@ import { AdminLayout } from "./components/admin/AdminLayout";
 import { Dashboard } from "./pages/admin/Dashboard";
 import { Products } from "./pages/admin/Products";
 import { Stocks } from "./pages/admin/Stocks";
+import { Featured } from "./pages/admin/Featured";
 import { Orders } from "./pages/admin/Orders";
 import { Invoices } from "./pages/admin/Invoices";
 import { Shipments } from "./pages/admin/Shipments";
@@ -42,11 +43,11 @@ const App = () => (
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/account" element={<Account />} />
 
-          {/* Admin routes */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="products" element={<Products />} />
             <Route path="stocks" element={<Stocks />} />
+            <Route path="featured" element={<Featured />} />
             <Route path="orders" element={<Orders />} />
             <Route path="invoices" element={<Invoices />} />
             <Route path="shipments" element={<Shipments />} />
