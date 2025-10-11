@@ -1,178 +1,89 @@
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { Resend } from "https://esm.sh/resend@2.0.0";
-
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+// deno-lint-ignore-file no-explicit-any
+const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY")!;
+const RESEND_FROM = Deno.env.get("RESEND_FROM") || "Maison Wydeline <no-reply@wavyservices.fr>";
+const RESEND_BCC = Deno.env.get("RESEND_BCC") || "";
+const FRONTEND_URL = Deno.env.get("FRONTEND_URL") || "https://wavyservices.fr";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-interface AuthEmailRequest {
-  user: {
-    email: string;
-  };
-  email_data: {
-    token: string;
-    token_hash: string;
-    redirect_to: string;
-    email_action_type: string;
-    site_url: string;
-  };
-}
+type HookPayload = { 
+  type: "PASSWORD_RECOVERY" | "SIGNUP" | string; 
+  email: string; 
+  action_link?: string; 
+};
 
-const handler = async (req: Request): Promise<Response> => {
-  // Handle CORS preflight requests
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response("ok", { headers: corsHeaders });
   }
 
   try {
-    const payload: AuthEmailRequest = await req.json();
-    console.log("Received auth email request:", payload.email_data.email_action_type);
+    const { type, email, action_link }: HookPayload = await req.json();
+    console.log(`Auth Hook received: type=${type}, email=${email}`);
 
-    const { user, email_data } = payload;
-    const resetUrl = `${email_data.redirect_to}#access_token=${email_data.token}&type=recovery`;
+    let subject = "Maison Wydeline • Notification";
+    let html = "";
 
-    let subject = "";
-    let htmlContent = "";
-
-    // Gérer les différents types d'emails d'authentification
-    switch (email_data.email_action_type) {
-      case "recovery":
-        subject = "Réinitialisation de votre mot de passe - Maison Wydeline";
-        htmlContent = `
-          <!DOCTYPE html>
-          <html>
-            <head>
-              <meta charset="utf-8">
-              <style>
-                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                .header { background-color: #000; color: #fff; padding: 20px; text-align: center; }
-                .content { background-color: #f9f9f9; padding: 30px; }
-                .button { 
-                  display: inline-block; 
-                  background-color: #000; 
-                  color: #fff !important; 
-                  padding: 12px 30px; 
-                  text-decoration: none; 
-                  border-radius: 4px;
-                  margin: 20px 0;
-                }
-                .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
-              </style>
-            </head>
-            <body>
-              <div class="container">
-                <div class="header">
-                  <h1>Maison Wydeline</h1>
-                </div>
-                <div class="content">
-                  <h2>Réinitialisation de votre mot de passe</h2>
-                  <p>Bonjour,</p>
-                  <p>Vous avez demandé à réinitialiser votre mot de passe. Cliquez sur le bouton ci-dessous pour créer un nouveau mot de passe :</p>
-                  <div style="text-align: center;">
-                    <a href="${resetUrl}" class="button">Réinitialiser mon mot de passe</a>
-                  </div>
-                  <p>Ce lien est valable pendant 1 heure.</p>
-                  <p>Si vous n'avez pas demandé cette réinitialisation, vous pouvez ignorer cet email en toute sécurité.</p>
-                  <p>Cordialement,<br>L'équipe Maison Wydeline</p>
-                </div>
-                <div class="footer">
-                  <p>Cet email a été envoyé par Maison Wydeline</p>
-                </div>
-              </div>
-            </body>
-          </html>
-        `;
-        break;
-
-      case "signup":
-      case "invite":
-        subject = "Confirmez votre inscription - Maison Wydeline";
-        const confirmUrl = `${email_data.site_url}/auth/v1/verify?token=${email_data.token_hash}&type=signup&redirect_to=${email_data.redirect_to}`;
-        htmlContent = `
-          <!DOCTYPE html>
-          <html>
-            <head>
-              <meta charset="utf-8">
-              <style>
-                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                .header { background-color: #000; color: #fff; padding: 20px; text-align: center; }
-                .content { background-color: #f9f9f9; padding: 30px; }
-                .button { 
-                  display: inline-block; 
-                  background-color: #000; 
-                  color: #fff !important; 
-                  padding: 12px 30px; 
-                  text-decoration: none; 
-                  border-radius: 4px;
-                  margin: 20px 0;
-                }
-                .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
-              </style>
-            </head>
-            <body>
-              <div class="container">
-                <div class="header">
-                  <h1>Maison Wydeline</h1>
-                </div>
-                <div class="content">
-                  <h2>Bienvenue chez Maison Wydeline !</h2>
-                  <p>Bonjour,</p>
-                  <p>Merci de vous être inscrit. Pour finaliser votre inscription, veuillez confirmer votre adresse email :</p>
-                  <div style="text-align: center;">
-                    <a href="${confirmUrl}" class="button">Confirmer mon email</a>
-                  </div>
-                  <p>Si vous n'avez pas créé de compte, vous pouvez ignorer cet email.</p>
-                  <p>Cordialement,<br>L'équipe Maison Wydeline</p>
-                </div>
-                <div class="footer">
-                  <p>Cet email a été envoyé par Maison Wydeline</p>
-                </div>
-              </div>
-            </body>
-          </html>
-        `;
-        break;
-
-      default:
-        subject = "Email de Maison Wydeline";
-        htmlContent = `
-          <h1>Maison Wydeline</h1>
-          <p>Un email vous a été envoyé depuis votre compte Maison Wydeline.</p>
-        `;
+    if (type === "PASSWORD_RECOVERY") {
+      const url = action_link || `${FRONTEND_URL}/auth/recovery`;
+      subject = "Réinitialisation de votre mot de passe";
+      html = `<div style="font-family:Inter,Arial,sans-serif;max-width:560px;margin:auto;padding:24px">
+        <h2 style="margin:0 0 12px">Réinitialisation de mot de passe</h2>
+        <p>Vous avez demandé à réinitialiser votre mot de passe pour <b>Maison Wydeline</b>.</p>
+        <p><a href="${url}" style="display:inline-block;background:#111;color:#fff;padding:12px 18px;border-radius:6px;text-decoration:none">Choisir un nouveau mot de passe</a></p>
+        <p style="color:#666;font-size:12px;margin-top:24px">Si vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail.</p>
+      </div>`;
+    } else if (type === "SIGNUP") {
+      const url = action_link || `${FRONTEND_URL}/auth/confirm`;
+      subject = "Confirmez votre inscription";
+      html = `<div style="font-family:Inter,Arial,sans-serif;max-width:560px;margin:auto;padding:24px">
+        <h2 style="margin:0 0 12px">Bienvenue chez Maison Wydeline</h2>
+        <p>Veuillez confirmer votre adresse e-mail pour activer votre compte.</p>
+        <p><a href="${url}" style="display:inline-block;background:#111;color:#fff;padding:12px 18px;border-radius:6px;text-decoration:none">Confirmer mon e-mail</a></p>
+      </div>`;
+    } else {
+      console.log(`Unhandled auth event type: ${type}`);
+      return new Response(null, { status: 204, headers: corsHeaders });
     }
 
-    const emailResponse = await resend.emails.send({
-      from: "Maison Wydeline <onboarding@resend.dev>",
-      to: [user.email],
-      subject: subject,
-      html: htmlContent,
-    });
+    const emailPayload: any = {
+      from: RESEND_FROM,
+      to: [email],
+      subject,
+      html
+    };
 
-    console.log("Email sent successfully:", emailResponse);
+    if (RESEND_BCC) {
+      emailPayload.bcc = [RESEND_BCC];
+    }
 
-    return new Response(JSON.stringify(emailResponse), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json",
-        ...corsHeaders,
+    const r = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { 
+        Authorization: `Bearer ${RESEND_API_KEY}`, 
+        "Content-Type": "application/json" 
       },
+      body: JSON.stringify(emailPayload)
     });
-  } catch (error: any) {
-    console.error("Error in send-auth-email function:", error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      }
-    );
-  }
-};
 
-serve(handler);
+    if (!r.ok) {
+      const errorText = await r.text();
+      console.error(`Resend API error: ${r.status} - ${errorText}`);
+      return new Response("resend_error", { status: 502, headers: corsHeaders });
+    }
+
+    const result = await r.json();
+    console.log("Email sent successfully via Resend:", result);
+
+    return new Response(JSON.stringify({ ok: true }), { 
+      status: 200, 
+      headers: { ...corsHeaders, "Content-Type": "application/json" } 
+    });
+  } catch (error) {
+    console.error("Error in send-auth-email function:", error);
+    return new Response("bad_request", { status: 400, headers: corsHeaders });
+  }
+});
