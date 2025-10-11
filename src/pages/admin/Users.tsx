@@ -118,11 +118,13 @@ export const Users = () => {
     try {
       const { error } = await supabase
         .from('profiles')
-        .update({
+        .upsert({
+          id: editingUser.user_id,
           first_name: editForm.first_name.trim(),
           last_name: editForm.last_name.trim()
-        })
-        .eq('id', editingUser.user_id);
+        }, {
+          onConflict: 'id'
+        });
 
       if (error) throw error;
 
