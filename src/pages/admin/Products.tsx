@@ -15,6 +15,7 @@ export const Products = () => {
   const [loading, setLoading] = useState(true);
   const [editingVariant, setEditingVariant] = useState<string | null>(null);
   const [editValue, setEditValue] = useState('');
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -65,6 +66,11 @@ export const Products = () => {
   };
 
   const exportToCSV = () => {
+    if (variants.length === 0) {
+      toast({ title: 'Aucune donnée à exporter', variant: 'destructive' });
+      return;
+    }
+
     const csvData = variants.map(v => {
       const product = products.find(p => p.id === v.product_id);
       return {
@@ -89,6 +95,52 @@ export const Products = () => {
     a.click();
   };
 
+  const handleImportCSV = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      const lines = text.split('\n').filter(line => line.trim());
+      
+      if (lines.length < 2) {
+        toast({ title: 'Fichier vide', variant: 'destructive' });
+        return;
+      }
+
+      const updates: Array<{ id: string; stock: number }> = [];
+      
+      for (let i = 1; i < lines.length; i++) {
+        const [productName, size, stock] = lines[i].split(',').map(s => s.trim());
+        
+        const product = products.find(p => p.name === productName);
+        if (!product) continue;
+
+        const variant = variants.find(v => 
+          v.product_id === product.id && v.size === parseInt(size)
+        );
+        
+        if (variant) {
+          updates.push({ id: variant.id, stock: parseInt(stock) });
+        }
+      }
+
+      for (const update of updates) {
+        await supabase
+          .from('product_variants')
+          .update({ stock_quantity: update.stock })
+          .eq('id', update.id);
+      }
+
+      toast({ title: 'Import réussi', description: `${updates.length} stocks mis à jour` });
+      fetchProducts();
+      setImportDialogOpen(false);
+    } catch (error) {
+      console.error('Error importing CSV:', error);
+      toast({ title: 'Erreur', description: "Impossible d'importer le fichier", variant: 'destructive' });
+    }
+  };
+
   if (loading) {
     return <div className="flex items-center justify-center h-64">Chargement...</div>;
   }
@@ -105,7 +157,7 @@ export const Products = () => {
             <Download className="h-4 w-4 mr-2" />
             Exporter CSV
           </Button>
-          <Dialog>
+          <Dialog open={importDialogOpen} onOpenChange={setImportDialogOpen}>
             <DialogTrigger asChild>
               <Button variant="outline">
                 <Upload className="h-4 w-4 mr-2" />
@@ -118,10 +170,13 @@ export const Products = () => {
               </DialogHeader>
               <div className="space-y-4">
                 <p className="text-sm text-muted-foreground">
-                  Format attendu : Produit, Taille, Stock, Seuil alerte
+                  Format attendu : Produit, Taille, Stock (sans la ligne d'en-tête)
                 </p>
-                <Input type="file" accept=".csv" />
-                <Button className="w-full">Importer</Button>
+                <Input 
+                  type="file" 
+                  accept=".csv" 
+                  onChange={handleImportCSV}
+                />
               </div>
             </DialogContent>
           </Dialog>
