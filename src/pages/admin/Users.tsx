@@ -46,6 +46,17 @@ export const Users = () => {
         profilesMap.set(profile.id, profile);
       });
 
+      // Fetch emails for all users
+      const userIds = [...new Set(rolesData?.map(r => r.user_id) || [])];
+      const emailsMap = new Map();
+      
+      for (const userId of userIds) {
+        const { data, error } = await supabase.rpc('get_user_email', { _user_id: userId });
+        if (!error && data) {
+          emailsMap.set(userId, data);
+        }
+      }
+
       // Group roles by user
       const usersMap = new Map();
       rolesData?.forEach(role => {
@@ -53,6 +64,7 @@ export const Users = () => {
           const profile = profilesMap.get(role.user_id);
           usersMap.set(role.user_id, {
             user_id: role.user_id,
+            email: emailsMap.get(role.user_id) || '',
             first_name: profile?.first_name || '',
             last_name: profile?.last_name || '',
             roles: [],
@@ -171,6 +183,7 @@ export const Users = () => {
               <TableRow>
                 <TableHead>Prénom</TableHead>
                 <TableHead>Nom</TableHead>
+                <TableHead>Email</TableHead>
                 <TableHead>ID Utilisateur</TableHead>
                 <TableHead>Rôles actuels</TableHead>
                 <TableHead>Date d'ajout</TableHead>
@@ -182,6 +195,7 @@ export const Users = () => {
                 <TableRow key={user.user_id}>
                   <TableCell>{user.first_name || '-'}</TableCell>
                   <TableCell>{user.last_name || '-'}</TableCell>
+                  <TableCell className="text-muted-foreground">{user.email || '-'}</TableCell>
                   <TableCell className="font-mono text-sm">{user.user_id.slice(0, 8)}</TableCell>
                   <TableCell>
                     <div className="flex gap-2">
