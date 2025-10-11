@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useState, useEffect } from 'react';
 import logo from '@/assets/logo-wydeline-white.png';
+import { useUserRole } from '@/hooks/useUserRole';
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ export const Header = () => {
   const location = useLocation();
   const cartCount = getItemCount();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { hasRole } = useUserRole();
 
   useEffect(() => {
     // Check auth status
@@ -82,14 +84,19 @@ export const Header = () => {
           >
             <User size={20} />
           </button>
-          <button
-            onClick={() => navigate('/admin/login')}
-            className="text-white hover:text-luxury-beige transition-colors"
-            aria-label="Back-Office"
-            title="Accès Back-Office"
-          >
-            <Settings size={20} />
-          </button>
+          {hasRole('BACKOFFICE') && (
+            <button
+              onClick={() => navigate('/admin')}
+              className="text-white hover:text-luxury-beige transition-colors relative"
+              aria-label="Back-Office"
+              title="Accès Back-Office"
+            >
+              <Settings size={20} />
+              <Badge className="absolute -top-2 -right-2 h-4 px-1.5 text-xs bg-luxury-beige text-luxury-dark">
+                BO
+              </Badge>
+            </button>
+          )}
           <button
             onClick={() => navigate('/panier')}
             className="text-white hover:text-luxury-beige transition-colors relative"

@@ -4,9 +4,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { User, ShoppingBag, LogOut } from 'lucide-react';
+import { User, ShoppingBag, LogOut, Settings } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { useUserRole } from '@/hooks/useUserRole';
 
 export default function Account() {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ export default function Account() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [orders, setOrders] = useState<any[]>([]);
+  const { hasRole, loading: roleLoading } = useUserRole();
 
   useEffect(() => {
     checkUser();
@@ -102,6 +104,29 @@ export default function Account() {
             Déconnexion
           </Button>
         </div>
+
+        {!roleLoading && hasRole('BACKOFFICE') && (
+          <Card className="mb-6 border-primary/50 bg-primary/5">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-full bg-primary/10">
+                    <Settings className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-lg">Accès Back-Office</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Gérez les commandes, produits et expéditions
+                    </p>
+                  </div>
+                </div>
+                <Button onClick={() => navigate('/admin')}>
+                  Accéder au Back-Office
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <Tabs defaultValue="orders" className="space-y-6">
           <TabsList>
