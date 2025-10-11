@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Upload, Eye } from 'lucide-react';
+import { Upload, Eye, AlertTriangle, PackageX } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export const Products = () => {
@@ -120,6 +120,8 @@ export const Products = () => {
           {products.map((product) => {
             const productVariants = variants.filter(v => v.product_id === product.id);
             const totalStock = productVariants.reduce((acc, v) => acc + v.stock_quantity, 0);
+            const outOfStock = productVariants.filter(v => v.stock_quantity === 0).length;
+            const lowStock = productVariants.filter(v => v.stock_quantity > 0 && v.stock_quantity < v.alert_threshold).length;
 
             return (
               <Card key={product.id}>
@@ -129,6 +131,26 @@ export const Products = () => {
                       <CardTitle className="flex items-center gap-2">
                         {product.name}
                         <Badge variant="outline">{product.category}</Badge>
+                        {outOfStock > 0 && (
+                          <Badge 
+                            variant="destructive" 
+                            className="flex items-center gap-1 cursor-pointer"
+                            onClick={() => navigate(`/admin/stocks?product=${product.id}`)}
+                          >
+                            <PackageX className="h-3 w-3" />
+                            {outOfStock} en rupture
+                          </Badge>
+                        )}
+                        {lowStock > 0 && (
+                          <Badge 
+                            variant="secondary"
+                            className="flex items-center gap-1 cursor-pointer bg-orange-500/10 text-orange-700 dark:text-orange-400 hover:bg-orange-500/20"
+                            onClick={() => navigate(`/admin/stocks?product=${product.id}`)}
+                          >
+                            <AlertTriangle className="h-3 w-3" />
+                            {lowStock} stock faible
+                          </Badge>
+                        )}
                       </CardTitle>
                       <p className="text-sm text-muted-foreground mt-1">{product.description}</p>
                     </div>
