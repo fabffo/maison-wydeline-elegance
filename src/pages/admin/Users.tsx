@@ -6,12 +6,17 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Shield } from 'lucide-react';
+import { Shield, Pencil } from 'lucide-react';
 import { useUserRole } from '@/hooks/useUserRole';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 export const Users = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editingUser, setEditingUser] = useState<any | null>(null);
+  const [editForm, setEditForm] = useState({ first_name: '', last_name: '' });
   const { toast } = useToast();
   const { isAdmin } = useUserRole();
 
@@ -96,6 +101,40 @@ export const Users = () => {
     }
   };
 
+  const openEditDialog = (user: any) => {
+    setEditingUser(user);
+    setEditForm({
+      first_name: user.first_name || '',
+      last_name: user.last_name || ''
+    });
+  };
+
+  const updateUserProfile = async () => {
+    if (!isAdmin || !editingUser) {
+      toast({ title: 'Accès refusé', description: 'Seuls les administrateurs peuvent modifier les profils', variant: 'destructive' });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          first_name: editForm.first_name.trim(),
+          last_name: editForm.last_name.trim()
+        })
+        .eq('id', editingUser.user_id);
+
+      if (error) throw error;
+
+      toast({ title: 'Profil mis à jour' });
+      setEditingUser(null);
+      fetchUsers();
+    } catch (error) {
+      console.error('Error updating user profile:', error);
+      toast({ title: 'Erreur', description: 'Impossible de mettre à jour le profil', variant: 'destructive' });
+    }
+  };
+
   if (loading) {
     return <div className="flex items-center justify-center h-64">Chargement...</div>;
   }
@@ -157,19 +196,28 @@ export const Users = () => {
                   <TableCell>{new Date(user.created_at).toLocaleDateString('fr-FR')}</TableCell>
                   {isAdmin && (
                     <TableCell>
-                      <Select
-                        value={user.roles[0] || 'USER'}
-                        onValueChange={(value) => updateUserRole(user.user_id, user.roles, value)}
-                      >
-                        <SelectTrigger className="w-40">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="USER">USER</SelectItem>
-                          <SelectItem value="BACKOFFICE">BACKOFFICE</SelectItem>
-                          <SelectItem value="ADMIN">ADMIN</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => openEditDialog(user)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Select
+                          value={user.roles[0] || 'USER'}
+                          onValueChange={(value) => updateUserRole(user.user_id, user.roles, value)}
+                        >
+                          <SelectTrigger className="w-40">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="USER">USER</SelectItem>
+                            <SelectItem value="BACKOFFICE">BACKOFFICE</SelectItem>
+                            <SelectItem value="ADMIN">ADMIN</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </TableCell>
                   )}
                 </TableRow>
@@ -178,6 +226,42 @@ export const Users = () => {
           </Table>
         </CardContent>
       </Card>
+
+      <Dialog open={!!editingUser} onOpenChange={(open) => !open && setEditingUser(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Modifier l'utilisateur</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="first_name">Prénom</Label>
+              <Input
+                id="first_name"
+                value={editForm.first_name}
+                onChange={(e) => setEditForm({ ...editForm, first_name: e.target.value })}
+                placeholder="Prénom"
+              />
+            </div>
+            <div>
+              <Label htmlFor="last_name">Nom</Label>
+              <Input
+                id="last_name"
+                value={editForm.last_name}
+                onChange={(e) => setEditForm({ ...editForm, last_name: e.target.value })}
+                placeholder="Nom"
+              />
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setEditingUser(null)}>
+                Annuler
+              </Button>
+              <Button onClick={updateUserProfile}>
+                Enregistrer
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
