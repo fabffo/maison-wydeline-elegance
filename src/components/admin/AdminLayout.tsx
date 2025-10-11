@@ -25,6 +25,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/admin' },
   { icon: Package, label: 'Produits', path: '/admin/products' },
+  { icon: Package, label: 'Stocks', path: '/admin/stocks' },
   { icon: ShoppingCart, label: 'Commandes', path: '/admin/orders' },
   { icon: FileText, label: 'Factures', path: '/admin/invoices' },
   { icon: Truck, label: 'Livraisons', path: '/admin/shipments' },
