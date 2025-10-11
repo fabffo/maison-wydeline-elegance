@@ -48,9 +48,14 @@ export default function Login() {
     setLoading(false);
 
     if (error) {
+      const isEmailNotConfirmed = error.message?.includes('Email not confirmed') || 
+                                   error.message?.includes('email_not_confirmed');
+      
       toast({
         title: 'Erreur de connexion',
-        description: 'Identifiants incorrects',
+        description: isEmailNotConfirmed 
+          ? 'Veuillez confirmer votre email avant de vous connecter. Vérifiez votre boîte de réception.'
+          : 'Identifiants incorrects',
         variant: 'destructive',
       });
     } else {
