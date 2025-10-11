@@ -26,6 +26,11 @@ export const Users = () => {
 
   const fetchUsers = async () => {
     try {
+      // Fetch all users from auth
+      const { data: allUsers, error: usersError } = await supabase.rpc('get_all_users');
+      
+      if (usersError) throw usersError;
+
       // Fetch all user roles
       const { data: rolesData, error: rolesError } = await supabase
         .from('user_roles')
@@ -40,41 +45,36 @@ export const Users = () => {
 
       if (profilesError) throw profilesError;
 
-      // Create a map of profiles by user_id
+      // Create maps
       const profilesMap = new Map();
       profilesData?.forEach(profile => {
         profilesMap.set(profile.id, profile);
       });
 
-      // Fetch emails for all users
-      const userIds = [...new Set(rolesData?.map(r => r.user_id) || [])];
-      const emailsMap = new Map();
-      
-      for (const userId of userIds) {
-        const { data, error } = await supabase.rpc('get_user_email', { _user_id: userId });
-        if (!error && data) {
-          emailsMap.set(userId, data);
-        }
-      }
-
-      // Group roles by user
-      const usersMap = new Map();
+      const rolesMap = new Map();
       rolesData?.forEach(role => {
-        if (!usersMap.has(role.user_id)) {
-          const profile = profilesMap.get(role.user_id);
-          usersMap.set(role.user_id, {
-            user_id: role.user_id,
-            email: emailsMap.get(role.user_id) || '',
-            first_name: profile?.first_name || '',
-            last_name: profile?.last_name || '',
-            roles: [],
-            created_at: role.created_at
-          });
+        if (!rolesMap.has(role.user_id)) {
+          rolesMap.set(role.user_id, []);
         }
-        usersMap.get(role.user_id).roles.push(role.role);
+        rolesMap.get(role.user_id).push(role.role);
       });
 
-      setUsers(Array.from(usersMap.values()));
+      // Combine all data
+      const usersWithData = allUsers?.map(user => {
+        const profile = profilesMap.get(user.id);
+        const roles = rolesMap.get(user.id) || ['USER'];
+        
+        return {
+          user_id: user.id,
+          email: user.email || '',
+          first_name: profile?.first_name || '',
+          last_name: profile?.last_name || '',
+          roles: roles,
+          created_at: user.created_at
+        };
+      }) || [];
+
+      setUsers(usersWithData);
     } catch (error) {
       console.error('Error fetching users:', error);
       toast({ title: 'Erreur', description: 'Impossible de charger les utilisateurs', variant: 'destructive' });

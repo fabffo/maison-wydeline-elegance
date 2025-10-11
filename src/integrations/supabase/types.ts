@@ -409,6 +409,14 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      get_all_users: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          created_at: string
+          email: string
+          id: string
+        }[]
+      }
       get_user_email: {
         Args: { _user_id: string }
         Returns: string
