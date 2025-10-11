@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { User, ShoppingBag, LogOut, Settings } from 'lucide-react';
+import { User, ShoppingBag, LogOut, Settings, Home } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { useUserRole } from '@/hooks/useUserRole';
@@ -104,6 +104,27 @@ export default function Account() {
             Déconnexion
           </Button>
         </div>
+
+        <Card className="mb-6 border-primary/50 bg-primary/5">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-full bg-primary/10">
+                  <Home className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg">Retour à la boutique</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Découvrez notre collection de chaussures
+                  </p>
+                </div>
+              </div>
+              <Button onClick={() => navigate('/collection')}>
+                Voir la collection
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         {!roleLoading && hasRole('BACKOFFICE') && (
           <Card className="mb-6 border-primary/50 bg-primary/5">
