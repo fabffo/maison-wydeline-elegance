@@ -22,6 +22,7 @@ export const Stocks = () => {
   const { toast } = useToast();
   
   const selectedProductId = searchParams.get('product');
+  const filterType = searchParams.get('filter');
 
   useEffect(() => {
     fetchStocks();
@@ -150,29 +151,39 @@ export const Stocks = () => {
     return <div className="flex items-center justify-center h-64">Chargement...</div>;
   }
 
-  const displayedProducts = selectedProductId 
+  let displayedProducts = selectedProductId 
     ? products.filter(p => p.id === selectedProductId)
     : products;
+
+  // Filter by out of stock if requested
+  if (filterType === 'outofstock') {
+    displayedProducts = displayedProducts.filter(product => {
+      const productVariants = variants.filter(v => v.product_id === product.id);
+      return productVariants.some(v => v.stock_quantity === 0);
+    });
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          {selectedProductId && (
+          {(selectedProductId || filterType) && (
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/admin/products')}
+              onClick={() => navigate(selectedProductId ? '/admin/products' : '/admin/stocks')}
               className="mb-2"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Retour aux produits
+              {selectedProductId ? 'Retour aux produits' : 'Voir tous les stocks'}
             </Button>
           )}
           <h1 className="text-3xl font-bold mb-2">Gestion des stocks</h1>
           <p className="text-muted-foreground">
             {selectedProductId 
               ? `Stocks pour ${displayedProducts[0]?.name || 'le produit sélectionné'}`
+              : filterType === 'outofstock'
+              ? 'Produits en rupture de stock'
               : 'Import/Export des stocks par taille'
             }
           </p>

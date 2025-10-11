@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Package, ShoppingCart, FileText, TrendingUp, AlertTriangle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 interface DashboardStats {
   totalProducts: number;
@@ -13,6 +15,7 @@ interface DashboardStats {
 }
 
 export const Dashboard = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState<DashboardStats>({
     totalProducts: 0,
     lowStockProducts: 0,
@@ -118,10 +121,14 @@ export const Dashboard = () => {
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalProducts}</div>
             {stats.lowStockProducts > 0 && (
-              <p className="text-xs text-destructive flex items-center gap-1 mt-1">
+              <Button
+                variant="link"
+                className="h-auto p-0 text-xs text-destructive flex items-center gap-1 mt-1"
+                onClick={() => navigate('/admin/stocks?filter=outofstock')}
+              >
                 <AlertTriangle className="h-3 w-3" />
                 {stats.lowStockProducts} en rupture
-              </p>
+              </Button>
             )}
           </CardContent>
         </Card>
