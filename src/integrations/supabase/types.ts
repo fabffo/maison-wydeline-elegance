@@ -401,6 +401,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      current_user_email: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       generate_invoice_number: {
         Args: Record<PropertyKey, never>
         Returns: string
