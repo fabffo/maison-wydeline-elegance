@@ -95,6 +95,50 @@ export const Products = () => {
     a.click();
   };
 
+  const syncFromJSON = async () => {
+    try {
+      const response = await fetch('/products.json');
+      const jsonProducts = await response.json();
+
+      for (const product of jsonProducts) {
+        const { error: productError } = await supabase
+          .from('products')
+          .upsert({
+            id: product.id,
+            name: product.name,
+            category: product.category,
+            description: product.description,
+            material: product.materials[0],
+            color: product.color,
+            price: product.price
+          });
+
+        if (productError) throw productError;
+
+        for (const size of product.sizes) {
+          const { error: variantError } = await supabase
+            .from('product_variants')
+            .upsert({
+              product_id: product.id,
+              size: size,
+              stock_quantity: product.stock[size] || 0,
+              alert_threshold: 5
+            }, {
+              onConflict: 'product_id,size'
+            });
+
+          if (variantError) throw variantError;
+        }
+      }
+
+      toast({ title: 'Synchronisation réussie', description: `${jsonProducts.length} produits synchronisés` });
+      fetchProducts();
+    } catch (error) {
+      console.error('Error syncing from JSON:', error);
+      toast({ title: 'Erreur', description: 'Impossible de synchroniser', variant: 'destructive' });
+    }
+  };
+
   const handleImportCSV = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -153,6 +197,9 @@ export const Products = () => {
           <p className="text-muted-foreground">Gérez vos produits et leurs variantes</p>
         </div>
         <div className="flex gap-2">
+          <Button onClick={syncFromJSON}>
+            Synchroniser depuis JSON
+          </Button>
           <Button variant="outline" onClick={exportToCSV}>
             <Download className="h-4 w-4 mr-2" />
             Exporter CSV
