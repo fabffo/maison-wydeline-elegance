@@ -189,6 +189,16 @@ export const Stocks = () => {
           </p>
         </div>
         <div className="flex gap-2">
+          {!filterType && !selectedProductId && (
+            <Button
+              variant="outline"
+              onClick={() => navigate('/admin/stocks?filter=outofstock')}
+              className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
+            >
+              <AlertTriangle className="h-4 w-4 mr-2" />
+              Ruptures de stock
+            </Button>
+          )}
           <Button variant="outline" onClick={exportToCSV}>
             <Download className="h-4 w-4 mr-2" />
             Exporter CSV
