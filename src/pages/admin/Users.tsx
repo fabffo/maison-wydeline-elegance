@@ -28,12 +28,28 @@ export const Users = () => {
 
       if (rolesError) throw rolesError;
 
+      // Fetch profiles to get names
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, first_name, last_name');
+
+      if (profilesError) throw profilesError;
+
+      // Create a map of profiles by user_id
+      const profilesMap = new Map();
+      profilesData?.forEach(profile => {
+        profilesMap.set(profile.id, profile);
+      });
+
       // Group roles by user
       const usersMap = new Map();
       rolesData?.forEach(role => {
         if (!usersMap.has(role.user_id)) {
+          const profile = profilesMap.get(role.user_id);
           usersMap.set(role.user_id, {
             user_id: role.user_id,
+            first_name: profile?.first_name || '',
+            last_name: profile?.last_name || '',
             roles: [],
             created_at: role.created_at
           });
@@ -112,6 +128,8 @@ export const Users = () => {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>Prénom</TableHead>
+                <TableHead>Nom</TableHead>
                 <TableHead>ID Utilisateur</TableHead>
                 <TableHead>Rôles actuels</TableHead>
                 <TableHead>Date d'ajout</TableHead>
@@ -121,6 +139,8 @@ export const Users = () => {
             <TableBody>
               {users.map((user) => (
                 <TableRow key={user.user_id}>
+                  <TableCell>{user.first_name || '-'}</TableCell>
+                  <TableCell>{user.last_name || '-'}</TableCell>
                   <TableCell className="font-mono text-sm">{user.user_id.slice(0, 8)}</TableCell>
                   <TableCell>
                     <div className="flex gap-2">
