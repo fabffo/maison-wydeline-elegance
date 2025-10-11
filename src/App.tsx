@@ -16,6 +16,7 @@ import Cart from "./pages/Cart";
 import OrderConfirmation from "./pages/OrderConfirmation";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
+import ResetPassword from "./pages/ResetPassword";
 import AdminLogin from "./pages/AdminLogin";
 import Account from "./pages/Account";
 import { AdminLayout } from "./components/admin/AdminLayout";
@@ -40,6 +41,7 @@ const App = () => (
         <Routes>
           {/* Auth routes (no header/footer) */}
           <Route path="/login" element={<Login />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/account" element={<Account />} />
 

@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -19,6 +20,8 @@ export default function Login() {
   const [signupConfirm, setSignupConfirm] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetDialogOpen, setResetDialogOpen] = useState(false);
 
   useEffect(() => {
     // Redirect if already logged in
@@ -133,6 +136,43 @@ export default function Login() {
     }
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!resetEmail) {
+      toast({
+        title: 'Erreur',
+        description: 'Veuillez saisir votre adresse email',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setLoading(true);
+    const redirectUrl = `${window.location.origin}/reset-password`;
+    
+    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+      redirectTo: redirectUrl,
+    });
+
+    setLoading(false);
+
+    if (error) {
+      toast({
+        title: 'Erreur',
+        description: 'Impossible d\'envoyer l\'email de réinitialisation',
+        variant: 'destructive',
+      });
+    } else {
+      toast({
+        title: 'Email envoyé',
+        description: 'Vérifiez votre boîte mail pour réinitialiser votre mot de passe',
+      });
+      setResetDialogOpen(false);
+      setResetEmail('');
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4 py-12">
       <div className="w-full max-w-md">
@@ -182,6 +222,39 @@ export default function Login() {
                   <Button type="submit" className="w-full" disabled={loading}>
                     {loading ? 'Connexion...' : 'Se connecter'}
                   </Button>
+                  
+                  <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button type="button" variant="link" className="w-full text-sm">
+                        Mot de passe oublié ?
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Réinitialiser le mot de passe</DialogTitle>
+                        <DialogDescription>
+                          Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <form onSubmit={handleForgotPassword} className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="reset-email">Email</Label>
+                          <Input
+                            id="reset-email"
+                            type="email"
+                            placeholder="votre@email.com"
+                            value={resetEmail}
+                            onChange={(e) => setResetEmail(e.target.value)}
+                            required
+                            disabled={loading}
+                          />
+                        </div>
+                        <Button type="submit" className="w-full" disabled={loading}>
+                          {loading ? 'Envoi...' : 'Envoyer le lien'}
+                        </Button>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
                 </form>
               </TabsContent>
 
