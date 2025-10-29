@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { useCart } from '@/contexts/CartContext';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, Download } from 'lucide-react';
 
@@ -29,8 +30,14 @@ const OrderConfirmation = () => {
   const sessionId = searchParams.get('session_id');
   const [order, setOrder] = useState<OrderData | null>(null);
   const [loading, setLoading] = useState(true);
+  const { clearCart } = useCart();
 
   useEffect(() => {
+    // Clear cart when arriving on confirmation page with valid session
+    if (sessionId) {
+      clearCart();
+    }
+    
     if (!sessionId) {
       setLoading(false);
       return;
@@ -48,7 +55,7 @@ const OrderConfirmation = () => {
     };
 
     fetchOrder();
-  }, [sessionId]);
+  }, [sessionId, clearCart]);
 
   if (loading) {
     return (
