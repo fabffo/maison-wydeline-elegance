@@ -134,8 +134,7 @@ const handler = async (req: Request): Promise<Response> => {
       metadata: { 
         order_number: orderNumber,
         invoice_number: invoiceNumber,
-        total_amount: totalAmount,
-        resend_id: emailResponse.id
+        total_amount: totalAmount
       }
     });
 

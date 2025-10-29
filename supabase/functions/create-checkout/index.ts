@@ -84,10 +84,19 @@ serve(async (req) => {
       quantity: item.quantity,
     }));
 
-    const origin = req.headers.get("origin") || req.headers.get("referer")?.split('/').slice(0, 3).join('/');
-    
+    // Get origin from request headers or fallback to referer
+    let origin = req.headers.get("origin");
     if (!origin) {
-      throw new Error("Unable to determine origin for redirect URLs");
+      const referer = req.headers.get("referer");
+      if (referer) {
+        const url = new URL(referer);
+        origin = url.origin;
+      }
+    }
+    
+    // Fallback to environment variable if headers don't provide origin
+    if (!origin) {
+      origin = Deno.env.get("SUPABASE_URL") ?? "";
     }
 
     console.log("Creating checkout session with origin:", origin);

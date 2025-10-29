@@ -103,12 +103,13 @@ Deno.serve(async (req) => {
     // Log error to database
     try {
       const payload: any = await req.json();
+      const errorMessage = error instanceof Error ? error.message : String(error);
       await supabase.from('email_logs').insert({
         recipient_email: payload.email || 'unknown',
         subject: 'Auth Email',
         email_type: `AUTH_${payload.type || 'UNKNOWN'}`,
         status: 'failed',
-        error_message: error.message
+        error_message: errorMessage
       });
     } catch (logError) {
       console.error("Failed to log error:", logError);
