@@ -75,12 +75,8 @@ const Cart = () => {
       if (response.data?.url) {
         console.log('Redirecting to Stripe:', response.data.url);
         clearCart();
-        // Use window.top to escape iframe
-        if (window.top) {
-          window.top.location.href = response.data.url;
-        } else {
-          window.location.href = response.data.url;
-        }
+        // Use window.open with _top target to escape iframe
+        window.open(response.data.url, '_top');
       } else {
         console.error('No URL in response:', response.data);
         throw new Error('Aucune URL de paiement reçue');
