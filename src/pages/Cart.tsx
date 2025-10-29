@@ -65,11 +65,16 @@ const Cart = () => {
         },
       });
 
+      console.log('Checkout response:', { data, error });
+
       if (error) throw error;
 
       if (data?.url) {
+        console.log('Redirecting to Stripe:', data.url);
         clearCart();
         window.location.href = data.url;
+      } else {
+        throw new Error('Aucune URL de paiement reçue');
       }
     } catch (error: any) {
       console.error('Checkout error:', error);

@@ -107,13 +107,13 @@ serve(async (req) => {
       line_items: lineItems,
       mode: "payment",
       success_url: `${origin}/order-confirmation?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/cart`,
+      cancel_url: `${origin}/panier`,
       metadata: {
         orderId: order.id,
       },
     });
 
-    console.log("Checkout session created:", session.id, "for order:", order.id);
+    console.log("Checkout session created:", session.id, "URL:", session.url, "for order:", order.id);
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
