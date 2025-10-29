@@ -29,6 +29,7 @@ import { Invoices } from "./pages/admin/Invoices";
 import { Shipments } from "./pages/admin/Shipments";
 import { Reports } from "./pages/admin/Reports";
 import { Users } from "./pages/admin/Users";
+import Emails from "./pages/admin/Emails";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,7 @@ const App = () => (
             <Route path="orders" element={<Orders />} />
             <Route path="invoices" element={<Invoices />} />
             <Route path="shipments" element={<Shipments />} />
+            <Route path="emails" element={<Emails />} />
             <Route path="reports" element={<Reports />} />
             <Route path="users" element={<Users />} />
           </Route>

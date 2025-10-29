@@ -1,8 +1,14 @@
 // deno-lint-ignore-file no-explicit-any
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY")!;
 const RESEND_FROM = Deno.env.get("RESEND_FROM") || "Maison Wydeline <no-reply@wavyservices.fr>";
 const RESEND_BCC = Deno.env.get("RESEND_BCC") || "";
 const FRONTEND_URL = Deno.env.get("FRONTEND_URL") || "https://wavyservices.fr";
+
+const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -78,12 +84,36 @@ Deno.serve(async (req) => {
     const result = await r.json();
     console.log("Email sent successfully via Resend:", result);
 
+    // Log email to database
+    await supabase.from('email_logs').insert({
+      recipient_email: email,
+      subject,
+      email_type: `AUTH_${type}`,
+      status: 'sent',
+      metadata: { action_link, resend_id: result.id }
+    });
+
     return new Response(JSON.stringify({ ok: true }), { 
       status: 200, 
       headers: { ...corsHeaders, "Content-Type": "application/json" } 
     });
   } catch (error) {
     console.error("Error in send-auth-email function:", error);
+    
+    // Log error to database
+    try {
+      const payload: any = await req.json();
+      await supabase.from('email_logs').insert({
+        recipient_email: payload.email || 'unknown',
+        subject: 'Auth Email',
+        email_type: `AUTH_${payload.type || 'UNKNOWN'}`,
+        status: 'failed',
+        error_message: error.message
+      });
+    } catch (logError) {
+      console.error("Failed to log error:", logError);
+    }
+    
     return new Response("bad_request", { status: 400, headers: corsHeaders });
   }
 });

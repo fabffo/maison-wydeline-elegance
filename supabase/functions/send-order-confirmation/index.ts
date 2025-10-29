@@ -1,7 +1,12 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "https://esm.sh/resend@2.0.0";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+
+const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -120,6 +125,20 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log("Email sent successfully:", emailResponse);
 
+    // Log email to database
+    await supabase.from('email_logs').insert({
+      recipient_email: customerEmail,
+      subject: `Confirmation de commande ${orderNumber}`,
+      email_type: 'ORDER_CONFIRMATION',
+      status: 'sent',
+      metadata: { 
+        order_number: orderNumber,
+        invoice_number: invoiceNumber,
+        total_amount: totalAmount,
+        resend_id: emailResponse.id
+      }
+    });
+
     return new Response(JSON.stringify(emailResponse), {
       status: 200,
       headers: {
@@ -129,6 +148,22 @@ const handler = async (req: Request): Promise<Response> => {
     });
   } catch (error: any) {
     console.error("Error sending confirmation email:", error);
+    
+    // Log error to database
+    try {
+      const body: OrderConfirmationRequest = await req.json();
+      await supabase.from('email_logs').insert({
+        recipient_email: body.customerEmail || 'unknown',
+        subject: `Confirmation de commande ${body.orderNumber || ''}`,
+        email_type: 'ORDER_CONFIRMATION',
+        status: 'failed',
+        error_message: error.message,
+        metadata: { order_number: body.orderNumber }
+      });
+    } catch (logError) {
+      console.error("Failed to log error:", logError);
+    }
+    
     return new Response(
       JSON.stringify({ error: error.message }),
       {

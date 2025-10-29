@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      email_logs: {
+        Row: {
+          created_at: string
+          email_type: string
+          error_message: string | null
+          id: string
+          metadata: Json | null
+          recipient_email: string
+          status: string
+          subject: string
+        }
+        Insert: {
+          created_at?: string
+          email_type: string
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          recipient_email: string
+          status?: string
+          subject: string
+        }
+        Update: {
+          created_at?: string
+          email_type?: string
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          recipient_email?: string
+          status?: string
+          subject?: string
+        }
+        Relationships: []
+      }
       invoices: {
         Row: {
           created_at: string
@@ -401,26 +434,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      current_user_email: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      generate_invoice_number: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
+      current_user_email: { Args: never; Returns: string }
+      generate_invoice_number: { Args: never; Returns: string }
       get_all_users: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           created_at: string
           email: string
           id: string
         }[]
       }
-      get_user_email: {
-        Args: { _user_id: string }
-        Returns: string
-      }
+      get_user_email: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -441,10 +465,7 @@ export type Database = {
         Args: { _order_id: string }
         Returns: undefined
       }
-      sync_products_from_json: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      sync_products_from_json: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "ADMIN" | "BACKOFFICE" | "USER"
