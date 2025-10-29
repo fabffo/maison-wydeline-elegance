@@ -1,14 +1,4 @@
 notepad .gitignore
-```
-
-Ajoutez ces lignes **au début du fichier** :
-```
-# Environment variables
-.env
-.env.local
-.env.production
-.env.development
-.env*.local
 
 # Logs
 logs
