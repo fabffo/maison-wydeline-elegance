@@ -74,7 +74,6 @@ const Cart = () => {
 
       if (response.data?.url) {
         console.log('Redirecting to Stripe:', response.data.url);
-        clearCart();
         // Use window.open with _top target to escape iframe
         window.open(response.data.url, '_top');
       } else {
