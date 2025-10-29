@@ -84,13 +84,15 @@ serve(async (req) => {
       quantity: item.quantity,
     }));
 
+    const origin = req.headers.get("origin") || Deno.env.get("SUPABASE_URL");
+    
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : customerEmail,
       line_items: lineItems,
       mode: "payment",
-      success_url: `${req.headers.get("origin")}/order-confirmation?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.get("origin")}/cart`,
+      success_url: `${origin}/order-confirmation?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/cart`,
       metadata: {
         orderId: order.id,
       },
