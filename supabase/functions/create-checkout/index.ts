@@ -84,7 +84,13 @@ serve(async (req) => {
       quantity: item.quantity,
     }));
 
-    const origin = req.headers.get("origin") || Deno.env.get("SUPABASE_URL");
+    const origin = req.headers.get("origin") || req.headers.get("referer")?.split('/').slice(0, 3).join('/');
+    
+    if (!origin) {
+      throw new Error("Unable to determine origin for redirect URLs");
+    }
+
+    console.log("Creating checkout session with origin:", origin);
     
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
