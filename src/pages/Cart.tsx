@@ -57,7 +57,7 @@ const Cart = () => {
         unitPrice: item!.product.price,
       }));
 
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
+      const response = await supabase.functions.invoke('create-checkout', {
         body: {
           customerName: customerInfo.name,
           customerEmail: customerInfo.email,
@@ -65,15 +65,19 @@ const Cart = () => {
         },
       });
 
-      console.log('Checkout response:', { data, error });
+      console.log('Full response:', response);
 
-      if (error) throw error;
+      if (response.error) {
+        console.error('Response error:', response.error);
+        throw response.error;
+      }
 
-      if (data?.url) {
-        console.log('Redirecting to Stripe:', data.url);
+      if (response.data?.url) {
+        console.log('Redirecting to Stripe:', response.data.url);
         clearCart();
-        window.location.href = data.url;
+        window.location.href = response.data.url;
       } else {
+        console.error('No URL in response:', response.data);
         throw new Error('Aucune URL de paiement reçue');
       }
     } catch (error: any) {
