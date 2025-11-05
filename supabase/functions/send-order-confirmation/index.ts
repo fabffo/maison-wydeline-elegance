@@ -127,7 +127,7 @@ const handler = async (req: Request): Promise<Response> => {
     `;
 
     const emailResponse = await resend.emails.send({
-      from: "Wydeline <onboarding@resend.dev>",
+      from: "Maison Wydeline <no-reply@wavyservices.fr>",
       to: [customerEmail],
       subject: `Confirmation de commande ${orderNumber}`,
       html: emailHtml,
