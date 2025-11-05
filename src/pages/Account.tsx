@@ -35,11 +35,25 @@ export default function Account() {
   };
 
   const fetchOrders = async (userId: string, email: string | undefined) => {
-    const { data } = await supabase
+    console.log('Fetching orders for:', { userId, email });
+    
+    const { data, error } = await supabase
       .from('orders')
       .select('*, order_items(*)')
-      .or(`user_id.eq.${userId},customer_email.eq.${email}`)
+      .or(`user_id.eq.${userId},customer_email.ilike.${email}`)
       .order('created_at', { ascending: false });
+
+    console.log('Orders query result:', { data, error });
+
+    if (error) {
+      console.error('Error fetching orders:', error);
+      toast({
+        title: 'Erreur',
+        description: 'Impossible de charger les commandes',
+        variant: 'destructive',
+      });
+      return;
+    }
 
     if (data) {
       setOrders(data);
