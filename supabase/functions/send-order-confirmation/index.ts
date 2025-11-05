@@ -13,6 +13,16 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// HTML sanitization function to prevent XSS attacks
+function escapeHtml(unsafe: string): string {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 interface OrderConfirmationRequest {
   customerName: string;
   customerEmail: string;
@@ -47,7 +57,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     const itemsHtml = items.map(item => `
       <tr>
-        <td style="padding: 8px; border-bottom: 1px solid #eee;">${item.productName}</td>
+        <td style="padding: 8px; border-bottom: 1px solid #eee;">${escapeHtml(item.productName)}</td>
         <td style="padding: 8px; border-bottom: 1px solid #eee;">${item.size}</td>
         <td style="padding: 8px; border-bottom: 1px solid #eee;">${item.quantity}</td>
         <td style="padding: 8px; border-bottom: 1px solid #eee;">${item.unitPrice.toFixed(2)} €</td>
@@ -78,11 +88,11 @@ const handler = async (req: Request): Promise<Response> => {
               <p>Confirmation de commande</p>
             </div>
             <div class="content">
-              <h2>Merci pour votre commande, ${customerName} !</h2>
+              <h2>Merci pour votre commande, ${escapeHtml(customerName)} !</h2>
               <p>Votre commande a été confirmée et sera traitée dans les plus brefs délais.</p>
               
-              <p><strong>Numéro de commande :</strong> ${orderNumber}</p>
-              ${invoiceNumber ? `<p><strong>Numéro de facture :</strong> ${invoiceNumber}</p>` : ''}
+              <p><strong>Numéro de commande :</strong> ${escapeHtml(orderNumber)}</p>
+              ${invoiceNumber ? `<p><strong>Numéro de facture :</strong> ${escapeHtml(invoiceNumber)}</p>` : ''}
               
               <h3>Détails de la commande</h3>
               <table>

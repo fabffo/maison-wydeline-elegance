@@ -15,6 +15,16 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// HTML sanitization function to prevent XSS attacks
+function escapeHtml(unsafe: string): string {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 type HookPayload = { 
   type: "PASSWORD_RECOVERY" | "SIGNUP" | string; 
   email: string; 
@@ -34,7 +44,7 @@ Deno.serve(async (req) => {
     let html = "";
 
     if (type === "PASSWORD_RECOVERY") {
-      const url = action_link || `${FRONTEND_URL}/auth/recovery`;
+      const url = escapeHtml(action_link || `${FRONTEND_URL}/auth/recovery`);
       subject = "Réinitialisation de votre mot de passe";
       html = `<div style="font-family:Inter,Arial,sans-serif;max-width:560px;margin:auto;padding:24px">
         <h2 style="margin:0 0 12px">Réinitialisation de mot de passe</h2>
@@ -43,7 +53,7 @@ Deno.serve(async (req) => {
         <p style="color:#666;font-size:12px;margin-top:24px">Si vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail.</p>
       </div>`;
     } else if (type === "SIGNUP") {
-      const url = action_link || `${FRONTEND_URL}/auth/confirm`;
+      const url = escapeHtml(action_link || `${FRONTEND_URL}/auth/confirm`);
       subject = "Confirmez votre inscription";
       html = `<div style="font-family:Inter,Arial,sans-serif;max-width:560px;margin:auto;padding:24px">
         <h2 style="margin:0 0 12px">Bienvenue chez Maison Wydeline</h2>
