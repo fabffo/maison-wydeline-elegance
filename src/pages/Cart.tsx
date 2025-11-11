@@ -1,23 +1,57 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
 import { useProducts } from '@/hooks/useProducts';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Trash2, ShoppingBag } from 'lucide-react';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+
+const checkoutSchema = z.object({
+  nomComplet: z.string().trim().min(1, 'Le nom est requis').max(100, 'Maximum 100 caractères'),
+  email: z.string().trim().email('Email invalide').max(255, 'Maximum 255 caractères'),
+  telephone: z.string().trim().min(10, 'Téléphone invalide').max(20, 'Maximum 20 caractères'),
+  adresse1: z.string().trim().min(1, 'L\'adresse est requise').max(200, 'Maximum 200 caractères'),
+  adresse2: z.string().trim().max(200, 'Maximum 200 caractères').optional(),
+  codePostal: z.string().trim().min(4, 'Code postal invalide').max(10, 'Maximum 10 caractères'),
+  ville: z.string().trim().min(1, 'La ville est requise').max(100, 'Maximum 100 caractères'),
+  pays: z.string().trim().length(2, 'Code pays ISO2 requis').default('FR'),
+});
 
 const Cart = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const { items, updateQuantity, removeItem, clearCart } = useCart();
+  const { items, updateQuantity, removeItem } = useCart();
   const { products } = useProducts();
   const { toast } = useToast();
-  const [customerInfo, setCustomerInfo] = useState({ name: '', email: '' });
   const [loading, setLoading] = useState(false);
+
+  const form = useForm<z.infer<typeof checkoutSchema>>({
+    resolver: zodResolver(checkoutSchema),
+    defaultValues: {
+      nomComplet: '',
+      email: '',
+      telephone: '',
+      adresse1: '',
+      adresse2: '',
+      codePostal: '',
+      ville: '',
+      pays: 'FR',
+    },
+  });
 
   const cartItems = items.map((item) => {
     const product = products.find((p) => p.id === item.productId);
@@ -28,16 +62,7 @@ const Cart = () => {
     return sum + (item!.product.price * item!.quantity);
   }, 0);
 
-  const handleCheckout = async () => {
-    if (!customerInfo.name || !customerInfo.email) {
-      toast({
-        title: 'Information requise',
-        description: 'Veuillez remplir votre nom et email',
-        variant: 'destructive',
-      });
-      return;
-    }
-
+  const handleCheckout = async (values: z.infer<typeof checkoutSchema>) => {
     if (cartItems.length === 0) {
       toast({
         title: 'Panier vide',
@@ -57,24 +82,30 @@ const Cart = () => {
         unitPrice: item!.product.price,
       }));
 
+      const shippingAddress = {
+        nomComplet: values.nomComplet,
+        adresse1: values.adresse1,
+        adresse2: values.adresse2 || '',
+        codePostal: values.codePostal,
+        ville: values.ville,
+        pays: values.pays,
+      };
+
       const response = await supabase.functions.invoke('create-checkout', {
         body: {
-          customerName: customerInfo.name,
-          customerEmail: customerInfo.email,
+          customerName: values.nomComplet,
+          customerEmail: values.email,
+          phone: values.telephone,
+          shippingAddress,
           items: orderItems,
         },
       });
 
-      console.log('Full response:', response);
-
       if (response.error) {
-        console.error('Response error:', response.error);
         throw response.error;
       }
 
       if (response.data?.url) {
-        console.log('Redirecting to Stripe:', response.data.url);
-        // Try to redirect parent window first (for iframe context)
         try {
           if (window.parent && window.parent !== window) {
             window.parent.location.href = response.data.url;
@@ -82,16 +113,12 @@ const Cart = () => {
             window.location.href = response.data.url;
           }
         } catch (e) {
-          // If parent access is blocked, fallback to current window
-          console.log('Parent access blocked, redirecting current window');
           window.location.href = response.data.url;
         }
       } else {
-        console.error('No URL in response:', response.data);
         throw new Error('Aucune URL de paiement reçue');
       }
     } catch (error: any) {
-      console.error('Checkout error:', error);
       toast({
         title: 'Erreur',
         description: error.message || 'Erreur lors du paiement',
@@ -169,48 +196,151 @@ const Cart = () => {
 
           {/* Checkout Form */}
           <div className="space-y-6">
-            <div className="p-6 bg-card rounded-lg border space-y-4">
-              <h2 className="text-xl font-medium">Informations</h2>
-              <div>
-                <Label htmlFor="name">Nom complet</Label>
-                <Input
-                  id="name"
-                  value={customerInfo.name}
-                  onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={customerInfo.email}
-                  onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })}
-                  required
-                />
-              </div>
-            </div>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(handleCheckout)} className="space-y-6">
+                <div className="p-6 bg-card rounded-lg border space-y-4">
+                  <h2 className="text-xl font-medium">Informations personnelles</h2>
+                  
+                  <FormField
+                    control={form.control}
+                    name="nomComplet"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nom complet *</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Jean Dupont" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-            <div className="p-6 bg-card rounded-lg border space-y-4">
-              <h2 className="text-xl font-medium">Récapitulatif</h2>
-              <div className="flex justify-between">
-                <span>Sous-total</span>
-                <span>€{total.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between font-medium text-lg">
-                <span>Total</span>
-                <span>€{total.toFixed(2)}</span>
-              </div>
-              <Button
-                onClick={handleCheckout}
-                disabled={loading}
-                className="w-full"
-                size="lg"
-              >
-                {loading ? 'Chargement...' : 'Payer avec Stripe'}
-              </Button>
-            </div>
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email *</FormLabel>
+                        <FormControl>
+                          <Input type="email" placeholder="jean.dupont@exemple.fr" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="telephone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Téléphone *</FormLabel>
+                        <FormControl>
+                          <Input placeholder="0612345678" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="p-6 bg-card rounded-lg border space-y-4">
+                  <h2 className="text-xl font-medium">Adresse de livraison</h2>
+                  
+                  <FormField
+                    control={form.control}
+                    name="adresse1"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Adresse *</FormLabel>
+                        <FormControl>
+                          <Input placeholder="123 rue de la Paix" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="adresse2"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Complément d'adresse (optionnel)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Appartement, étage, etc." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="codePostal"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Code postal *</FormLabel>
+                          <FormControl>
+                            <Input placeholder="75001" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="ville"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Ville *</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Paris" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name="pays"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Pays (code ISO2) *</FormLabel>
+                        <FormControl>
+                          <Input placeholder="FR" maxLength={2} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="p-6 bg-card rounded-lg border space-y-4">
+                  <h2 className="text-xl font-medium">Récapitulatif</h2>
+                  <div className="flex justify-between">
+                    <span>Sous-total</span>
+                    <span>€{total.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between font-medium text-lg">
+                    <span>Total</span>
+                    <span>€{total.toFixed(2)}</span>
+                  </div>
+                  <Button
+                    type="submit"
+                    disabled={loading || !form.formState.isValid}
+                    className="w-full"
+                    size="lg"
+                  >
+                    {loading ? 'Chargement...' : 'Payer avec Stripe'}
+                  </Button>
+                </div>
+              </form>
+            </Form>
           </div>
         </div>
       </div>

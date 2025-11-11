@@ -13,10 +13,15 @@ serve(async (req) => {
   }
 
   try {
-    const { customerName, customerEmail, items } = await req.json();
+    const { customerName, customerEmail, phone, shippingAddress, items } = await req.json();
 
-    if (!customerName || !customerEmail || !items || items.length === 0) {
+    if (!customerName || !customerEmail || !phone || !shippingAddress || !items || items.length === 0) {
       throw new Error("Missing required fields");
+    }
+
+    // Validate shipping address
+    if (!shippingAddress.adresse1 || !shippingAddress.codePostal || !shippingAddress.ville || !shippingAddress.pays) {
+      throw new Error("Incomplete shipping address");
     }
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
@@ -33,7 +38,7 @@ serve(async (req) => {
       return sum + (item.unitPrice * item.quantity);
     }, 0);
 
-    // Create order in database
+    // Create order in database with shipping address
     const { data: order, error: orderError } = await supabase
       .from("orders")
       .insert({
@@ -41,6 +46,10 @@ serve(async (req) => {
         customer_email: customerEmail,
         total_amount: totalAmount,
         status: "PENDING",
+        shipping_address: {
+          ...shippingAddress,
+          phone,
+        },
       })
       .select()
       .single();
@@ -110,6 +119,8 @@ serve(async (req) => {
       cancel_url: `${origin}/panier`,
       metadata: {
         orderId: order.id,
+        phone,
+        shippingAddress: JSON.stringify(shippingAddress),
       },
     });
 
