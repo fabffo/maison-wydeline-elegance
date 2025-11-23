@@ -6,12 +6,12 @@ const LaMarque = () => {
 
   return (
     <main className="min-h-screen pt-24 pb-16">
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-4">
         <h1 className="text-4xl md:text-5xl font-medium text-center mb-16">
           {t.brand.title}
         </h1>
 
-        <div className="max-w-4xl mx-auto space-y-16">
+        <div className="max-w-6xl mx-auto space-y-16">
           {/* Hero Image */}
           <div className="aspect-[16/9] rounded-lg overflow-hidden">
             <img
@@ -21,27 +21,46 @@ const LaMarque = () => {
             />
           </div>
 
-          {/* Raison d'être */}
+          {/* Qui sommes nous */}
           <section>
-            <h2 className="text-3xl font-medium mb-6">{t.brand.reason}</h2>
+            <h2 className="text-3xl font-medium mb-6">QUI SOMMES NOUS</h2>
+            <p className="text-lg text-muted-foreground leading-relaxed mb-4 italic">
+              À nos chères clientes,
+            </p>
             <p className="text-lg text-muted-foreground leading-relaxed mb-4">
-              {t.brand.reasonText}
+              Se chausser sans compromis — sans se demander si sa taille existera dans le modèle de ses rêves — c'est ce qui a poussé Wydeline à créer, avec son équipe, une marque dédiée aux femmes chaussant du 41 au 45.
+            </p>
+            <p className="text-lg text-muted-foreground leading-relaxed mb-4">
+              Maison Wydeline est née de cette volonté : offrir à toutes des chaussures élégantes, confortables et durables, conçues avec soin et pensées pour sublimer chaque silhouette.
+            </p>
+            <p className="text-lg text-muted-foreground leading-relaxed mb-4">
+              Maison Wydeline, c'est avant tout une histoire de confiance — celle que l'on accorde à une marque, mais surtout celle que l'on cultive envers soi-même.
+            </p>
+            <p className="text-lg text-muted-foreground leading-relaxed mb-4">
+              C'est aussi une question de place : la vôtre.
             </p>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Trop longtemps privées de choix, de confort ou de style, les grandes pointures 
-              méritent des chaussures pensées pour elles.
+              Parce que vous comptez, parce que vous méritez de trouver votre style, votre confort et votre taille sans concession, nous pensons à vous chaque jour.
             </p>
           </section>
 
-          {/* Mission */}
+          {/* Maison engagée */}
           <section>
-            <h2 className="text-3xl font-medium mb-6">{t.brand.mission}</h2>
+            <h2 className="text-3xl font-medium mb-6">MAISON ENGAGÉE</h2>
             <p className="text-lg text-muted-foreground leading-relaxed mb-4">
-              {t.brand.missionText}
+              Chez Maison Wydeline, l'élégance rime avec responsabilité.
+            </p>
+            <p className="text-lg text-muted-foreground leading-relaxed mb-4">
+              Nous nous engageons à faire, avec nos moyens et notre taille, le meilleur pour nos clientes et pour notre environnement.
+            </p>
+            <p className="text-lg text-muted-foreground leading-relaxed mb-4">
+              Nos chaussures, nos étuis et nos boîtes sont fabriqués en Europe, dans des ateliers que nous avons personnellement visités.
+            </p>
+            <p className="text-lg text-muted-foreground leading-relaxed mb-4">
+              Nos produits ne prennent pas l'avion, et chaque détail de nos colis est pensé pour limiter notre empreinte écologique : aucun plastique inutile, des matériaux durables, et une production raisonnée.
             </p>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Nos modèles sont pensés pour vous accompagner au fil des saisons, 
-              en alliant confort et allure à chaque pas.
+              Nous savons que le chemin du progrès est continu. Notre promesse : avancer, évoluer et toujours faire mieux.
             </p>
           </section>
 
