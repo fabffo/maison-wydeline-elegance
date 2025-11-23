@@ -6,12 +6,12 @@ const LaMarque = () => {
 
   return (
     <main className="min-h-screen pt-24 pb-16">
-      <div className="container mx-auto px-4">
+      <div className="mx-auto px-8 md:px-12 lg:px-16">
         <h1 className="text-4xl md:text-5xl font-medium text-center mb-16">
           {t.brand.title}
         </h1>
 
-        <div className="max-w-6xl mx-auto space-y-16">
+        <div className="space-y-16">
           {/* Hero Image */}
           <div className="aspect-[16/9] rounded-lg overflow-hidden">
             <img
