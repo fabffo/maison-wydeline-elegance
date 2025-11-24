@@ -64,35 +64,45 @@ export const Header = () => {
     <header className={`fixed top-0 left-0 right-0 z-50 transition-colors ${
       isHomePage 
         ? 'bg-transparent border-b border-transparent' 
-        : 'bg-luxury-dark/95 backdrop-blur-sm border-b border-luxury-dark'
+        : 'bg-white/95 backdrop-blur-sm border-b border-border'
     }`}>
       <nav className="container mx-auto px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-12">
           <Link to="/" className="block">
-            <img src={logo} alt="Maison Wydeline" className="h-8 w-auto" />
+            <img 
+              src={logo} 
+              alt="Maison Wydeline" 
+              className={`h-8 w-auto ${!isHomePage ? 'brightness-0' : ''}`} 
+            />
           </Link>
           
           <div className="hidden md:flex items-center gap-10">
             <Link
               to="/collection"
-              className={`text-base font-medium transition-colors hover:text-luxury-beige ${
-                isActive('/collection') ? 'text-luxury-beige' : 'text-white'
+              className={`text-base font-medium transition-colors ${
+                isHomePage 
+                  ? `hover:text-luxury-beige ${isActive('/collection') ? 'text-luxury-beige' : 'text-white'}`
+                  : `hover:text-luxury-beige ${isActive('/collection') ? 'text-luxury-beige' : 'text-luxury-dark'}`
               }`}
             >
               {t.nav.collection}
             </Link>
             <Link
               to="/la-marque"
-              className={`text-base font-medium transition-colors hover:text-luxury-beige ${
-                isActive('/la-marque') ? 'text-luxury-beige' : 'text-white'
+              className={`text-base font-medium transition-colors ${
+                isHomePage 
+                  ? `hover:text-luxury-beige ${isActive('/la-marque') ? 'text-luxury-beige' : 'text-white'}`
+                  : `hover:text-luxury-beige ${isActive('/la-marque') ? 'text-luxury-beige' : 'text-luxury-dark'}`
               }`}
             >
               {t.nav.brand}
             </Link>
             <Link
               to="/contact"
-              className={`text-base font-medium transition-colors hover:text-luxury-beige ${
-                isActive('/contact') ? 'text-luxury-beige' : 'text-white'
+              className={`text-base font-medium transition-colors ${
+                isHomePage 
+                  ? `hover:text-luxury-beige ${isActive('/contact') ? 'text-luxury-beige' : 'text-white'}`
+                  : `hover:text-luxury-beige ${isActive('/contact') ? 'text-luxury-beige' : 'text-luxury-dark'}`
               }`}
             >
               {t.nav.contact}
@@ -103,7 +113,11 @@ export const Header = () => {
         <div className="flex items-center gap-6">
           <button
             onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')}
-            className="text-sm font-medium text-white hover:text-luxury-beige transition-colors"
+            className={`text-sm font-medium transition-colors ${
+              isHomePage 
+                ? 'text-white hover:text-luxury-beige'
+                : 'text-luxury-dark hover:text-luxury-beige'
+            }`}
             aria-label="Toggle language"
           >
             {language === 'fr' ? 'EN' : 'FR'}
@@ -113,7 +127,11 @@ export const Header = () => {
               <HoverCardTrigger asChild>
                 <button
                   onClick={() => navigate('/account')}
-                  className="text-white hover:text-luxury-beige transition-colors flex flex-col items-center gap-0.5"
+                  className={`transition-colors flex flex-col items-center gap-0.5 ${
+                    isHomePage 
+                      ? 'text-white hover:text-luxury-beige'
+                      : 'text-luxury-dark hover:text-luxury-beige'
+                  }`}
                   aria-label="Account"
                 >
                   <User size={20} />
@@ -136,7 +154,11 @@ export const Header = () => {
           ) : (
             <button
               onClick={() => navigate(isAuthenticated ? '/account' : '/login')}
-              className="text-white hover:text-luxury-beige transition-colors"
+              className={`transition-colors ${
+                isHomePage 
+                  ? 'text-white hover:text-luxury-beige'
+                  : 'text-luxury-dark hover:text-luxury-beige'
+              }`}
               aria-label="Account"
             >
               <User size={20} />
@@ -145,7 +167,11 @@ export const Header = () => {
           {hasRole('BACKOFFICE') && (
             <button
               onClick={() => navigate('/admin')}
-              className="text-white hover:text-luxury-beige transition-colors relative"
+              className={`transition-colors relative ${
+                isHomePage 
+                  ? 'text-white hover:text-luxury-beige'
+                  : 'text-luxury-dark hover:text-luxury-beige'
+              }`}
               aria-label="Back-Office"
               title="Accès Back-Office"
             >
@@ -157,7 +183,11 @@ export const Header = () => {
           )}
           <button
             onClick={() => navigate('/panier')}
-            className="text-white hover:text-luxury-beige transition-colors relative"
+            className={`transition-colors relative ${
+              isHomePage 
+                ? 'text-white hover:text-luxury-beige'
+                : 'text-luxury-dark hover:text-luxury-beige'
+            }`}
             aria-label="Shopping cart"
           >
             <ShoppingCart size={20} />
