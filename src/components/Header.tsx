@@ -67,10 +67,10 @@ export const Header = () => {
             <img src={logo} alt="Maison Wydeline" className="h-8 w-auto" />
           </Link>
           
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-10">
             <Link
               to="/collection"
-              className={`text-sm font-medium transition-colors hover:text-luxury-beige ${
+              className={`text-base font-medium transition-colors hover:text-luxury-beige ${
                 isActive('/collection') ? 'text-luxury-beige' : 'text-white'
               }`}
             >
@@ -78,7 +78,7 @@ export const Header = () => {
             </Link>
             <Link
               to="/la-marque"
-              className={`text-sm font-medium transition-colors hover:text-luxury-beige ${
+              className={`text-base font-medium transition-colors hover:text-luxury-beige ${
                 isActive('/la-marque') ? 'text-luxury-beige' : 'text-white'
               }`}
             >
@@ -86,7 +86,7 @@ export const Header = () => {
             </Link>
             <Link
               to="/contact"
-              className={`text-sm font-medium transition-colors hover:text-luxury-beige ${
+              className={`text-base font-medium transition-colors hover:text-luxury-beige ${
                 isActive('/contact') ? 'text-luxury-beige' : 'text-white'
               }`}
             >
