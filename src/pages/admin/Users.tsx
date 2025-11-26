@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Shield, Pencil } from 'lucide-react';
+import { Shield, Pencil, UserPlus } from 'lucide-react';
 import { useUserRole } from '@/hooks/useUserRole';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -17,6 +17,14 @@ export const Users = () => {
   const [loading, setLoading] = useState(true);
   const [editingUser, setEditingUser] = useState<any | null>(null);
   const [editForm, setEditForm] = useState({ first_name: '', last_name: '' });
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [createForm, setCreateForm] = useState({ 
+    email: '', 
+    password: '', 
+    first_name: '', 
+    last_name: '', 
+    role: 'BACKOFFICE' as 'ADMIN' | 'BACKOFFICE'
+  });
   const { toast } = useToast();
   const { isAdmin } = useUserRole();
 
@@ -149,6 +157,60 @@ export const Users = () => {
     }
   };
 
+  const createUser = async () => {
+    if (!isAdmin) {
+      toast({ title: 'Accès refusé', description: 'Seuls les administrateurs peuvent créer des utilisateurs', variant: 'destructive' });
+      return;
+    }
+
+    // Validation
+    if (!createForm.email || !createForm.password || !createForm.first_name || !createForm.last_name) {
+      toast({ title: 'Erreur', description: 'Tous les champs sont requis', variant: 'destructive' });
+      return;
+    }
+
+    if (createForm.password.length < 6) {
+      toast({ title: 'Erreur', description: 'Le mot de passe doit contenir au moins 6 caractères', variant: 'destructive' });
+      return;
+    }
+
+    try {
+      // Create user with auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: createForm.email.trim(),
+        password: createForm.password,
+        options: {
+          data: {
+            first_name: createForm.first_name.trim(),
+            last_name: createForm.last_name.trim()
+          }
+        }
+      });
+
+      if (authError) throw authError;
+      if (!authData.user) throw new Error('Utilisateur non créé');
+
+      // Assign role
+      const { error: roleError } = await supabase
+        .from('user_roles')
+        .insert([{ user_id: authData.user.id, role: createForm.role }]);
+
+      if (roleError) throw roleError;
+
+      toast({ title: 'Utilisateur créé', description: `${createForm.email} a été créé avec le rôle ${createForm.role}` });
+      setCreateDialogOpen(false);
+      setCreateForm({ email: '', password: '', first_name: '', last_name: '', role: 'BACKOFFICE' });
+      fetchUsers();
+    } catch (error: any) {
+      console.error('Error creating user:', error);
+      toast({ 
+        title: 'Erreur', 
+        description: error.message || 'Impossible de créer l\'utilisateur', 
+        variant: 'destructive' 
+      });
+    }
+  };
+
   if (loading) {
     return <div className="flex items-center justify-center h-64">Chargement...</div>;
   }
@@ -160,7 +222,15 @@ export const Users = () => {
           <h1 className="text-3xl font-bold mb-2">Gestion des utilisateurs</h1>
           <p className="text-muted-foreground">Gérez les rôles et permissions des utilisateurs</p>
         </div>
-        <Shield className="h-8 w-8 text-muted-foreground" />
+        <div className="flex items-center gap-4">
+          {isAdmin && (
+            <Button onClick={() => setCreateDialogOpen(true)}>
+              <UserPlus className="h-4 w-4 mr-2" />
+              Créer un utilisateur
+            </Button>
+          )}
+          <Shield className="h-8 w-8 text-muted-foreground" />
+        </div>
       </div>
 
       {!isAdmin && (
@@ -273,6 +343,77 @@ export const Users = () => {
               </Button>
               <Button onClick={updateUserProfile}>
                 Enregistrer
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Créer un utilisateur Admin/Backoffice</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="create_email">Email</Label>
+              <Input
+                id="create_email"
+                type="email"
+                value={createForm.email}
+                onChange={(e) => setCreateForm({ ...createForm, email: e.target.value })}
+                placeholder="utilisateur@wydeline.com"
+              />
+            </div>
+            <div>
+              <Label htmlFor="create_password">Mot de passe</Label>
+              <Input
+                id="create_password"
+                type="password"
+                value={createForm.password}
+                onChange={(e) => setCreateForm({ ...createForm, password: e.target.value })}
+                placeholder="Minimum 6 caractères"
+              />
+            </div>
+            <div>
+              <Label htmlFor="create_first_name">Prénom</Label>
+              <Input
+                id="create_first_name"
+                value={createForm.first_name}
+                onChange={(e) => setCreateForm({ ...createForm, first_name: e.target.value })}
+                placeholder="Prénom"
+              />
+            </div>
+            <div>
+              <Label htmlFor="create_last_name">Nom</Label>
+              <Input
+                id="create_last_name"
+                value={createForm.last_name}
+                onChange={(e) => setCreateForm({ ...createForm, last_name: e.target.value })}
+                placeholder="Nom"
+              />
+            </div>
+            <div>
+              <Label htmlFor="create_role">Rôle</Label>
+              <Select
+                value={createForm.role}
+                onValueChange={(value: 'ADMIN' | 'BACKOFFICE') => setCreateForm({ ...createForm, role: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="BACKOFFICE">BACKOFFICE</SelectItem>
+                  <SelectItem value="ADMIN">ADMIN</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>
+                Annuler
+              </Button>
+              <Button onClick={createUser}>
+                Créer l'utilisateur
               </Button>
             </div>
           </div>
