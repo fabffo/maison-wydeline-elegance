@@ -175,27 +175,33 @@ export const Users = () => {
     }
 
     try {
-      // Create user with auth
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: createForm.email.trim(),
-        password: createForm.password,
-        options: {
-          data: {
-            first_name: createForm.first_name.trim(),
-            last_name: createForm.last_name.trim()
-          }
-        }
+      // Get session token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('Session non trouvée');
+      }
+
+      // Call edge function to create user with admin privileges
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-admin-user`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: createForm.email.trim(),
+          password: createForm.password,
+          first_name: createForm.first_name.trim(),
+          last_name: createForm.last_name.trim(),
+          role: createForm.role
+        })
       });
 
-      if (authError) throw authError;
-      if (!authData.user) throw new Error('Utilisateur non créé');
+      const data = await response.json();
 
-      // Assign role
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .insert([{ user_id: authData.user.id, role: createForm.role }]);
-
-      if (roleError) throw roleError;
+      if (!response.ok) {
+        throw new Error(data.error || 'Erreur lors de la création');
+      }
 
       toast({ title: 'Utilisateur créé', description: `${createForm.email} a été créé avec le rôle ${createForm.role}` });
       setCreateDialogOpen(false);
