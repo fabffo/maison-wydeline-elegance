@@ -126,7 +126,7 @@ export const ProductPreorderConfig = () => {
               }
             />
             <p className="text-sm text-muted-foreground">
-              Les admins seront notifiés quand ce nombre de précommandes est atteint
+              Le backoffice sera notifié quand ce nombre de précommandes est atteint
             </p>
           </div>
 
