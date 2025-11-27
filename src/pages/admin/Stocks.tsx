@@ -155,13 +155,31 @@ export const Stocks = () => {
     ? products.filter(p => p.id === selectedProductId)
     : products;
 
-  // Filter by out of stock if requested
+  // Filter products based on filter type
   if (filterType === 'outofstock') {
     displayedProducts = displayedProducts.filter(product => {
       const productVariants = variants.filter(v => v.product_id === product.id);
       return productVariants.some(v => v.stock_quantity === 0);
     });
+  } else if (filterType === 'lowstock') {
+    displayedProducts = displayedProducts.filter(product => {
+      const productVariants = variants.filter(v => v.product_id === product.id);
+      return productVariants.some(v => v.stock_quantity > 0 && v.stock_quantity < v.alert_threshold);
+    });
   }
+
+  // Filter variants to display based on filter type
+  const getFilteredVariants = (productId: string) => {
+    let productVariants = variants.filter(v => v.product_id === productId);
+    
+    if (filterType === 'outofstock') {
+      productVariants = productVariants.filter(v => v.stock_quantity === 0);
+    } else if (filterType === 'lowstock') {
+      productVariants = productVariants.filter(v => v.stock_quantity > 0 && v.stock_quantity < v.alert_threshold);
+    }
+    
+    return productVariants;
+  };
 
   return (
     <div className="space-y-6">
@@ -183,21 +201,33 @@ export const Stocks = () => {
             {selectedProductId 
               ? `Stocks pour ${displayedProducts[0]?.name || 'le produit sélectionné'}`
               : filterType === 'outofstock'
-              ? 'Produits en rupture de stock'
+              ? 'Produits et pointures en rupture de stock'
+              : filterType === 'lowstock'
+              ? 'Produits et pointures en alerte de stock'
               : 'Import/Export des stocks par taille'
             }
           </p>
         </div>
         <div className="flex gap-2">
           {!filterType && !selectedProductId && (
-            <Button
-              variant="outline"
-              onClick={() => navigate('/admin/stocks?filter=outofstock')}
-              className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
-            >
-              <AlertTriangle className="h-4 w-4 mr-2" />
-              Ruptures de stock
-            </Button>
+            <>
+              <Button
+                variant="outline"
+                onClick={() => navigate('/admin/stocks?filter=outofstock')}
+                className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
+              >
+                <AlertTriangle className="h-4 w-4 mr-2" />
+                Ruptures
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => navigate('/admin/stocks?filter=lowstock')}
+                className="border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white"
+              >
+                <AlertTriangle className="h-4 w-4 mr-2" />
+                Alertes
+              </Button>
+            </>
           )}
           <Button variant="outline" onClick={exportToCSV}>
             <Download className="h-4 w-4 mr-2" />
@@ -230,8 +260,9 @@ export const Stocks = () => {
       </div>
 
       {displayedProducts.map((product) => {
-        const productVariants = variants.filter(v => v.product_id === product.id);
-        const lowStockCount = productVariants.filter(v => v.stock_quantity < v.alert_threshold).length;
+        const productVariants = getFilteredVariants(product.id);
+        const lowStockCount = productVariants.filter(v => v.stock_quantity < v.alert_threshold && v.stock_quantity > 0).length;
+        const outOfStockCount = productVariants.filter(v => v.stock_quantity === 0).length;
 
         return (
           <Card key={product.id}>
@@ -239,8 +270,14 @@ export const Stocks = () => {
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
                   {product.name}
-                  {lowStockCount > 0 && (
+                  {outOfStockCount > 0 && (
                     <Badge variant="destructive" className="flex items-center gap-1">
+                      <AlertTriangle className="h-3 w-3" />
+                      {outOfStockCount} rupture{outOfStockCount > 1 ? 's' : ''}
+                    </Badge>
+                  )}
+                  {lowStockCount > 0 && (
+                    <Badge className="flex items-center gap-1 bg-orange-600 text-white">
                       <AlertTriangle className="h-3 w-3" />
                       {lowStockCount} alerte{lowStockCount > 1 ? 's' : ''}
                     </Badge>
@@ -293,10 +330,10 @@ export const Stocks = () => {
                       </TableCell>
                       <TableCell>{variant.alert_threshold}</TableCell>
                       <TableCell>
-                        {variant.stock_quantity < variant.alert_threshold ? (
-                          <Badge variant="destructive">Stock faible</Badge>
-                        ) : variant.stock_quantity === 0 ? (
-                          <Badge variant="secondary">Rupture</Badge>
+                        {variant.stock_quantity === 0 ? (
+                          <Badge variant="destructive">Rupture</Badge>
+                        ) : variant.stock_quantity < variant.alert_threshold ? (
+                          <Badge className="bg-orange-600 text-white">Alerte</Badge>
                         ) : (
                           <Badge variant="outline">Disponible</Badge>
                         )}
