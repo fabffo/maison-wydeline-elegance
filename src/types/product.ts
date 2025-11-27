@@ -11,6 +11,9 @@ export interface Product {
   price: number;
   stock: Record<string, number>;
   preorder: boolean;
+  preorderPendingCount?: number;
+  preorderNotificationThreshold?: number;
+  preorderNotificationSent?: boolean;
   images: string[];
   alt: string;
   tags: string[];
@@ -20,4 +23,5 @@ export interface CartItem {
   productId: string;
   size: number;
   quantity: number;
+  isPreorder?: boolean;
 }

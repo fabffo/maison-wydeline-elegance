@@ -7,6 +7,12 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product }: ProductCardProps) => {
+  // Calculate total stock
+  const totalStock = Object.values(product.stock || {}).reduce((sum, qty) => sum + qty, 0);
+  
+  // Show badge only if preorder is active AND stock is 0
+  const showPreorderBadge = product.preorder && totalStock === 0;
+
   return (
     <Link to={`/produit/${product.slug}`} className="group">
       <article className="relative">
@@ -18,7 +24,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
         </div>
-        {product.preorder && (
+        {showPreorderBadge && (
           <div className="absolute top-4 right-4">
             <BadgePreorder />
           </div>

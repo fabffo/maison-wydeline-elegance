@@ -59,7 +59,11 @@ export const Products = () => {
             description: product.description,
             material: product.materials[0],
             color: product.color,
-            price: product.price
+            price: product.price,
+            preorder: product.preorder || false,
+            preorder_pending_count: 0,
+            preorder_notification_threshold: 10,
+            preorder_notification_sent: false
           });
 
         if (productError) throw productError;
@@ -122,6 +126,7 @@ export const Products = () => {
             const totalStock = productVariants.reduce((acc, v) => acc + v.stock_quantity, 0);
             const outOfStock = productVariants.filter(v => v.stock_quantity === 0).length;
             const lowStock = productVariants.filter(v => v.stock_quantity > 0 && v.stock_quantity < v.alert_threshold).length;
+            const isPreorderActive = product.preorder === true;
 
             return (
               <Card key={product.id}>
@@ -131,6 +136,11 @@ export const Products = () => {
                       <CardTitle className="flex items-center gap-2">
                         {product.name}
                         <Badge variant="outline">{product.category}</Badge>
+                        {isPreorderActive && (
+                          <Badge variant="secondary" className="bg-blue-500/10 text-blue-700 dark:text-blue-400">
+                            📦 Précommande active
+                          </Badge>
+                        )}
                         {outOfStock > 0 && (
                           <Badge 
                             variant="destructive" 
@@ -157,6 +167,14 @@ export const Products = () => {
                     <Button
                       variant="outline"
                       size="sm"
+                      onClick={() => navigate(`/admin/products/${product.id}/preorder`)}
+                      className="mr-2"
+                    >
+                      ⚙️ Précommande
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => navigate(`/admin/stocks?product=${product.id}`)}
                     >
                       <Eye className="h-4 w-4 mr-2" />
@@ -165,7 +183,7 @@ export const Products = () => {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
                     <div>
                       <span className="text-muted-foreground">Prix:</span>
                       <p className="font-medium">{product.price} €</p>
@@ -181,6 +199,12 @@ export const Products = () => {
                     <div>
                       <span className="text-muted-foreground">Stock total:</span>
                       <p className="font-medium">{totalStock} unités</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Précommandes:</span>
+                      <p className="font-medium">
+                        {product.preorder_pending_count || 0} / {product.preorder_notification_threshold || 10}
+                      </p>
                     </div>
                   </div>
                 </CardContent>

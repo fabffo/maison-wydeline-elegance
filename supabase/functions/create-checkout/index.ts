@@ -65,6 +65,7 @@ serve(async (req) => {
       quantity: item.quantity,
       unit_price: item.unitPrice,
       total_price: item.unitPrice * item.quantity,
+      is_preorder: item.isPreorder || false,
     }));
 
     const { error: itemsError } = await supabase

@@ -41,9 +41,13 @@ const ProductDetail = () => {
       return;
     }
 
-    addItem(product.id, selectedSize);
+    // Determine if this is a preorder
+    const hasStockForSelectedSize = (product.stock[selectedSize.toString()] || 0) > 0;
+    const isPreorder = product.preorder && !hasStockForSelectedSize;
+
+    addItem(product.id, selectedSize, 1, isPreorder);
     toast({
-      title: t.product.addToCart,
+      title: isPreorder ? 'Précommande ajoutée' : t.product.addToCart,
       description: `${product.name} - ${t.product.size} ${selectedSize}`,
     });
   };
@@ -62,6 +66,13 @@ const ProductDetail = () => {
   const hasStock = availableSizes.length > 0;
   const totalStock = product.sizes.reduce((sum, size) => sum + (product.stock[size.toString()] || 0), 0);
   const lowStockThreshold = 3;
+  
+  // Determine if preorder badge should be shown (only if preorder=true AND stock=0)
+  const showPreorderBadge = product.preorder && totalStock === 0;
+  
+  // Determine if user can order (either has stock OR preorder is active)
+  const hasStockForSelectedSize = selectedSize ? (product.stock[selectedSize.toString()] || 0) > 0 : false;
+  const canOrder = hasStockForSelectedSize || product.preorder;
 
   return (
     <main className="min-h-screen pt-24 pb-16">
@@ -108,17 +119,21 @@ const ProductDetail = () => {
               <p className="text-2xl text-muted-foreground">€{product.price}</p>
             </div>
 
-            {product.preorder && (
+            {showPreorderBadge && (
               <div>
                 <BadgePreorder />
               </div>
             )}
 
-            {!hasStock && (
+            {product.preorder && totalStock === 0 && (
+              <div className="bg-blue-50 text-blue-700 px-4 py-3 rounded-lg border border-blue-200">
+                <p className="font-medium">📦 Disponible en précommande</p>
+              </div>
+            )}
+
+            {!product.preorder && !hasStock && (
               <div className="bg-destructive/10 text-destructive px-4 py-3 rounded-lg">
-                <p className="font-medium">
-                  {product.preorder ? '📦 Disponible en précommande' : '⚠️ Rupture de stock'}
-                </p>
+                <p className="font-medium">⚠️ Rupture de stock</p>
               </div>
             )}
 
@@ -146,18 +161,18 @@ const ProductDetail = () => {
               lowStockThreshold={lowStockThreshold}
             />
 
-            {hasStock ? (
+            {canOrder ? (
               <Button
                 onClick={handleAddToCart}
                 disabled={!selectedSize}
                 className="w-full"
                 size="lg"
               >
-                {t.product.addToCart}
+                {product.preorder && !hasStockForSelectedSize ? 'Précommander' : t.product.addToCart}
               </Button>
             ) : (
               <Button disabled className="w-full" size="lg">
-                {product.preorder ? 'Précommande' : t.product.outOfStock}
+                {t.product.outOfStock}
               </Button>
             )}
           </div>

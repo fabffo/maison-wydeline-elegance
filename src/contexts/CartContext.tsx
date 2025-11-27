@@ -3,7 +3,7 @@ import { CartItem } from '@/types/product';
 
 interface CartContextType {
   items: CartItem[];
-  addItem: (productId: string, size: number, quantity?: number) => void;
+  addItem: (productId: string, size: number, quantity?: number, isPreorder?: boolean) => void;
   updateQuantity: (productId: string, size: number, quantity: number) => void;
   removeItem: (productId: string, size: number) => void;
   clearCart: () => void;
@@ -24,7 +24,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
   }, [items]);
 
-  const addItem = (productId: string, size: number, quantity = 1) => {
+  const addItem = (productId: string, size: number, quantity = 1, isPreorder = false) => {
     setItems((prev) => {
       const existing = prev.find(
         (item) => item.productId === productId && item.size === size
@@ -32,11 +32,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       if (existing) {
         return prev.map((item) =>
           item.productId === productId && item.size === size
-            ? { ...item, quantity: item.quantity + quantity }
+            ? { ...item, quantity: item.quantity + quantity, isPreorder }
             : item
         );
       }
-      return [...prev, { productId, size, quantity }];
+      return [...prev, { productId, size, quantity, isPreorder }];
     });
   };
 

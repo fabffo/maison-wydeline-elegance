@@ -114,7 +114,7 @@ serve(async (req) => {
 
       console.log("Invoice created:", invoiceNumber);
 
-      // Get order items for email
+      // Get order items for email and preorder processing
       const { data: orderItems, error: itemsError } = await supabase
         .from("order_items")
         .select("*")
@@ -122,6 +122,25 @@ serve(async (req) => {
 
       if (itemsError) {
         console.error("Error fetching order items:", itemsError);
+      }
+
+      // Process preorders: increment counter for products with is_preorder=true
+      if (orderItems && orderItems.length > 0) {
+        for (const item of orderItems) {
+          if (item.is_preorder === true) {
+            console.log(`Processing preorder for product ${item.product_id}, quantity: ${item.quantity}`);
+            const { error: preorderError } = await supabase.rpc('increment_preorder_count', {
+              _product_id: item.product_id,
+              _quantity: item.quantity
+            });
+            
+            if (preorderError) {
+              console.error(`Error incrementing preorder count for product ${item.product_id}:`, preorderError);
+            } else {
+              console.log(`Preorder count incremented for product ${item.product_id}`);
+            }
+          }
+        }
       }
 
       // Send confirmation email
