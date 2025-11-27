@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 
 interface DashboardStats {
   totalProducts: number;
+  outOfStockProducts: number;
   lowStockProducts: number;
   pendingOrders: number;
   totalRevenue: number;
@@ -18,6 +19,7 @@ export const Dashboard = () => {
   const navigate = useNavigate();
   const [stats, setStats] = useState<DashboardStats>({
     totalProducts: 0,
+    outOfStockProducts: 0,
     lowStockProducts: 0,
     pendingOrders: 0,
     totalRevenue: 0,
@@ -33,14 +35,18 @@ export const Dashboard = () => {
           .from('products')
           .select('*', { count: 'exact', head: true });
 
-        // Fetch low stock variants
-        const { data: lowStockVariants } = await supabase
+        // Fetch stock variants
+        const { data: stockVariants } = await supabase
           .from('product_variants')
           .select('product_id, stock_quantity, alert_threshold')
           .limit(100);
 
-        const lowStockCount = lowStockVariants?.filter(v => 
-          v.stock_quantity < v.alert_threshold
+        const outOfStockCount = stockVariants?.filter(v => 
+          v.stock_quantity === 0
+        ).length || 0;
+
+        const lowStockCount = stockVariants?.filter(v => 
+          v.stock_quantity > 0 && v.stock_quantity < v.alert_threshold
         ).length || 0;
 
         // Fetch pending orders
@@ -66,6 +72,7 @@ export const Dashboard = () => {
 
         setStats({
           totalProducts: productsCount || 0,
+          outOfStockProducts: outOfStockCount,
           lowStockProducts: lowStockCount,
           pendingOrders: pendingCount || 0,
           totalRevenue,
@@ -120,16 +127,28 @@ export const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalProducts}</div>
-            {stats.lowStockProducts > 0 && (
-              <Button
-                variant="link"
-                className="h-auto p-0 text-xs text-destructive flex items-center gap-1 mt-1"
-                onClick={() => navigate('/admin/stocks?filter=outofstock')}
-              >
-                <AlertTriangle className="h-3 w-3" />
-                {stats.lowStockProducts} en rupture
-              </Button>
-            )}
+            <div className="space-y-1 mt-1">
+              {stats.outOfStockProducts > 0 && (
+                <Button
+                  variant="link"
+                  className="h-auto p-0 text-xs text-destructive flex items-center gap-1"
+                  onClick={() => navigate('/admin/stocks?filter=outofstock')}
+                >
+                  <AlertTriangle className="h-3 w-3" />
+                  {stats.outOfStockProducts} en rupture
+                </Button>
+              )}
+              {stats.lowStockProducts > 0 && (
+                <Button
+                  variant="link"
+                  className="h-auto p-0 text-xs text-orange-600 flex items-center gap-1"
+                  onClick={() => navigate('/admin/stocks?filter=lowstock')}
+                >
+                  <AlertTriangle className="h-3 w-3" />
+                  {stats.lowStockProducts} en alerte
+                </Button>
+              )}
+            </div>
           </CardContent>
         </Card>
 
