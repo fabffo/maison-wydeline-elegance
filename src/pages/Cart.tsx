@@ -80,6 +80,7 @@ const Cart = () => {
         size: item!.size,
         quantity: item!.quantity,
         unitPrice: item!.product.price,
+        isPreorder: item!.isPreorder || false,
       }));
 
       const shippingAddress = {

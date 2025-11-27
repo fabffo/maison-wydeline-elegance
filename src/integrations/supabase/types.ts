@@ -119,6 +119,7 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          is_preorder: boolean | null
           order_id: string
           product_id: string
           product_name: string
@@ -130,6 +131,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          is_preorder?: boolean | null
           order_id: string
           product_id: string
           product_name: string
@@ -141,6 +143,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          is_preorder?: boolean | null
           order_id?: string
           product_id?: string
           product_name?: string
@@ -257,6 +260,10 @@ export type Database = {
           is_featured: boolean | null
           material: string | null
           name: string
+          preorder: boolean | null
+          preorder_notification_sent: boolean | null
+          preorder_notification_threshold: number | null
+          preorder_pending_count: number | null
           price: number
           updated_at: string
         }
@@ -274,6 +281,10 @@ export type Database = {
           is_featured?: boolean | null
           material?: string | null
           name: string
+          preorder?: boolean | null
+          preorder_notification_sent?: boolean | null
+          preorder_notification_threshold?: number | null
+          preorder_pending_count?: number | null
           price: number
           updated_at?: string
         }
@@ -291,6 +302,10 @@ export type Database = {
           is_featured?: boolean | null
           material?: string | null
           name?: string
+          preorder?: boolean | null
+          preorder_notification_sent?: boolean | null
+          preorder_notification_threshold?: number | null
+          preorder_pending_count?: number | null
           price?: number
           updated_at?: string
         }
@@ -451,6 +466,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      increment_preorder_count: {
+        Args: { _product_id: string; _quantity: number }
+        Returns: undefined
       }
       notify_admins: {
         Args: {
