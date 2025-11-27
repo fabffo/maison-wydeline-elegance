@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,16 +14,44 @@ serve(async (req) => {
   }
 
   try {
-    const { customerName, customerEmail, phone, shippingAddress, items } = await req.json();
+    const body = await req.json();
 
-    if (!customerName || !customerEmail || !phone || !shippingAddress || !items || items.length === 0) {
-      throw new Error("Missing required fields");
+    // Server-side validation schema
+    const checkoutSchema = z.object({
+      customerName: z.string().trim().min(1).max(100),
+      customerEmail: z.string().email().max(255),
+      phone: z.string().trim().min(10).max(20),
+      shippingAddress: z.object({
+        nomComplet: z.string().trim().max(100).optional(),
+        adresse1: z.string().trim().min(1).max(200),
+        adresse2: z.string().trim().max(200).optional(),
+        codePostal: z.string().trim().min(4).max(10),
+        ville: z.string().trim().min(1).max(100),
+        pays: z.string().length(2),
+      }),
+      items: z.array(z.object({
+        productId: z.string(),
+        productName: z.string().max(255),
+        size: z.number().int().positive(),
+        quantity: z.number().int().positive().max(10),
+        unitPrice: z.number().positive(),
+        isPreorder: z.boolean().optional(),
+      })).min(1).max(20),
+    });
+
+    // Validate input
+    const validationResult = checkoutSchema.safeParse(body);
+    if (!validationResult.success) {
+      return new Response(JSON.stringify({ 
+        error: "Invalid input data", 
+        details: validationResult.error.issues 
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400,
+      });
     }
 
-    // Validate shipping address
-    if (!shippingAddress.adresse1 || !shippingAddress.codePostal || !shippingAddress.ville || !shippingAddress.pays) {
-      throw new Error("Incomplete shipping address");
-    }
+    const { customerName, customerEmail, phone, shippingAddress, items } = validationResult.data;
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2025-08-27.basil",
@@ -32,6 +61,38 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
+
+    // Verify all products exist and validate prices
+    const productIds = items.map(item => item.productId);
+    const { data: products, error: productsError } = await supabase
+      .from("products")
+      .select("id, price")
+      .in("id", productIds);
+
+    if (productsError) {
+      return new Response(JSON.stringify({ error: "Failed to verify products" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500,
+      });
+    }
+
+    if (!products || products.length !== productIds.length) {
+      return new Response(JSON.stringify({ error: "Some products do not exist" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400,
+      });
+    }
+
+    // Validate prices match database
+    for (const item of items) {
+      const product = products.find(p => p.id === item.productId);
+      if (!product || Math.abs(product.price - item.unitPrice) > 0.01) {
+        return new Response(JSON.stringify({ error: "Price mismatch detected" }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 400,
+        });
+      }
+    }
 
     // Calculate total
     const totalAmount = items.reduce((sum: number, item: any) => {
