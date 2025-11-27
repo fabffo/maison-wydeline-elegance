@@ -480,6 +480,15 @@ export type Database = {
         }
         Returns: undefined
       }
+      notify_backoffice: {
+        Args: {
+          _message: string
+          _reference_id: string
+          _title: string
+          _type: string
+        }
+        Returns: undefined
+      }
       reserve_stock_for_order: {
         Args: { _order_id: string }
         Returns: undefined
