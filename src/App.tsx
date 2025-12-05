@@ -31,6 +31,7 @@ import { Shipments } from "./pages/admin/Shipments";
 import { Reports } from "./pages/admin/Reports";
 import { Users } from "./pages/admin/Users";
 import Emails from "./pages/admin/Emails";
+import { TvaRates } from "./pages/admin/TvaRates";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +60,7 @@ const App = () => (
             <Route path="emails" element={<Emails />} />
             <Route path="reports" element={<Reports />} />
             <Route path="users" element={<Users />} />
+            <Route path="tva" element={<TvaRates />} />
           </Route>
 
           {/* Public routes with Header/Footer */}
