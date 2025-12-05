@@ -138,23 +138,39 @@ function generateInvoicePdf(data: InvoiceEmailRequest): string {
     doc.setFont("helvetica", "normal");
   });
   
-  // Total row
+  // TVA calculation (20%)
+  const tvaRate = 0.20;
+  const totalHT = data.totalAmount / (1 + tvaRate);
+  const tvaAmount = data.totalAmount - totalHT;
+  
+  // Total section
   yPos += 15;
   doc.setDrawColor(26, 26, 26);
   doc.setLineWidth(0.5);
   doc.line(20, yPos - 5, pageWidth - 20, yPos - 5);
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Total HT", 135, yPos + 2);
+  doc.text(`${totalHT.toFixed(2)} €`, 170, yPos + 2);
+  
+  yPos += 7;
+  doc.text("TVA 20%", 135, yPos + 2);
+  doc.text(`${tvaAmount.toFixed(2)} €`, 170, yPos + 2);
+  
+  yPos += 10;
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
   doc.text("Total TTC", 135, yPos + 2);
   doc.text(`${data.totalAmount.toFixed(2)} €`, 170, yPos + 2);
   
   // Footer
-  yPos += 30;
+  yPos += 25;
   doc.setFontSize(9);
   doc.setFont("helvetica", "normal");
   doc.setTextColor(100);
   doc.text("Maison Wydeline", 20, yPos);
-  doc.text("TVA non applicable, art. 293 B du CGI", 20, yPos + 5);
+  doc.text("TVA 20% - N° TVA Intracommunautaire: [À compléter]", 20, yPos + 5);
   
   // Page footer
   doc.setFontSize(8);
@@ -250,6 +266,14 @@ const handler = async (req: Request): Promise<Response> => {
                 </thead>
                 <tbody>
                   ${itemsHtml}
+                  <tr style="background: #fafafa;">
+                    <td colspan="4" style="padding: 12px; text-align: right;">Total HT</td>
+                    <td style="padding: 12px; text-align: right;">${(totalAmount / 1.20).toFixed(2)} €</td>
+                  </tr>
+                  <tr style="background: #fafafa;">
+                    <td colspan="4" style="padding: 12px; text-align: right;">TVA 20%</td>
+                    <td style="padding: 12px; text-align: right;">${(totalAmount - totalAmount / 1.20).toFixed(2)} €</td>
+                  </tr>
                   <tr class="total-row">
                     <td colspan="4" style="text-align: right;">Total TTC</td>
                     <td style="text-align: right;">${totalAmount.toFixed(2)} €</td>
