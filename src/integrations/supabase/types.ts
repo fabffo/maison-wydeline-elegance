@@ -265,6 +265,7 @@ export type Database = {
           preorder_notification_threshold: number | null
           preorder_pending_count: number | null
           price: number
+          tva_rate_id: string | null
           updated_at: string
         }
         Insert: {
@@ -286,6 +287,7 @@ export type Database = {
           preorder_notification_threshold?: number | null
           preorder_pending_count?: number | null
           price: number
+          tva_rate_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -307,9 +309,18 @@ export type Database = {
           preorder_notification_threshold?: number | null
           preorder_pending_count?: number | null
           price?: number
+          tva_rate_id?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "products_tva_rate_id_fkey"
+            columns: ["tva_rate_id"]
+            isOneToOne: false
+            referencedRelation: "tva_rates"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -422,6 +433,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      tva_rates: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_default: boolean | null
+          name: string
+          rate: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_default?: boolean | null
+          name: string
+          rate: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_default?: boolean | null
+          name?: string
+          rate?: number
+          updated_at?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
