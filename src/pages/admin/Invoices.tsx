@@ -55,16 +55,14 @@ export const Invoices = () => {
         body: {
           customerName: invoice.orders?.customer_name || 'Client',
           customerEmail: invoice.orders?.customer_email,
-          orderId: invoice.order_id,
-          orderDate: new Date(invoice.orders?.created_at).toLocaleDateString('fr-FR'),
+          orderNumber: invoice.order_id.slice(0, 8).toUpperCase(),
           totalAmount: invoice.orders?.total_amount || 0,
-          currency: invoice.orders?.currency || 'EUR',
           items: orderItems?.map((item: any) => ({
             productName: item.product_name,
             size: item.size,
             quantity: item.quantity,
-            unitPrice: item.unit_price,
-            totalPrice: item.total_price
+            unitPrice: Number(item.unit_price),
+            totalPrice: Number(item.total_price)
           })) || [],
           invoiceNumber: invoice.invoice_number
         }
