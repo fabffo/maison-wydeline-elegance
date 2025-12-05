@@ -140,14 +140,30 @@ function generateOrderPdf(data: OrderConfirmationRequest): string {
     doc.setFont("helvetica", "normal");
   });
   
-  // Total row
+  // TVA calculation (20%)
+  const tvaRate = 0.20;
+  const totalHT = data.totalAmount / (1 + tvaRate);
+  const tvaAmount = data.totalAmount - totalHT;
+  
+  // Total section
   yPos += 15;
   doc.setDrawColor(26, 26, 26);
   doc.setLineWidth(0.5);
   doc.line(20, yPos - 5, pageWidth - 20, yPos - 5);
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Total HT", 135, yPos + 2);
+  doc.text(`${totalHT.toFixed(2)} €`, 170, yPos + 2);
+  
+  yPos += 7;
+  doc.text("TVA 20%", 135, yPos + 2);
+  doc.text(`${tvaAmount.toFixed(2)} €`, 170, yPos + 2);
+  
+  yPos += 10;
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
-  doc.text("Total", 135, yPos + 2);
+  doc.text("Total TTC", 135, yPos + 2);
   doc.text(`${data.totalAmount.toFixed(2)} €`, 170, yPos + 2);
   
   // Thank you message
@@ -245,8 +261,10 @@ const handler = async (req: Request): Promise<Response> => {
                 </tbody>
               </table>
               
-              <div class="total">
-                Total : ${totalAmount.toFixed(2)} €
+              <div style="text-align: right; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
+                <p style="margin: 5px 0;">Total HT : ${(totalAmount / 1.20).toFixed(2)} €</p>
+                <p style="margin: 5px 0;">TVA 20% : ${(totalAmount - totalAmount / 1.20).toFixed(2)} €</p>
+                <p style="font-size: 18px; font-weight: bold; margin: 10px 0;">Total TTC : ${totalAmount.toFixed(2)} €</p>
               </div>
               
               <div class="pdf-notice">
