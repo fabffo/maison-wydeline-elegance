@@ -54,7 +54,7 @@ function generateInvoicePdf(data: InvoiceEmailRequest): string {
   // Header
   doc.setFontSize(24);
   doc.setFont("helvetica", "bold");
-  doc.text("WYDELINE", 20, 25);
+  doc.text("Maison Wydeline", 20, 25);
   
   doc.setFontSize(12);
   doc.setFont("helvetica", "normal");
