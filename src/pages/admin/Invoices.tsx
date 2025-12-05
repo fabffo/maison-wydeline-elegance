@@ -33,11 +33,57 @@ export const Invoices = () => {
   };
 
   const sendInvoiceEmail = async (invoice: any) => {
-    // Placeholder for email functionality
-    toast({ 
-      title: 'Email envoyé', 
-      description: `Facture ${invoice.invoice_number} envoyée à ${invoice.orders?.customer_email}` 
-    });
+    if (!invoice.orders?.customer_email) {
+      toast({ 
+        title: 'Erreur', 
+        description: 'Aucun email client trouvé pour cette facture',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    try {
+      // Fetch order items for this order
+      const { data: orderItems, error: itemsError } = await supabase
+        .from('order_items')
+        .select('*')
+        .eq('order_id', invoice.order_id);
+
+      if (itemsError) throw itemsError;
+
+      const response = await supabase.functions.invoke('send-order-confirmation', {
+        body: {
+          customerName: invoice.orders?.customer_name || 'Client',
+          customerEmail: invoice.orders?.customer_email,
+          orderId: invoice.order_id,
+          orderDate: new Date(invoice.orders?.created_at).toLocaleDateString('fr-FR'),
+          totalAmount: invoice.orders?.total_amount || 0,
+          currency: invoice.orders?.currency || 'EUR',
+          items: orderItems?.map((item: any) => ({
+            productName: item.product_name,
+            size: item.size,
+            quantity: item.quantity,
+            unitPrice: item.unit_price,
+            totalPrice: item.total_price
+          })) || [],
+          invoiceNumber: invoice.invoice_number
+        }
+      });
+
+      if (response.error) throw response.error;
+
+      toast({ 
+        title: 'Email envoyé', 
+        description: `Facture ${invoice.invoice_number} envoyée à ${invoice.orders?.customer_email}` 
+      });
+    } catch (error: any) {
+      console.error('Error sending invoice email:', error);
+      toast({ 
+        title: 'Erreur', 
+        description: `Impossible d'envoyer l'email: ${error.message}`,
+        variant: 'destructive'
+      });
+    }
   };
 
   const exportInvoices = () => {
