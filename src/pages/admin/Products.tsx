@@ -23,7 +23,7 @@ export const Products = () => {
     try {
       const { data: productsData, error: productsError } = await supabase
         .from('products')
-        .select('*')
+        .select('*, tva_rates(rate, name)')
         .order('name');
 
       const { data: variantsData, error: variantsError } = await supabase
@@ -186,7 +186,12 @@ export const Products = () => {
                   <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
                     <div>
                       <span className="text-muted-foreground">Prix:</span>
-                      <p className="font-medium">{product.price} €</p>
+                      <p className="font-medium">
+                        {product.price} € 
+                        <span className="text-xs text-muted-foreground ml-1">
+                          (TVA {product.tva_rates?.rate || 20}%)
+                        </span>
+                      </p>
                     </div>
                     <div>
                       <span className="text-muted-foreground">Couleur:</span>
