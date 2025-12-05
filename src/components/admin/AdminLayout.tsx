@@ -14,8 +14,7 @@ import {
   BarChart3,
   Home,
   Star,
-  Mail,
-  Percent
+  Mail
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUserRole } from '@/hooks/useUserRole';
@@ -34,7 +33,6 @@ const menuItems = [
   { icon: FileText, label: 'Factures', path: '/admin/invoices' },
   { icon: Truck, label: 'Livraisons', path: '/admin/shipments' },
   { icon: Mail, label: 'Emails', path: '/admin/emails' },
-  { icon: Percent, label: 'TVA', path: '/admin/tva' },
   { icon: BarChart3, label: 'Rapports', path: '/admin/reports' },
   { icon: Users, label: 'Utilisateurs', path: '/admin/users' },
 ];
