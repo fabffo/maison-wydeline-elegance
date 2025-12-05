@@ -124,6 +124,21 @@ serve(async (req) => {
         console.error("Error fetching order items:", itemsError);
       }
 
+      // Fetch TVA rate for products (use first item's product)
+      let tvaRate = 20; // Default
+      if (orderItems && orderItems.length > 0) {
+        const productId = orderItems[0].product_id;
+        const { data: product } = await supabase
+          .from("products")
+          .select("tva_rate_id, tva_rates(rate)")
+          .eq("id", productId)
+          .maybeSingle();
+        
+        if (product?.tva_rates) {
+          tvaRate = Number((product.tva_rates as any).rate);
+        }
+      }
+
       // Process preorders: increment counter for products with is_preorder=true
       if (orderItems && orderItems.length > 0) {
         for (const item of orderItems) {
@@ -158,6 +173,7 @@ serve(async (req) => {
                 quantity: item.quantity,
                 unitPrice: Number(item.unit_price),
                 totalPrice: Number(item.total_price),
+                tvaRate: tvaRate,
               })) || [],
               totalAmount: Number(order.total_amount),
               invoiceNumber: invoiceNumber,

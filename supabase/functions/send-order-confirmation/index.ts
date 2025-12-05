@@ -34,6 +34,7 @@ interface OrderConfirmationRequest {
     quantity: number;
     unitPrice: number;
     totalPrice: number;
+    tvaRate?: number;
   }>;
   totalAmount: number;
   invoiceNumber?: string;
@@ -140,9 +141,12 @@ function generateOrderPdf(data: OrderConfirmationRequest): string {
     doc.setFont("helvetica", "normal");
   });
   
-  // TVA calculation (20%)
-  const tvaRate = 0.20;
-  const totalHT = data.totalAmount / (1 + tvaRate);
+  // TVA calculation - use average rate from items or default to 20%
+  const avgTvaRate = data.items.length > 0 && data.items[0].tvaRate !== undefined
+    ? data.items[0].tvaRate / 100
+    : 0.20;
+  const tvaRateDisplay = avgTvaRate * 100;
+  const totalHT = data.totalAmount / (1 + avgTvaRate);
   const tvaAmount = data.totalAmount - totalHT;
   
   // Total section
@@ -157,7 +161,7 @@ function generateOrderPdf(data: OrderConfirmationRequest): string {
   doc.text(`${totalHT.toFixed(2)} €`, 170, yPos + 2);
   
   yPos += 7;
-  doc.text("TVA 20%", 135, yPos + 2);
+  doc.text(`TVA ${tvaRateDisplay}%`, 135, yPos + 2);
   doc.text(`${tvaAmount.toFixed(2)} €`, 170, yPos + 2);
   
   yPos += 10;
@@ -200,6 +204,12 @@ const handler = async (req: Request): Promise<Response> => {
     } = requestData;
 
     console.log("Sending order confirmation to:", customerEmail);
+
+    // Calculate TVA rate from items
+    const tvaRateValue = items.length > 0 && items[0].tvaRate !== undefined ? items[0].tvaRate : 20;
+    const tvaMultiplier = 1 + (tvaRateValue / 100);
+    const totalHT = totalAmount / tvaMultiplier;
+    const tvaAmount = totalAmount - totalHT;
 
     // Generate PDF
     const pdfBase64 = generateOrderPdf(requestData);
@@ -262,8 +272,8 @@ const handler = async (req: Request): Promise<Response> => {
               </table>
               
               <div style="text-align: right; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
-                <p style="margin: 5px 0;">Total HT : ${(totalAmount / 1.20).toFixed(2)} €</p>
-                <p style="margin: 5px 0;">TVA 20% : ${(totalAmount - totalAmount / 1.20).toFixed(2)} €</p>
+                <p style="margin: 5px 0;">Total HT : ${totalHT.toFixed(2)} €</p>
+                <p style="margin: 5px 0;">TVA ${tvaRateValue}% : ${tvaAmount.toFixed(2)} €</p>
                 <p style="font-size: 18px; font-weight: bold; margin: 10px 0;">Total TTC : ${totalAmount.toFixed(2)} €</p>
               </div>
               

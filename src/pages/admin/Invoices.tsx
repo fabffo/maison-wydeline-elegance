@@ -46,13 +46,28 @@ export const Invoices = () => {
     setSendingId(invoice.id);
 
     try {
-      // Fetch order items for this order
+      // Fetch order items for this order with product TVA rate
       const { data: orderItems, error: itemsError } = await supabase
         .from('order_items')
         .select('*')
         .eq('order_id', invoice.order_id);
 
       if (itemsError) throw itemsError;
+
+      // Fetch TVA rate for products
+      let tvaRate = 20; // Default
+      if (orderItems && orderItems.length > 0) {
+        const productId = orderItems[0].product_id;
+        const { data: product } = await supabase
+          .from('products')
+          .select('tva_rate_id, tva_rates(rate)')
+          .eq('id', productId)
+          .maybeSingle();
+        
+        if (product?.tva_rates) {
+          tvaRate = Number((product.tva_rates as any).rate);
+        }
+      }
 
       // Parse shipping address from order
       const shippingAddress = invoice.orders?.shipping_address as any;
@@ -70,7 +85,8 @@ export const Invoices = () => {
             size: item.size,
             quantity: item.quantity,
             unitPrice: Number(item.unit_price),
-            totalPrice: Number(item.total_price)
+            totalPrice: Number(item.total_price),
+            tvaRate: tvaRate
           })) || [],
           shippingAddress: shippingAddress ? {
             adresse1: shippingAddress.adresse1 || '',
