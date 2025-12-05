@@ -51,10 +51,12 @@ export const Invoices = () => {
 
       if (itemsError) throw itemsError;
 
-      const response = await supabase.functions.invoke('send-order-confirmation', {
+      const response = await supabase.functions.invoke('send-invoice', {
         body: {
           customerName: invoice.orders?.customer_name || 'Client',
           customerEmail: invoice.orders?.customer_email,
+          invoiceNumber: invoice.invoice_number,
+          invoiceDate: new Date(invoice.invoice_date).toLocaleDateString('fr-FR'),
           orderNumber: invoice.order_id.slice(0, 8).toUpperCase(),
           totalAmount: invoice.orders?.total_amount || 0,
           items: orderItems?.map((item: any) => ({
@@ -63,8 +65,7 @@ export const Invoices = () => {
             quantity: item.quantity,
             unitPrice: Number(item.unit_price),
             totalPrice: Number(item.total_price)
-          })) || [],
-          invoiceNumber: invoice.invoice_number
+          })) || []
         }
       });
 
