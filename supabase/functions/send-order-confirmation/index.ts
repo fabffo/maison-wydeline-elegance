@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "https://esm.sh/resend@2.0.0";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { jsPDF } from "https://esm.sh/jspdf@2.5.1";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
@@ -13,8 +14,8 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// HTML sanitization function to prevent XSS attacks
 function escapeHtml(unsafe: string): string {
+  if (!unsafe) return '';
   return unsafe
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -36,6 +37,133 @@ interface OrderConfirmationRequest {
   }>;
   totalAmount: number;
   invoiceNumber?: string;
+  shippingAddress?: {
+    adresse1: string;
+    adresse2?: string;
+    codePostal: string;
+    ville: string;
+    pays: string;
+  };
+}
+
+function generateOrderPdf(data: OrderConfirmationRequest): string {
+  const doc = new jsPDF();
+  const pageWidth = doc.internal.pageSize.getWidth();
+  
+  // Header
+  doc.setFontSize(24);
+  doc.setFont("helvetica", "bold");
+  doc.text("WYDELINE", 20, 25);
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(100);
+  doc.text("Maison de chaussures", 20, 32);
+  
+  // Order badge
+  doc.setFillColor(26, 26, 26);
+  doc.rect(pageWidth - 70, 15, 55, 12, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "bold");
+  doc.text("BON DE COMMANDE", pageWidth - 42.5, 23, { align: "center" });
+  
+  // Reset text color
+  doc.setTextColor(0, 0, 0);
+  
+  // Order info box
+  doc.setFillColor(250, 250, 250);
+  doc.rect(20, 45, pageWidth - 40, 28, 'F');
+  doc.setDrawColor(26, 26, 26);
+  doc.setLineWidth(0.5);
+  doc.line(20, 45, 20, 73);
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "bold");
+  doc.text(`Commande N° : ${data.orderNumber}`, 25, 55);
+  doc.setFont("helvetica", "normal");
+  doc.text(`Date : ${new Date().toLocaleDateString('fr-FR')}`, 25, 62);
+  doc.text(`Client : ${data.customerName}`, 25, 69);
+  
+  if (data.invoiceNumber) {
+    doc.text(`Facture N° : ${data.invoiceNumber}`, 120, 55);
+  }
+  
+  // Shipping address
+  let yPos = 88;
+  if (data.shippingAddress) {
+    doc.setFont("helvetica", "bold");
+    doc.text("Adresse de livraison :", 20, yPos);
+    doc.setFont("helvetica", "normal");
+    yPos += 7;
+    doc.text(data.shippingAddress.adresse1, 20, yPos);
+    if (data.shippingAddress.adresse2) {
+      yPos += 5;
+      doc.text(data.shippingAddress.adresse2, 20, yPos);
+    }
+    yPos += 5;
+    doc.text(`${data.shippingAddress.codePostal} ${data.shippingAddress.ville}`, 20, yPos);
+    yPos += 5;
+    doc.text(data.shippingAddress.pays, 20, yPos);
+    yPos += 15;
+  }
+  
+  // Table header
+  doc.setFillColor(26, 26, 26);
+  doc.rect(20, yPos, pageWidth - 40, 10, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "bold");
+  doc.text("Produit", 25, yPos + 7);
+  doc.text("Taille", 95, yPos + 7);
+  doc.text("Qté", 115, yPos + 7);
+  doc.text("Prix unit.", 135, yPos + 7);
+  doc.text("Total", 170, yPos + 7);
+  
+  yPos += 10;
+  doc.setTextColor(0, 0, 0);
+  doc.setFont("helvetica", "normal");
+  
+  // Table rows
+  data.items.forEach((item, index) => {
+    yPos += 10;
+    if (index % 2 === 0) {
+      doc.setFillColor(250, 250, 250);
+      doc.rect(20, yPos - 6, pageWidth - 40, 10, 'F');
+    }
+    doc.text(item.productName.substring(0, 30), 25, yPos);
+    doc.text(item.size.toString(), 97, yPos);
+    doc.text(item.quantity.toString(), 117, yPos);
+    doc.text(`${item.unitPrice.toFixed(2)} €`, 135, yPos);
+    doc.setFont("helvetica", "bold");
+    doc.text(`${item.totalPrice.toFixed(2)} €`, 170, yPos);
+    doc.setFont("helvetica", "normal");
+  });
+  
+  // Total row
+  yPos += 15;
+  doc.setDrawColor(26, 26, 26);
+  doc.setLineWidth(0.5);
+  doc.line(20, yPos - 5, pageWidth - 20, yPos - 5);
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("Total", 135, yPos + 2);
+  doc.text(`${data.totalAmount.toFixed(2)} €`, 170, yPos + 2);
+  
+  // Thank you message
+  yPos += 25;
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(100);
+  doc.text("Merci pour votre commande !", pageWidth / 2, yPos, { align: "center" });
+  doc.setFontSize(9);
+  doc.text("Nous vous tiendrons informé de l'évolution de votre commande.", pageWidth / 2, yPos + 7, { align: "center" });
+  
+  // Page footer
+  doc.setFontSize(8);
+  doc.text(`© ${new Date().getFullYear()} Wydeline - Tous droits réservés`, pageWidth / 2, 285, { align: "center" });
+  
+  return doc.output('datauristring').split(',')[1];
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -44,16 +172,22 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    const requestData: OrderConfirmationRequest = await req.json();
     const { 
       customerName, 
       customerEmail, 
       orderNumber, 
       items, 
       totalAmount,
-      invoiceNumber 
-    }: OrderConfirmationRequest = await req.json();
+      invoiceNumber,
+      shippingAddress
+    } = requestData;
 
     console.log("Sending order confirmation to:", customerEmail);
+
+    // Generate PDF
+    const pdfBase64 = generateOrderPdf(requestData);
+    console.log("Order PDF generated successfully");
 
     const itemsHtml = items.map(item => `
       <tr>
@@ -79,6 +213,7 @@ const handler = async (req: Request): Promise<Response> => {
             table { width: 100%; border-collapse: collapse; margin: 20px 0; }
             th { background: #f5f5f5; padding: 10px; text-align: left; font-weight: bold; }
             .total { font-size: 18px; font-weight: bold; text-align: right; margin-top: 20px; padding-top: 20px; border-top: 2px solid #333; }
+            .pdf-notice { background: #1a1a1a; color: white; padding: 15px; text-align: center; margin-top: 20px; }
           </style>
         </head>
         <body>
@@ -114,6 +249,10 @@ const handler = async (req: Request): Promise<Response> => {
                 Total : ${totalAmount.toFixed(2)} €
               </div>
               
+              <div class="pdf-notice">
+                📎 Votre bon de commande PDF est joint à cet email
+              </div>
+              
               <p style="margin-top: 30px;">Nous vous tiendrons informé de l'évolution de votre commande.</p>
               <p>Pour toute question, n'hésitez pas à nous contacter.</p>
             </div>
@@ -131,11 +270,16 @@ const handler = async (req: Request): Promise<Response> => {
       to: [customerEmail],
       subject: `Confirmation de commande ${orderNumber}`,
       html: emailHtml,
+      attachments: [
+        {
+          filename: `commande-${orderNumber}.pdf`,
+          content: pdfBase64,
+        }
+      ]
     });
 
-    console.log("Email sent successfully:", emailResponse);
+    console.log("Email sent successfully with PDF:", emailResponse);
 
-    // Log email to database
     await supabase.from('email_logs').insert({
       recipient_email: customerEmail,
       subject: `Confirmation de commande ${orderNumber}`,
@@ -144,41 +288,21 @@ const handler = async (req: Request): Promise<Response> => {
       metadata: { 
         order_number: orderNumber,
         invoice_number: invoiceNumber,
-        total_amount: totalAmount
+        total_amount: totalAmount,
+        has_pdf: true
       }
     });
 
     return new Response(JSON.stringify(emailResponse), {
       status: 200,
-      headers: {
-        "Content-Type": "application/json",
-        ...corsHeaders,
-      },
+      headers: { "Content-Type": "application/json", ...corsHeaders },
     });
   } catch (error: any) {
     console.error("Error sending confirmation email:", error);
     
-    // Log error to database
-    try {
-      const body: OrderConfirmationRequest = await req.json();
-      await supabase.from('email_logs').insert({
-        recipient_email: body.customerEmail || 'unknown',
-        subject: `Confirmation de commande ${body.orderNumber || ''}`,
-        email_type: 'ORDER_CONFIRMATION',
-        status: 'failed',
-        error_message: error.message,
-        metadata: { order_number: body.orderNumber }
-      });
-    } catch (logError) {
-      console.error("Failed to log error:", logError);
-    }
-    
     return new Response(
       JSON.stringify({ error: error.message }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      }
+      { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   }
 };

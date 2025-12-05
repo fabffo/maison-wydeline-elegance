@@ -4,11 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
-import { Download, FileText, Mail } from 'lucide-react';
+import { Download, FileText, Mail, Loader2 } from 'lucide-react';
 
 export const Invoices = () => {
   const [invoices, setInvoices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sendingId, setSendingId] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -42,6 +43,8 @@ export const Invoices = () => {
       return;
     }
 
+    setSendingId(invoice.id);
+
     try {
       // Fetch order items for this order
       const { data: orderItems, error: itemsError } = await supabase
@@ -51,6 +54,9 @@ export const Invoices = () => {
 
       if (itemsError) throw itemsError;
 
+      // Parse shipping address from order
+      const shippingAddress = invoice.orders?.shipping_address as any;
+
       const response = await supabase.functions.invoke('send-invoice', {
         body: {
           customerName: invoice.orders?.customer_name || 'Client',
@@ -58,21 +64,28 @@ export const Invoices = () => {
           invoiceNumber: invoice.invoice_number,
           invoiceDate: new Date(invoice.invoice_date).toLocaleDateString('fr-FR'),
           orderNumber: invoice.order_id.slice(0, 8).toUpperCase(),
-          totalAmount: invoice.orders?.total_amount || 0,
+          totalAmount: Number(invoice.orders?.total_amount) || 0,
           items: orderItems?.map((item: any) => ({
             productName: item.product_name,
             size: item.size,
             quantity: item.quantity,
             unitPrice: Number(item.unit_price),
             totalPrice: Number(item.total_price)
-          })) || []
+          })) || [],
+          shippingAddress: shippingAddress ? {
+            adresse1: shippingAddress.adresse1 || '',
+            adresse2: shippingAddress.adresse2 || '',
+            codePostal: shippingAddress.codePostal || '',
+            ville: shippingAddress.ville || '',
+            pays: shippingAddress.pays || 'FR'
+          } : undefined
         }
       });
 
       if (response.error) throw response.error;
 
       toast({ 
-        title: 'Email envoyé', 
+        title: 'Email envoyé avec PDF', 
         description: `Facture ${invoice.invoice_number} envoyée à ${invoice.orders?.customer_email}` 
       });
     } catch (error: any) {
@@ -82,6 +95,8 @@ export const Invoices = () => {
         description: `Impossible d'envoyer l'email: ${error.message}`,
         variant: 'destructive'
       });
+    } finally {
+      setSendingId(null);
     }
   };
 
@@ -161,9 +176,14 @@ export const Invoices = () => {
                         size="sm" 
                         variant="outline"
                         onClick={() => sendInvoiceEmail(invoice)}
+                        disabled={sendingId === invoice.id}
                       >
-                        <Mail className="h-4 w-4 mr-1" />
-                        Envoyer
+                        {sendingId === invoice.id ? (
+                          <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                        ) : (
+                          <Mail className="h-4 w-4 mr-1" />
+                        )}
+                        {sendingId === invoice.id ? 'Envoi...' : 'Envoyer'}
                       </Button>
                     </div>
                   </TableCell>
