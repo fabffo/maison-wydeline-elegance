@@ -2,15 +2,23 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { Upload, Eye, AlertTriangle, PackageX } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+interface TvaRate {
+  id: string;
+  name: string;
+  rate: number;
+  is_default: boolean;
+}
+
 export const Products = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [variants, setVariants] = useState<any[]>([]);
+  const [tvaRates, setTvaRates] = useState<TvaRate[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -21,26 +29,41 @@ export const Products = () => {
 
   const fetchProducts = async () => {
     try {
-      const { data: productsData, error: productsError } = await supabase
-        .from('products')
-        .select('*')
-        .order('name');
+      const [productsRes, variantsRes, tvaRes] = await Promise.all([
+        supabase.from('products').select('*').order('name'),
+        supabase.from('product_variants').select('*').order('product_id, size'),
+        supabase.from('tva_rates').select('*').order('rate', { ascending: false })
+      ]);
 
-      const { data: variantsData, error: variantsError } = await supabase
-        .from('product_variants')
-        .select('*')
-        .order('product_id, size');
+      if (productsRes.error) throw productsRes.error;
+      if (variantsRes.error) throw variantsRes.error;
+      if (tvaRes.error) throw tvaRes.error;
 
-      if (productsError) throw productsError;
-      if (variantsError) throw variantsError;
-
-      setProducts(productsData || []);
-      setVariants(variantsData || []);
+      setProducts(productsRes.data || []);
+      setVariants(variantsRes.data || []);
+      setTvaRates(tvaRes.data || []);
     } catch (error) {
       console.error('Error fetching products:', error);
       toast({ title: 'Erreur', description: 'Impossible de charger les produits', variant: 'destructive' });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const updateProductTva = async (productId: string, tvaRateId: string) => {
+    try {
+      const { error } = await supabase
+        .from('products')
+        .update({ tva_rate_id: tvaRateId })
+        .eq('id', productId);
+
+      if (error) throw error;
+
+      setProducts(prev => prev.map(p => p.id === productId ? { ...p, tva_rate_id: tvaRateId } : p));
+      toast({ title: 'TVA mise à jour' });
+    } catch (error) {
+      console.error('Error updating TVA:', error);
+      toast({ title: 'Erreur', description: 'Impossible de mettre à jour la TVA', variant: 'destructive' });
     }
   };
 
@@ -183,7 +206,7 @@ export const Products = () => {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
+                  <div className="grid grid-cols-2 md:grid-cols-6 gap-4 text-sm">
                     <div>
                       <span className="text-muted-foreground">Prix:</span>
                       <p className="font-medium">{product.price} €</p>
@@ -205,6 +228,24 @@ export const Products = () => {
                       <p className="font-medium">
                         {product.preorder_pending_count || 0} / {product.preorder_notification_threshold || 10}
                       </p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">TVA:</span>
+                      <Select
+                        value={product.tva_rate_id || ''}
+                        onValueChange={(value) => updateProductTva(product.id, value)}
+                      >
+                        <SelectTrigger className="h-8 w-32 mt-1">
+                          <SelectValue placeholder="Choisir TVA" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {tvaRates.map((rate) => (
+                            <SelectItem key={rate.id} value={rate.id}>
+                              {rate.name} ({rate.rate}%)
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                 </CardContent>
