@@ -28,7 +28,7 @@ const LaMarque = () => {
               À nos chères clientes,
             </p>
             <p className="text-lg text-muted-foreground leading-relaxed mb-4">
-              Se chausser sans compromis — sans se demander si sa taille existera dans le modèle de ses rêves — c'est ce qui a poussé Wydeline à créer, avec son équipe, une marque dédiée aux femmes chaussant du 41 au 45.
+              «Se chausser sans compromis — sans se demander si sa taille existera dans le modèle de ses rêves — c'est ce qui a poussé Wydeline à créer, avec son équipe, une marque dédiée aux femmes chaussant du 41 au 45.
             </p>
             <p className="text-lg text-muted-foreground leading-relaxed mb-4">
               Maison Wydeline est née de cette volonté : offrir à toutes des chaussures élégantes, confortables et durables, conçues avec soin et pensées pour sublimer chaque silhouette.
@@ -57,7 +57,7 @@ const LaMarque = () => {
               Nos chaussures, nos étuis et nos boîtes sont fabriqués en Europe, dans des ateliers que nous avons personnellement visités.
             </p>
             <p className="text-lg text-muted-foreground leading-relaxed mb-4">
-              Nos produits ne prennent pas l'avion, et chaque détail de nos colis est pensé pour limiter notre empreinte écologique : aucun plastique inutile, des matériaux durables, et une production raisonnée.
+              Chaque détail de nos colis est pensé pour limiter notre empreinte écologique : aucun plastique inutile, des matériaux durables, et une production raisonnée.
             </p>
             <p className="text-lg text-muted-foreground leading-relaxed">
               Nous savons que le chemin du progrès est continu. Notre promesse : avancer, évoluer et toujours faire mieux.
