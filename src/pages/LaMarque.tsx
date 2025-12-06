@@ -48,13 +48,11 @@ const LaMarque = () => {
 
           {/* Maison engagée - Image gauche, texte droite */}
           <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-            <div className="overflow-hidden rounded-2xl">
-              <img
-                src={maisonEngageeImg}
-                alt="Bottines bordeaux Maison Wydeline"
-                className="w-full h-auto object-cover"
-              />
-            </div>
+            <img
+              src={maisonEngageeImg}
+              alt="Bottines bordeaux Maison Wydeline"
+              className="w-full h-auto object-cover rounded-2xl"
+            />
             <div>
               <h2 className="text-3xl font-medium mb-6">MAISON ENGAGÉE</h2>
               <p className="text-lg text-muted-foreground leading-relaxed mb-4">
