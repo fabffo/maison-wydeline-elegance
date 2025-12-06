@@ -85,7 +85,7 @@ const LaMarque = () => {
               />
             </div>
             <div>
-              <h2 className="text-3xl font-medium mb-6">{t.values.title}</h2>
+              <h2 className="text-3xl font-medium mb-6">NOS VALEURS</h2>
               <p className="text-lg text-muted-foreground leading-relaxed mb-4">
                 <span className="font-medium text-foreground">{t.values.excellence.title}</span> — {t.values.excellence.text}
               </p>
