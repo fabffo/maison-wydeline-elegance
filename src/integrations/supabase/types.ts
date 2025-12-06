@@ -237,6 +237,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_product_variants_product"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "product_variants_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
@@ -425,6 +432,13 @@ export type Database = {
           size?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_stock_movements_product"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "stock_movements_product_id_fkey"
             columns: ["product_id"]
