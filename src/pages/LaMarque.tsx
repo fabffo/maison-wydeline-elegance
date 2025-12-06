@@ -16,7 +16,7 @@ const LaMarque = () => {
         <div className="space-y-24">
           {/* Qui sommes nous - Image gauche, texte droite */}
           <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-            <div className="aspect-[4/5] rounded-2xl overflow-hidden">
+            <div className="rounded-2xl overflow-hidden">
               <img
                 src={quiSommesNousImg}
                 alt="Collection Maison Wydeline"
@@ -48,7 +48,7 @@ const LaMarque = () => {
 
           {/* Maison engagée - Image gauche, texte droite */}
           <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-            <div className="aspect-[4/5] rounded-2xl overflow-hidden">
+            <div className="rounded-2xl overflow-hidden">
               <img
                 src={maisonEngageeImg}
                 alt="Bottines bordeaux Maison Wydeline"
@@ -77,7 +77,7 @@ const LaMarque = () => {
 
           {/* Nos valeurs - Image gauche, texte droite */}
           <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-            <div className="aspect-[4/5] rounded-2xl overflow-hidden">
+            <div className="rounded-2xl overflow-hidden">
               <img
                 src={nosValeursImg}
                 alt="Ballerines blanches Maison Wydeline"
