@@ -1,6 +1,6 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 import quiSommesNousImg from '@/assets/qui-sommes-nous.png';
-import maisonEngageeImg from '@/assets/maison-engagee.png';
+import maisonEngageeImg from '@/assets/maison-engagee.jpg';
 import nosValeursImg from '@/assets/nos-valeurs.png';
 
 const LaMarque = () => {
