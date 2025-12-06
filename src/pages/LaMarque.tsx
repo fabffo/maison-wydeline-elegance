@@ -52,7 +52,7 @@ const LaMarque = () => {
               <img
                 src={maisonEngageeImg}
                 alt="Bottines bordeaux Maison Wydeline"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover rounded-2xl"
               />
             </div>
             <div>
