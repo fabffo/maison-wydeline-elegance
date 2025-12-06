@@ -15,7 +15,7 @@ const LaMarque = () => {
 
         <div className="space-y-24">
           {/* Qui sommes nous - Image gauche, texte droite */}
-          <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
             <div className="aspect-[4/5] rounded-lg overflow-hidden">
               <img
                 src={quiSommesNousImg}
@@ -47,7 +47,7 @@ const LaMarque = () => {
           </section>
 
           {/* Maison engagée - Image gauche, texte droite */}
-          <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
             <div className="aspect-square rounded-lg overflow-hidden">
               <img
                 src={maisonEngageeImg}
@@ -76,7 +76,7 @@ const LaMarque = () => {
           </section>
 
           {/* Nos valeurs - Image gauche, texte droite */}
-          <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
             <div className="aspect-[4/3] rounded-lg overflow-hidden">
               <img
                 src={nosValeursImg}
