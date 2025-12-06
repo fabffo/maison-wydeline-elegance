@@ -84,25 +84,17 @@ const LaMarque = () => {
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="bg-luxury-cream rounded-lg p-8 md:p-10">
-              <h2 className="text-3xl font-medium mb-8">{t.values.title}</h2>
-              
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-xl font-medium mb-2">{t.values.excellence.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed">{t.values.excellence.text}</p>
-                </div>
-
-                <div>
-                  <h3 className="text-xl font-medium mb-2">{t.values.elegance.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed">{t.values.elegance.text}</p>
-                </div>
-
-                <div>
-                  <h3 className="text-xl font-medium mb-2">{t.values.comfort.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed">{t.values.comfort.text}</p>
-                </div>
-              </div>
+            <div>
+              <h2 className="text-3xl font-medium mb-6">{t.values.title}</h2>
+              <p className="text-lg text-muted-foreground leading-relaxed mb-4">
+                <span className="font-medium text-foreground">{t.values.excellence.title}</span> — {t.values.excellence.text}
+              </p>
+              <p className="text-lg text-muted-foreground leading-relaxed mb-4">
+                <span className="font-medium text-foreground">{t.values.elegance.title}</span> — {t.values.elegance.text}
+              </p>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                <span className="font-medium text-foreground">{t.values.comfort.title}</span> — {t.values.comfort.text}
+              </p>
             </div>
           </section>
         </div>
