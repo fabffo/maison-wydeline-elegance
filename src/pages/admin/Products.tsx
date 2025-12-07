@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Upload, Eye, AlertTriangle, PackageX } from 'lucide-react';
+import { Upload, Eye, AlertTriangle, PackageX, ImageIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export const Products = () => {
@@ -164,6 +164,15 @@ export const Products = () => {
                       </CardTitle>
                       <p className="text-sm text-muted-foreground mt-1">{product.description}</p>
                     </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate(`/admin/products/${product.id}/images`)}
+                      className="mr-2"
+                    >
+                      <ImageIcon className="h-4 w-4 mr-2" />
+                      Photos
+                    </Button>
                     <Button
                       variant="outline"
                       size="sm"

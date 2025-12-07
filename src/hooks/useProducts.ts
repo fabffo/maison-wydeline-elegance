@@ -22,6 +22,12 @@ export const useProducts = () => {
           .from('products')
           .select('id, preorder, preorder_pending_count, preorder_notification_threshold, preorder_notification_sent');
 
+        // Load product images from database
+        const { data: productImages, error: imagesError } = await supabase
+          .from('product_images')
+          .select('product_id, image_url, position')
+          .order('position');
+
         if (error || productsError) {
           console.error('Failed to load variants or products:', error, productsError);
           setProducts(staticProducts);
@@ -29,7 +35,7 @@ export const useProducts = () => {
           return;
         }
 
-        // Merge stock and preorder data with static products
+        // Merge stock, preorder data, and images with static products
         const productsWithStock = staticProducts.map((product: Product) => {
           const productVariants = variants?.filter(v => v.product_id === product.id) || [];
           const productData = productsData?.find(p => p.id === product.id);
@@ -39,9 +45,16 @@ export const useProducts = () => {
             stock[variant.size.toString()] = variant.stock_quantity;
           });
 
+          // Get database images for this product, fallback to static images
+          const dbImages = productImages?.filter(img => img.product_id === product.id) || [];
+          const images = dbImages.length > 0 
+            ? dbImages.map(img => img.image_url)
+            : product.images;
+
           return {
             ...product,
             stock,
+            images,
             preorder: productData?.preorder ?? product.preorder,
             preorderPendingCount: productData?.preorder_pending_count ?? 0,
             preorderNotificationThreshold: productData?.preorder_notification_threshold ?? 10,
