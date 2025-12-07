@@ -23,6 +23,7 @@ import { AdminLayout } from "./components/admin/AdminLayout";
 import { Dashboard } from "./pages/admin/Dashboard";
 import { Products } from "./pages/admin/Products";
 import { ProductPreorderConfig } from "./pages/admin/ProductPreorderConfig";
+import { ProductImages } from "./pages/admin/ProductImages";
 import { Stocks } from "./pages/admin/Stocks";
 import { Featured } from "./pages/admin/Featured";
 import { Orders } from "./pages/admin/Orders";
@@ -52,6 +53,7 @@ const App = () => (
             <Route index element={<Dashboard />} />
             <Route path="products" element={<Products />} />
             <Route path="products/:productId/preorder" element={<ProductPreorderConfig />} />
+            <Route path="products/:productId/images" element={<ProductImages />} />
             <Route path="stocks" element={<Stocks />} />
             <Route path="featured" element={<Featured />} />
             <Route path="orders" element={<Orders />} />
