@@ -114,6 +114,16 @@ serve(async (req) => {
 
       console.log("Invoice created:", invoiceNumber);
 
+      // Get shipping address for invoice
+      const shippingAddress = order.shipping_address as {
+        nomComplet?: string;
+        adresse1?: string;
+        adresse2?: string;
+        codePostal?: string;
+        ville?: string;
+        pays?: string;
+      } | null;
+
       // Get order items for email and preorder processing
       const { data: orderItems, error: itemsError } = await supabase
         .from("order_items")
@@ -187,7 +197,46 @@ serve(async (req) => {
           console.log("Confirmation email sent successfully");
         }
       } catch (emailErr) {
-        console.error("Exception sending email:", emailErr);
+        console.error("Exception sending confirmation email:", emailErr);
+      }
+
+      // Send invoice email automatically
+      try {
+        const { data: invoiceEmailData, error: invoiceEmailError } = await supabase.functions.invoke(
+          'send-invoice',
+          {
+            body: {
+              customerName: order.customer_name,
+              customerEmail: order.customer_email,
+              invoiceNumber: invoiceNumber,
+              invoiceDate: new Date().toISOString(),
+              orderNumber: order.id.slice(0, 8),
+              items: orderItems?.map((item: any) => ({
+                name: item.product_name,
+                quantity: item.quantity,
+                unitPrice: Number(item.unit_price),
+                tvaRate: tvaRate,
+              })) || [],
+              totalAmount: Number(order.total_amount),
+              shippingAddress: shippingAddress ? {
+                name: shippingAddress.nomComplet || order.customer_name,
+                address1: shippingAddress.adresse1 || '',
+                address2: shippingAddress.adresse2 || '',
+                postalCode: shippingAddress.codePostal || '',
+                city: shippingAddress.ville || '',
+                country: shippingAddress.pays || 'FR',
+              } : null,
+            },
+          }
+        );
+
+        if (invoiceEmailError) {
+          console.error("Error sending invoice email:", invoiceEmailError);
+        } else {
+          console.log("Invoice email sent successfully");
+        }
+      } catch (invoiceEmailErr) {
+        console.error("Exception sending invoice email:", invoiceEmailErr);
       }
 
       // Notify admins about new order
