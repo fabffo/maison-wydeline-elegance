@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 import heroImage from '@/assets/hero-main.jpg';
 import logoWhite from '@/assets/logo-wydeline-white.png';
 
@@ -42,12 +43,27 @@ const ComingSoon = () => {
 
     setIsSubmitting(true);
     
-    // Simulate API call - you can connect to your actual newsletter service
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    toast.success('Merci ! Vous serez informé(e) du lancement.');
-    setEmail('');
-    setIsSubmitting(false);
+    try {
+      const { error } = await supabase
+        .from('newsletter_subscribers')
+        .insert({ email: email.toLowerCase().trim() });
+      
+      if (error) {
+        if (error.code === '23505') {
+          toast.info('Cette adresse email est déjà inscrite !');
+        } else {
+          throw error;
+        }
+      } else {
+        toast.success('Merci ! Vous serez informé(e) du lancement.');
+        setEmail('');
+      }
+    } catch (error) {
+      console.error('Newsletter subscription error:', error);
+      toast.error('Une erreur est survenue. Veuillez réessayer.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
