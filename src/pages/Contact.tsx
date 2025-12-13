@@ -5,6 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 const Contact = () => {
   const { t } = useLanguage();
@@ -13,11 +14,48 @@ const Contact = () => {
     email: '',
     message: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success('Message envoyé avec succès!');
-    setFormData({ name: '', email: '', message: '' });
+    
+    // Basic validation
+    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
+      toast.error('Veuillez remplir tous les champs');
+      return;
+    }
+
+    if (formData.name.length > 100) {
+      toast.error('Le nom ne peut pas dépasser 100 caractères');
+      return;
+    }
+
+    if (formData.message.length > 5000) {
+      toast.error('Le message ne peut pas dépasser 5000 caractères');
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('send-contact-email', {
+        body: {
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          message: formData.message.trim(),
+        },
+      });
+
+      if (error) throw error;
+
+      toast.success('Message envoyé avec succès ! Vous recevrez une confirmation par email.');
+      setFormData({ name: '', email: '', message: '' });
+    } catch (error: any) {
+      console.error('Error sending contact email:', error);
+      toast.error('Erreur lors de l\'envoi du message. Veuillez réessayer.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -37,7 +75,9 @@ const Contact = () => {
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 required
+                maxLength={100}
                 className="mt-2"
+                disabled={isSubmitting}
               />
             </div>
 
@@ -49,7 +89,9 @@ const Contact = () => {
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 required
+                maxLength={255}
                 className="mt-2"
+                disabled={isSubmitting}
               />
             </div>
 
@@ -60,12 +102,14 @@ const Contact = () => {
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 required
+                maxLength={5000}
                 className="mt-2 min-h-[150px]"
+                disabled={isSubmitting}
               />
             </div>
 
-            <Button type="submit" className="w-full" size="lg">
-              {t.contact.send}
+            <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
+              {isSubmitting ? 'Envoi en cours...' : t.contact.send}
             </Button>
           </form>
         </div>
