@@ -86,7 +86,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send notification email to all active recipients
     const notificationResponse = await resend.emails.send({
-      from: "Maison Wydeline <noreply@wavyservices.com>",
+      from: "Maison Wydeline <no-reply@wavyservices.fr>",
       to: recipientEmails,
       reply_to: email,
       subject: `Nouveau message de contact - ${escapeHtml(name)}`,
@@ -119,7 +119,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send confirmation email to the customer
     const confirmationResponse = await resend.emails.send({
-      from: "Maison Wydeline <noreply@wavyservices.com>",
+      from: "Maison Wydeline <no-reply@wavyservices.fr>",
       to: [email],
       subject: "Nous avons bien reçu votre message - Maison Wydeline",
       html: `
