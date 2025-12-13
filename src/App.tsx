@@ -7,7 +7,9 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { COMING_SOON_MODE } from "@/config/siteConfig";
 import Home from "./pages/Home";
+import ComingSoon from "./pages/ComingSoon";
 import Collection from "./pages/Collection";
 import ProductDetail from "./pages/ProductDetail";
 import LaMarque from "./pages/LaMarque";
@@ -37,63 +39,102 @@ import ContactRecipients from "./pages/admin/ContactRecipients";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          {/* Auth routes (no header/footer) */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/account" element={<Account />} />
+const App = () => {
+  // Coming Soon mode - show landing page without header/footer
+  if (COMING_SOON_MODE) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              {/* Admin routes still accessible during coming soon */}
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<Dashboard />} />
+                <Route path="products" element={<Products />} />
+                <Route path="products/:productId/preorder" element={<ProductPreorderConfig />} />
+                <Route path="products/:productId/images" element={<ProductImages />} />
+                <Route path="stocks" element={<Stocks />} />
+                <Route path="featured" element={<Featured />} />
+                <Route path="orders" element={<Orders />} />
+                <Route path="invoices" element={<Invoices />} />
+                <Route path="shipments" element={<Shipments />} />
+                <Route path="emails" element={<Emails />} />
+                <Route path="tva" element={<TvaRates />} />
+                <Route path="contact-recipients" element={<ContactRecipients />} />
+                <Route path="reports" element={<Reports />} />
+                <Route path="users" element={<Users />} />
+              </Route>
+              {/* All other routes show Coming Soon */}
+              <Route path="*" element={<ComingSoon />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    );
+  }
 
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="products" element={<Products />} />
-            <Route path="products/:productId/preorder" element={<ProductPreorderConfig />} />
-            <Route path="products/:productId/images" element={<ProductImages />} />
-            <Route path="stocks" element={<Stocks />} />
-            <Route path="featured" element={<Featured />} />
-            <Route path="orders" element={<Orders />} />
-            <Route path="invoices" element={<Invoices />} />
-            <Route path="shipments" element={<Shipments />} />
-            <Route path="emails" element={<Emails />} />
-            <Route path="tva" element={<TvaRates />} />
-            <Route path="contact-recipients" element={<ContactRecipients />} />
-            <Route path="reports" element={<Reports />} />
-            <Route path="users" element={<Users />} />
-          </Route>
+  // Normal mode - full website
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            {/* Auth routes (no header/footer) */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/account" element={<Account />} />
 
-          {/* Public routes with Header/Footer */}
-          <Route path="*" element={
-            <LanguageProvider>
-              <CartProvider>
-                <div className="flex flex-col min-h-screen">
-                  <Header />
-                  <div className="flex-1">
-                    <Routes>
-                      <Route path="/" element={<Home />} />
-                      <Route path="/collection" element={<Collection />} />
-                      <Route path="/produit/:slug" element={<ProductDetail />} />
-                      <Route path="/la-marque" element={<LaMarque />} />
-                      <Route path="/contact" element={<Contact />} />
-                      <Route path="/panier" element={<Cart />} />
-                      <Route path="/order-confirmation" element={<OrderConfirmation />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<Dashboard />} />
+              <Route path="products" element={<Products />} />
+              <Route path="products/:productId/preorder" element={<ProductPreorderConfig />} />
+              <Route path="products/:productId/images" element={<ProductImages />} />
+              <Route path="stocks" element={<Stocks />} />
+              <Route path="featured" element={<Featured />} />
+              <Route path="orders" element={<Orders />} />
+              <Route path="invoices" element={<Invoices />} />
+              <Route path="shipments" element={<Shipments />} />
+              <Route path="emails" element={<Emails />} />
+              <Route path="tva" element={<TvaRates />} />
+              <Route path="contact-recipients" element={<ContactRecipients />} />
+              <Route path="reports" element={<Reports />} />
+              <Route path="users" element={<Users />} />
+            </Route>
+
+            {/* Public routes with Header/Footer */}
+            <Route path="*" element={
+              <LanguageProvider>
+                <CartProvider>
+                  <div className="flex flex-col min-h-screen">
+                    <Header />
+                    <div className="flex-1">
+                      <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/collection" element={<Collection />} />
+                        <Route path="/produit/:slug" element={<ProductDetail />} />
+                        <Route path="/la-marque" element={<LaMarque />} />
+                        <Route path="/contact" element={<Contact />} />
+                        <Route path="/panier" element={<Cart />} />
+                        <Route path="/order-confirmation" element={<OrderConfirmation />} />
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </div>
+                    <Footer />
                   </div>
-                  <Footer />
-                </div>
-              </CartProvider>
-            </LanguageProvider>
-          } />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+                </CartProvider>
+              </LanguageProvider>
+            } />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
