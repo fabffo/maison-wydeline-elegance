@@ -15,7 +15,8 @@ import {
   Home,
   Star,
   Mail,
-  Percent
+  Percent,
+  Contact
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUserRole } from '@/hooks/useUserRole';
@@ -35,6 +36,7 @@ const menuItems = [
   { icon: Truck, label: 'Livraisons', path: '/admin/shipments' },
   { icon: Mail, label: 'Emails', path: '/admin/emails' },
   { icon: Percent, label: 'TVA', path: '/admin/tva' },
+  { icon: Contact, label: 'Contacts', path: '/admin/contact-recipients' },
   { icon: BarChart3, label: 'Rapports', path: '/admin/reports' },
   { icon: Users, label: 'Utilisateurs', path: '/admin/users' },
 ];

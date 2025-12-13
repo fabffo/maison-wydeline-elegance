@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "https://esm.sh/resend@2.0.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
@@ -12,6 +13,13 @@ interface ContactEmailRequest {
   name: string;
   email: string;
   message: string;
+}
+
+interface ContactRecipient {
+  id: string;
+  name: string;
+  email: string;
+  is_active: boolean;
 }
 
 const escapeHtml = (text: string): string => {
@@ -46,10 +54,40 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error("Field length exceeds maximum allowed");
     }
 
-    // Send notification email to Wydeline
+    // Initialize Supabase client to fetch recipients
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+    // Fetch active contact recipients from database
+    const { data: recipients, error: fetchError } = await supabase
+      .from("contact_recipients")
+      .select("id, name, email, is_active")
+      .eq("is_active", true);
+
+    if (fetchError) {
+      console.error("Error fetching contact recipients:", fetchError);
+      throw new Error("Failed to fetch contact recipients");
+    }
+
+    if (!recipients || recipients.length === 0) {
+      console.warn("No active contact recipients configured, using fallback");
+      // Fallback to default email if no recipients configured
+      recipients?.push({ 
+        id: "fallback", 
+        name: "Contact Principal", 
+        email: "contact@maisonwydeline.com",
+        is_active: true 
+      });
+    }
+
+    const recipientEmails = recipients.map((r: ContactRecipient) => r.email);
+    console.log("Sending notification to recipients:", recipientEmails);
+
+    // Send notification email to all active recipients
     const notificationResponse = await resend.emails.send({
       from: "Maison Wydeline <onboarding@resend.dev>",
-      to: ["contact@maisonwydeline.com"],
+      to: recipientEmails,
       reply_to: email,
       subject: `Nouveau message de contact - ${escapeHtml(name)}`,
       html: `
@@ -127,7 +165,8 @@ const handler = async (req: Request): Promise<Response> => {
     return new Response(
       JSON.stringify({ 
         success: true,
-        message: "Emails sent successfully" 
+        message: "Emails sent successfully",
+        recipientCount: recipientEmails.length
       }),
       {
         status: 200,
