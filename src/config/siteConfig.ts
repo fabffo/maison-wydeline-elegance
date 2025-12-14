@@ -8,4 +8,4 @@
  * Simply change this value to control which version is shown.
  */
 
-export const COMING_SOON_MODE = true;
+export const COMING_SOON_MODE = false;
