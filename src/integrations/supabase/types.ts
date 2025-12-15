@@ -344,6 +344,7 @@ export type Database = {
           color: string | null
           created_at: string
           description: string | null
+          description_fournisseur: string | null
           featured_area: string | null
           featured_end_at: string | null
           featured_label: string | null
@@ -358,6 +359,7 @@ export type Database = {
           preorder_notification_threshold: number | null
           preorder_pending_count: number | null
           price: number
+          reference_fournisseur: string | null
           tva_rate_id: string | null
           updated_at: string
         }
@@ -366,6 +368,7 @@ export type Database = {
           color?: string | null
           created_at?: string
           description?: string | null
+          description_fournisseur?: string | null
           featured_area?: string | null
           featured_end_at?: string | null
           featured_label?: string | null
@@ -380,6 +383,7 @@ export type Database = {
           preorder_notification_threshold?: number | null
           preorder_pending_count?: number | null
           price: number
+          reference_fournisseur?: string | null
           tva_rate_id?: string | null
           updated_at?: string
         }
@@ -388,6 +392,7 @@ export type Database = {
           color?: string | null
           created_at?: string
           description?: string | null
+          description_fournisseur?: string | null
           featured_area?: string | null
           featured_end_at?: string | null
           featured_label?: string | null
@@ -402,6 +407,7 @@ export type Database = {
           preorder_notification_threshold?: number | null
           preorder_pending_count?: number | null
           price?: number
+          reference_fournisseur?: string | null
           tva_rate_id?: string | null
           updated_at?: string
         }
