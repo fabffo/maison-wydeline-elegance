@@ -340,6 +340,7 @@ export type Database = {
       }
       products: {
         Row: {
+          alt_text: string | null
           category: string
           color: string | null
           created_at: string
@@ -350,6 +351,7 @@ export type Database = {
           featured_label: string | null
           featured_priority: number | null
           featured_start_at: string | null
+          heel_height_cm: number | null
           id: string
           is_featured: boolean | null
           material: string | null
@@ -360,10 +362,13 @@ export type Database = {
           preorder_pending_count: number | null
           price: number
           reference_fournisseur: string | null
+          slug: string | null
+          tags: string[] | null
           tva_rate_id: string | null
           updated_at: string
         }
         Insert: {
+          alt_text?: string | null
           category: string
           color?: string | null
           created_at?: string
@@ -374,6 +379,7 @@ export type Database = {
           featured_label?: string | null
           featured_priority?: number | null
           featured_start_at?: string | null
+          heel_height_cm?: number | null
           id: string
           is_featured?: boolean | null
           material?: string | null
@@ -384,10 +390,13 @@ export type Database = {
           preorder_pending_count?: number | null
           price: number
           reference_fournisseur?: string | null
+          slug?: string | null
+          tags?: string[] | null
           tva_rate_id?: string | null
           updated_at?: string
         }
         Update: {
+          alt_text?: string | null
           category?: string
           color?: string | null
           created_at?: string
@@ -398,6 +407,7 @@ export type Database = {
           featured_label?: string | null
           featured_priority?: number | null
           featured_start_at?: string | null
+          heel_height_cm?: number | null
           id?: string
           is_featured?: boolean | null
           material?: string | null
@@ -408,6 +418,8 @@ export type Database = {
           preorder_pending_count?: number | null
           price?: number
           reference_fournisseur?: string | null
+          slug?: string | null
+          tags?: string[] | null
           tva_rate_id?: string | null
           updated_at?: string
         }

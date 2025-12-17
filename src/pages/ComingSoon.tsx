@@ -9,8 +9,8 @@ import logoWhite from '@/assets/logo-wydeline-white.png';
 interface Product {
   id: string;
   name: string;
-  images: string[];
   price: number;
+  images: string[];
 }
 
 const ComingSoon = () => {
@@ -19,13 +19,34 @@ const ComingSoon = () => {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    // Fetch some products to showcase
     const fetchProducts = async () => {
       try {
-        const response = await fetch('/products.json');
-        const data = await response.json();
-        // Take first 4 products for showcase
-        setProducts(data.slice(0, 4));
+        // Fetch products from Supabase
+        const { data: productsData, error } = await supabase
+          .from('products')
+          .select('id, name, price')
+          .limit(4);
+
+        if (error) throw error;
+
+        // Fetch images for these products
+        const productIds = productsData?.map(p => p.id) || [];
+        const { data: imagesData } = await supabase
+          .from('product_images')
+          .select('product_id, image_url, position')
+          .in('product_id', productIds)
+          .order('position');
+
+        // Map products with their images
+        const productsWithImages = productsData?.map(product => {
+          const productImages = imagesData?.filter(img => img.product_id === product.id) || [];
+          return {
+            ...product,
+            images: productImages.map(img => img.image_url),
+          };
+        }) || [];
+
+        setProducts(productsWithImages);
       } catch (error) {
         console.error('Error fetching products:', error);
       }
@@ -154,11 +175,17 @@ const ComingSoon = () => {
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="aspect-[3/4] overflow-hidden rounded-lg bg-luxury-cream">
-                  <img
-                    src={product.images[0]}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
+                  {product.images[0] ? (
+                    <img
+                      src={product.images[0]}
+                      alt={product.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                      Image à venir
+                    </div>
+                  )}
                 </div>
                 <div className="mt-4 text-center">
                   <h3 className="font-medium text-sm md:text-base">{product.name}</h3>

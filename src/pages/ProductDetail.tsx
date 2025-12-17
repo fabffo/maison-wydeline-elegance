@@ -91,7 +91,7 @@ const ProductDetail = () => {
             <div className="aspect-[3/4] overflow-hidden bg-luxury-cream rounded-lg">
               <img
                 src={product.images[selectedImage]}
-                alt={product.alt}
+                alt={product.altText || product.name}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -142,10 +142,12 @@ const ProductDetail = () => {
               <p className="text-muted-foreground">{product.description}</p>
             </div>
 
-            <div>
-              <h3 className="font-medium mb-2">{t.product.materials}</h3>
-              <p className="text-sm text-muted-foreground">{product.materials.join(', ')}</p>
-            </div>
+            {product.material && (
+              <div>
+                <h3 className="font-medium mb-2">{t.product.materials}</h3>
+                <p className="text-sm text-muted-foreground">{product.material}</p>
+              </div>
+            )}
 
             <div>
               <p className="text-sm text-muted-foreground">

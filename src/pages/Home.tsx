@@ -3,7 +3,6 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { ProductCard } from '@/components/ProductCard';
 import { Badge } from '@/components/ui/badge';
 import heroImage from '@/assets/hero-main.jpg';
 
@@ -37,7 +36,7 @@ const Home = () => {
     try {
       const now = new Date().toISOString();
       
-      // Fetch products with public.json files mapping
+      // Fetch featured products from database
       const { data: productsData, error: productsError } = await supabase
         .from('products')
         .select('*')
@@ -48,17 +47,21 @@ const Home = () => {
 
       if (productsError) throw productsError;
 
-      // Fetch products.json to get images and slug
-      const response = await fetch('/products.json');
-      const jsonProducts = await response.json();
+      // Fetch product images
+      const productIds = productsData?.map(p => p.id) || [];
+      const { data: imagesData } = await supabase
+        .from('product_images')
+        .select('product_id, image_url, position')
+        .in('product_id', productIds)
+        .order('position');
 
-      // Map database products with JSON data
+      // Map database products with images
       const enrichedProducts = productsData?.map(dbProduct => {
-        const jsonProduct = jsonProducts.find((p: any) => p.id === dbProduct.id);
+        const productImages = imagesData?.filter(img => img.product_id === dbProduct.id) || [];
         return {
           ...dbProduct,
-          slug: jsonProduct?.slug || '',
-          images: jsonProduct?.images || [],
+          slug: dbProduct.slug || dbProduct.id,
+          images: productImages.map(img => img.image_url),
         };
       }) || [];
 
