@@ -114,7 +114,13 @@ export const Stocks = () => {
         return;
       }
 
-      const updates: Array<{ id: string; stock: number }> = [];
+      const updates: Array<{ 
+        variantId: string; 
+        productId: string;
+        size: number;
+        newStock: number; 
+        currentStock: number;
+      }> = [];
       
       for (let i = 1; i < lines.length; i++) {
         const [productName, size, stock] = lines[i].split(',').map(s => s.trim());
@@ -127,15 +133,39 @@ export const Stocks = () => {
         );
         
         if (variant) {
-          updates.push({ id: variant.id, stock: parseInt(stock) });
+          updates.push({ 
+            variantId: variant.id, 
+            productId: product.id,
+            size: variant.size,
+            newStock: parseInt(stock),
+            currentStock: variant.stock_quantity
+          });
         }
       }
 
+      // Update stocks and create stock movements
       for (const update of updates) {
+        // Update the stock quantity
         await supabase
           .from('product_variants')
-          .update({ stock_quantity: update.stock })
-          .eq('id', update.id);
+          .update({ stock_quantity: update.newStock })
+          .eq('id', update.variantId);
+
+        // Calculate the difference for the movement
+        const quantityChange = update.newStock - update.currentStock;
+        
+        // Only create movement if there's an actual change
+        if (quantityChange !== 0) {
+          await supabase
+            .from('stock_movements')
+            .insert({
+              product_id: update.productId,
+              size: update.size,
+              quantity_change: quantityChange,
+              movement_type: 'REASSORT',
+              notes: 'Réassort marchandises (import CSV)'
+            });
+        }
       }
 
       toast({ title: 'Import réussi', description: `${updates.length} stocks mis à jour` });
