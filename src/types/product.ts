@@ -3,10 +3,10 @@ export interface Product {
   slug: string;
   name: string;
   category: string;
-  description: string;
-  materials: string[];
-  color: string;
-  heelHeightCm: number;
+  description: string | null;
+  material: string | null;
+  color: string | null;
+  heelHeightCm: number | null;
   sizes: number[];
   price: number;
   stock: Record<string, number>;
@@ -15,8 +15,8 @@ export interface Product {
   preorderNotificationThreshold?: number;
   preorderNotificationSent?: boolean;
   images: string[];
-  alt: string;
-  tags: string[];
+  altText: string | null;
+  tags: string[] | null;
 }
 
 export interface CartItem {

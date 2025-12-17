@@ -19,7 +19,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         <div className="aspect-[3/4] mb-4 overflow-hidden bg-luxury-cream rounded-lg">
           <img
             src={product.images[0]}
-            alt={product.alt}
+            alt={product.altText || product.name}
             loading="lazy"
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
