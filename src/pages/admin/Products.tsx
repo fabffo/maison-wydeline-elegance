@@ -2,16 +2,17 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Upload, Eye, AlertTriangle, PackageX, ImageIcon } from 'lucide-react';
+import { Upload, Eye, AlertTriangle, PackageX, ImageIcon, Pencil } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { ProductEditDialog } from '@/components/admin/ProductEditDialog';
 
 export const Products = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [variants, setVariants] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editingProduct, setEditingProduct] = useState<any | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -167,6 +168,15 @@ export const Products = () => {
                     <Button
                       variant="outline"
                       size="sm"
+                      onClick={() => setEditingProduct(product)}
+                      className="mr-2"
+                    >
+                      <Pencil className="h-4 w-4 mr-2" />
+                      Modifier
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => navigate(`/admin/products/${product.id}/images`)}
                       className="mr-2"
                     >
@@ -227,6 +237,13 @@ export const Products = () => {
           })}
         </div>
       )}
+
+      <ProductEditDialog
+        product={editingProduct}
+        open={!!editingProduct}
+        onOpenChange={(open) => !open && setEditingProduct(null)}
+        onSaved={fetchProducts}
+      />
     </div>
   );
 };
