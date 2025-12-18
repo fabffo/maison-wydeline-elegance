@@ -107,8 +107,15 @@ const Cart = () => {
       }
 
       if (response.data?.url) {
-        // Rediriger vers Stripe Checkout dans le même onglet
-        window.location.href = response.data.url;
+        // Detect if we're in an iframe (Lovable preview) - Stripe doesn't work in iframes
+        const isInIframe = window.self !== window.top;
+        if (isInIframe) {
+          // In preview: open new tab
+          window.open(response.data.url, '_blank');
+        } else {
+          // In production: redirect in same tab
+          window.location.href = response.data.url;
+        }
       } else {
         throw new Error('Aucune URL de paiement reçue');
       }
