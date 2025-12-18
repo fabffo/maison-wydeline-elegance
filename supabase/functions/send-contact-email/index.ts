@@ -54,10 +54,10 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error("Field length exceeds maximum allowed");
     }
 
-    // Initialize Supabase client to fetch recipients
+    // Initialize Supabase client with service role key to access contact recipients securely
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    const supabaseServiceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 
     // Fetch active contact recipients from database
     const { data: recipients, error: fetchError } = await supabase
