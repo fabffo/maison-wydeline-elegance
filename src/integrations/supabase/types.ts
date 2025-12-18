@@ -342,6 +342,7 @@ export type Database = {
         Row: {
           alt_text: string | null
           category: string
+          characteristics: Json | null
           color: string | null
           created_at: string
           description: string | null
@@ -370,6 +371,7 @@ export type Database = {
         Insert: {
           alt_text?: string | null
           category: string
+          characteristics?: Json | null
           color?: string | null
           created_at?: string
           description?: string | null
@@ -398,6 +400,7 @@ export type Database = {
         Update: {
           alt_text?: string | null
           category?: string
+          characteristics?: Json | null
           color?: string | null
           created_at?: string
           description?: string | null

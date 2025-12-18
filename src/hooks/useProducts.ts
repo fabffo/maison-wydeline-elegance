@@ -76,6 +76,7 @@ export const useProducts = () => {
             images,
             altText: dbProduct.alt_text,
             tags: dbProduct.tags,
+            characteristics: dbProduct.characteristics as Record<string, string> | null,
           };
         });
 

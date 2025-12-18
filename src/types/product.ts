@@ -17,6 +17,7 @@ export interface Product {
   images: string[];
   altText: string | null;
   tags: string[] | null;
+  characteristics: Record<string, string> | null;
 }
 
 export interface CartItem {
