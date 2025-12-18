@@ -107,13 +107,8 @@ const Cart = () => {
       }
 
       if (response.data?.url) {
-        // Ouvrir Stripe Checkout dans un nouvel onglet
-        window.open(response.data.url, '_blank');
-        
-        toast({
-          title: 'Redirection vers le paiement',
-          description: 'Une nouvelle fenêtre s\'est ouverte pour finaliser votre paiement',
-        });
+        // Rediriger vers Stripe Checkout dans le même onglet
+        window.location.href = response.data.url;
       } else {
         throw new Error('Aucune URL de paiement reçue');
       }
