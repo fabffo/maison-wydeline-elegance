@@ -143,18 +143,18 @@ const ProductDetail = () => {
               <p className="text-muted-foreground">{product.description}</p>
             </div>
 
-            {product.material && (
+            {product.characteristics && Object.keys(product.characteristics).length > 0 && (
               <div>
-                <h3 className="font-medium mb-2">{t.product.materials}</h3>
-                <p className="text-sm text-muted-foreground">{product.material}</p>
+                <h3 className="font-medium mb-3">Caractéristiques</h3>
+                <ul className="space-y-2">
+                  {Object.entries(product.characteristics).map(([key, value]) => (
+                    <li key={key} className="text-sm text-muted-foreground">
+                      <span className="font-medium text-foreground">{key} :</span> {value}
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
-
-            <div>
-              <p className="text-sm text-muted-foreground">
-                {t.product.heelHeight}: {product.heelHeightCm} cm
-              </p>
-            </div>
 
             <SizeSelector
               sizes={product.sizes}
