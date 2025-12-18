@@ -72,7 +72,8 @@ const ProductDetail = () => {
   
   // Determine if user can order (either has stock OR preorder is active)
   const hasStockForSelectedSize = selectedSize ? (product.stock[selectedSize.toString()] || 0) > 0 : false;
-  const canOrder = hasStockForSelectedSize || product.preorder;
+  // Use hasStock (any size available) for canOrder, not just selected size
+  const canOrder = hasStock || product.preorder;
 
   return (
     <main className="min-h-screen pt-24 pb-16">
