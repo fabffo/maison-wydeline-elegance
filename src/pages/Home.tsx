@@ -4,7 +4,16 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
+import { ArrowRight, Sparkles, Heart, Shield } from 'lucide-react';
 import heroImage from '@/assets/hero-main.jpg';
+import maisonEngagee from '@/assets/maison-engagee.jpg';
+import nosValeurs from '@/assets/nos-valeurs.png';
+
+// Import product images for category grid
+import bottinesNoires from '@/assets/ankle-boots-black.jpg';
+import bottinesBordeaux from '@/assets/ankle-boots-bordeaux.jpg';
+import bottesVertes from '@/assets/boots-green-suede.jpg';
+import platesNoires from '@/assets/flats-white.jpg';
 
 interface FeaturedProduct {
   id: string;
@@ -36,7 +45,6 @@ const Home = () => {
     try {
       const now = new Date().toISOString();
       
-      // Fetch featured products from database
       const { data: productsData, error: productsError } = await supabase
         .from('products')
         .select('*')
@@ -47,7 +55,6 @@ const Home = () => {
 
       if (productsError) throw productsError;
 
-      // Fetch product images
       const productIds = productsData?.map(p => p.id) || [];
       const { data: imagesData } = await supabase
         .from('product_images')
@@ -55,7 +62,6 @@ const Home = () => {
         .in('product_id', productIds)
         .order('position');
 
-      // Map database products with images
       const enrichedProducts = productsData?.map(dbProduct => {
         const productImages = imagesData?.filter(img => img.product_id === dbProduct.id) || [];
         return {
@@ -65,7 +71,6 @@ const Home = () => {
         };
       }) || [];
 
-      // Group by area
       const grouped: Record<string, FeaturedProduct[]> = {
         HERO: [],
         CAROUSEL: [],
@@ -98,10 +103,18 @@ const Home = () => {
 
   const heroProduct = featuredProducts.HERO[0];
 
+  // Category cards for the grid
+  const categories = [
+    { name: 'Bottines', image: bottinesNoires, link: '/collection?category=bottines' },
+    { name: 'Bottes', image: bottesVertes, link: '/collection?category=bottes' },
+    { name: 'Escarpins', image: bottinesBordeaux, link: '/collection?category=escarpins' },
+    { name: 'Plates', image: platesNoires, link: '/collection?category=plates' },
+  ];
+
   return (
     <main className="min-h-screen">
-      {/* Hero Section - Dynamic or Static */}
-      <section className="h-screen snap-start relative flex items-center justify-center">
+      {/* Hero Section - Full Width Banner */}
+      <section className="relative min-h-[90vh] flex items-center">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ 
@@ -110,144 +123,183 @@ const Home = () => {
               : `url(${heroImage})`
           }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-luxury-dark/70 via-luxury-dark/40 to-transparent" />
         </div>
-        <div className="relative z-10 container mx-auto px-6 text-white">
-          {heroProduct ? (
-            <>
-              {heroProduct.featured_label && (
-                <Badge className="mb-4 text-lg px-4 py-2">{heroProduct.featured_label}</Badge>
-              )}
-              <h1 className="text-5xl md:text-7xl font-medium mb-6 animate-fade-in max-w-4xl leading-tight">
-                Chaussures élégantes grandes tailles pour femmes – du 41 au 45 – Fabriquées au Portugal
-              </h1>
-              <p className="text-xl md:text-2xl mb-8 max-w-2xl animate-fade-in" style={{ animationDelay: '0.2s' }}>
-                {heroProduct.price} €
-              </p>
-              <Link to={`/produit/${heroProduct.slug}`}>
-                <Button size="lg" variant="secondary" className="animate-fade-in" style={{ animationDelay: '0.4s' }}>
-                  Découvrir
-                </Button>
-              </Link>
-            </>
-          ) : (
-            <>
-              <h1 className="text-4xl md:text-6xl font-medium mb-6 animate-fade-in max-w-4xl leading-tight">
-                Chaussures élégantes grandes tailles pour femmes – du 41 au 45 – Fabriquées au Portugal
-              </h1>
-              <p className="text-xl md:text-2xl mb-8 max-w-2xl animate-fade-in" style={{ animationDelay: '0.2s' }}>
-                {t.hero.subtitle}
-              </p>
+        
+        <div className="relative z-10 container mx-auto px-6 lg:px-12">
+          <div className="max-w-2xl">
+            <p className="text-sm uppercase tracking-[0.3em] text-primary-foreground/80 mb-4 animate-fade-in">
+              Du 41 au 45 • Fabriquées au Portugal
+            </p>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-light text-primary-foreground mb-6 animate-fade-in leading-[1.1]">
+              L'élégance
+              <br />
+              <span className="font-medium">n'a pas de pointure</span>
+            </h1>
+            <p className="text-lg md:text-xl text-primary-foreground/90 mb-8 animate-fade-in max-w-lg" style={{ animationDelay: '0.2s' }}>
+              Des chaussures raffinées pour les femmes qui chaussent grand.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 animate-fade-in" style={{ animationDelay: '0.4s' }}>
               <Link to="/collection">
-                <Button size="lg" variant="secondary" className="animate-fade-in" style={{ animationDelay: '0.4s' }}>
-                  {t.hero.cta}
+                <Button size="lg" className="group bg-primary-foreground text-primary hover:bg-primary-foreground/90 px-8">
+                  Découvrir la collection
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
-            </>
-          )}
-        </div>
-      </section>
-
-      {/* SEO Content Section */}
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-6 max-w-4xl">
-          <div className="prose prose-lg max-w-none text-foreground">
-            <p className="text-lg leading-relaxed mb-8">
-              Trouver de belles chaussures élégantes quand on chausse du 41 au 45 reste encore aujourd'hui un véritable défi.
-              Chez <strong>Maison Wydeline</strong>, nous avons fait le choix de créer une marque dédiée aux femmes qui refusent de choisir entre style, confort et qualité, quelle que soit leur pointure.
-            </p>
-
-            <h2 className="text-3xl font-medium mt-12 mb-6">Chaussures grandes tailles femme : élégance et exigence</h2>
-            <p className="text-lg leading-relaxed mb-6">
-              Maison Wydeline propose une collection de <strong>chaussures grandes tailles pour femmes</strong>, du 41 au 45, pensées pour sublimer toutes les silhouettes. Escarpins, bottines ou sandales sont dessinés avec une attention particulière portée à l'équilibre, au maintien et à la féminité, souvent négligés dans les grandes pointures.
-            </p>
-            <p className="text-lg leading-relaxed mb-8">
-              Nos modèles s'adressent aux femmes qui recherchent des <strong>chaussures élégantes grande taille</strong>, adaptées aussi bien au quotidien qu'aux occasions spéciales : travail, soirée, cérémonie ou mariage.
-            </p>
-
-            <h2 className="text-3xl font-medium mt-12 mb-6">Fabrication européenne : le savoir-faire portugais</h2>
-            <p className="text-lg leading-relaxed mb-6">
-              Toutes nos chaussures sont <strong>fabriquées au Portugal</strong>, pays reconnu pour son excellence artisanale dans la chaussure haut de gamme.
-              Nous travaillons avec des ateliers européens sélectionnés pour leur maîtrise du cuir, la qualité des finitions et le respect des standards de fabrication.
-            </p>
-            <p className="text-lg leading-relaxed mb-4">Choisir Maison Wydeline, c'est faire le choix de :</p>
-            <ul className="list-disc list-inside space-y-2 mb-8 text-lg">
-              <li>Matériaux durables et soigneusement sélectionnés</li>
-              <li>Confort pensé pour les pieds féminins grandes tailles</li>
-              <li>Chaussures conçues pour durer, loin de la fast fashion</li>
-            </ul>
-
-            <h2 className="text-3xl font-medium mt-12 mb-6">Des chaussures pensées pour les grandes pointures</h2>
-            <p className="text-lg leading-relaxed mb-6">
-              Contrairement aux modèles simplement "agrandis", nos chaussures sont <strong>conçues dès le départ pour les grandes pointures</strong>.
-              Chaque détail compte : cambrure, largeur, stabilité du talon, maintien du pied.
-            </p>
-            <p className="text-lg leading-relaxed mb-8">
-              Notre objectif est simple : offrir aux femmes chaussant du 41 au 45 des chaussures aussi élégantes que confortables, sans compromis.
-            </p>
-
-            <h2 className="text-3xl font-medium mt-12 mb-6">Une marque engagée pour les femmes</h2>
-            <p className="text-lg leading-relaxed mb-6">
-              Maison Wydeline est née d'un constat : trop peu de marques proposent de chaussures féminines et raffinées en grande taille.
-              Nous avons choisi de créer une alternative premium, respectueuse du pied, du style et du savoir-faire européen.
-            </p>
-            <p className="text-lg leading-relaxed">
-              Nous livrons en France et en Europe, avec un service client attentif et une expérience d'achat pensée pour vous accompagner en toute confiance.
-            </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Carousel Section */}
-      {featuredProducts.CAROUSEL.length > 0 && (
-        <section className="py-24 bg-background">
-          <div className="container mx-auto px-6">
-            <h2 className="text-4xl font-medium mb-12 text-center">Notre Sélection</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {featuredProducts.CAROUSEL.slice(0, 4).map((product) => (
-                <div key={product.id} className="relative">
-                  <Link to={`/produit/${product.slug}`}>
-                    <div className="aspect-[3/4] overflow-hidden rounded-lg bg-luxury-cream">
-                      <img
-                        src={product.images[0]}
-                        alt={product.name}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                    <div className="mt-4">
-                      {product.featured_label && (
-                        <Badge className="mb-2">{product.featured_label}</Badge>
-                      )}
-                      <h3 className="font-medium text-lg">{product.name}</h3>
-                      <p className="text-muted-foreground">{product.price} €</p>
-                    </div>
-                  </Link>
+      {/* Announcement Bar */}
+      <section className="bg-primary text-primary-foreground py-4">
+        <div className="container mx-auto px-6 text-center">
+          <p className="text-sm tracking-wide">
+            <span className="font-medium">Livraison offerte</span> en France métropolitaine • Retours gratuits sous 30 jours
+          </p>
+        </div>
+      </section>
+
+      {/* Category Grid - Allbirds Style */}
+      <section className="py-16 md:py-24 bg-background">
+        <div className="container mx-auto px-6">
+          <h2 className="text-3xl md:text-4xl font-light text-center mb-4">Nos Collections</h2>
+          <p className="text-muted-foreground text-center mb-12 max-w-xl mx-auto">
+            Chaque modèle est pensé dès le départ pour les grandes pointures
+          </p>
+          
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            {categories.map((category) => (
+              <Link 
+                key={category.name} 
+                to={category.link}
+                className="group relative aspect-[3/4] overflow-hidden rounded-lg bg-luxury-cream"
+              >
+                <img
+                  src={category.image}
+                  alt={category.name}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-luxury-dark/60 via-transparent to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <h3 className="text-xl md:text-2xl font-medium text-primary-foreground mb-2">{category.name}</h3>
+                  <span className="inline-flex items-center text-sm text-primary-foreground/90 group-hover:underline">
+                    Découvrir <ArrowRight className="ml-1 h-3 w-3" />
+                  </span>
                 </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Products Carousel */}
+      {featuredProducts.CAROUSEL.length > 0 && (
+        <section className="py-16 md:py-24 bg-luxury-cream">
+          <div className="container mx-auto px-6">
+            <div className="flex items-center justify-between mb-12">
+              <div>
+                <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground mb-2">Sélection</p>
+                <h2 className="text-3xl md:text-4xl font-light">Nos Incontournables</h2>
+              </div>
+              <Link to="/collection" className="hidden md:inline-flex items-center text-sm hover:underline">
+                Tout voir <ArrowRight className="ml-1 h-3 w-3" />
+              </Link>
+            </div>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {featuredProducts.CAROUSEL.slice(0, 4).map((product) => (
+                <Link key={product.id} to={`/produit/${product.slug}`} className="group">
+                  <div className="aspect-[3/4] overflow-hidden rounded-lg bg-background mb-4">
+                    <img
+                      src={product.images[0]}
+                      alt={product.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                  <div>
+                    {product.featured_label && (
+                      <Badge variant="secondary" className="mb-2 text-xs">{product.featured_label}</Badge>
+                    )}
+                    <h3 className="font-medium text-foreground group-hover:underline">{product.name}</h3>
+                    <p className="text-muted-foreground">{product.price} €</p>
+                  </div>
+                </Link>
               ))}
+            </div>
+            
+            <div className="mt-8 text-center md:hidden">
+              <Link to="/collection">
+                <Button variant="outline">Voir toute la collection</Button>
+              </Link>
             </div>
           </div>
         </section>
       )}
 
-      {/* Values Section */}
-      <section className="min-h-screen snap-start bg-luxury-cream py-24">
+      {/* Value Proposition - Allbirds Style Split */}
+      <section className="bg-background">
+        <div className="grid lg:grid-cols-2 min-h-[70vh]">
+          <div className="relative aspect-square lg:aspect-auto">
+            <img
+              src={maisonEngagee}
+              alt="Savoir-faire portugais"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="flex items-center p-8 lg:p-16">
+            <div className="max-w-lg">
+              <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground mb-4">Savoir-faire</p>
+              <h2 className="text-3xl md:text-4xl font-light mb-6 leading-tight">
+                Fabriquées au Portugal, 
+                <br />
+                <span className="font-medium">avec exigence</span>
+              </h2>
+              <p className="text-muted-foreground mb-8 leading-relaxed">
+                Nous travaillons avec des ateliers portugais reconnus pour leur excellence artisanale. 
+                Cuir de qualité, finitions impeccables et respect des standards européens.
+              </p>
+              <Link to="/la-marque">
+                <Button variant="outline" className="group">
+                  Découvrir notre histoire
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* USP Icons Row */}
+      <section className="py-16 md:py-20 bg-luxury-cream">
         <div className="container mx-auto px-6">
-          <h2 className="text-4xl md:text-5xl font-medium text-center mb-20">{t.values.title}</h2>
-          
-          <div className="grid md:grid-cols-3 gap-12 max-w-6xl mx-auto">
-            <div className="text-center">
-              <h3 className="text-2xl font-medium mb-4">{t.values.excellence.title}</h3>
-              <p className="text-muted-foreground leading-relaxed">{t.values.excellence.text}</p>
+          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto text-center">
+            <div className="flex flex-col items-center">
+              <div className="w-16 h-16 rounded-full bg-background flex items-center justify-center mb-4">
+                <Sparkles className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="font-medium mb-2">Élégance intemporelle</h3>
+              <p className="text-sm text-muted-foreground">
+                Des designs raffinés qui subliment toutes les silhouettes
+              </p>
             </div>
-            
-            <div className="text-center">
-              <h3 className="text-2xl font-medium mb-4">{t.values.elegance.title}</h3>
-              <p className="text-muted-foreground leading-relaxed">{t.values.elegance.text}</p>
+            <div className="flex flex-col items-center">
+              <div className="w-16 h-16 rounded-full bg-background flex items-center justify-center mb-4">
+                <Heart className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="font-medium mb-2">Confort pensé</h3>
+              <p className="text-sm text-muted-foreground">
+                Chaque modèle est conçu pour les grandes pointures
+              </p>
             </div>
-            
-            <div className="text-center">
-              <h3 className="text-2xl font-medium mb-4">{t.values.comfort.title}</h3>
-              <p className="text-muted-foreground leading-relaxed">{t.values.comfort.text}</p>
+            <div className="flex flex-col items-center">
+              <div className="w-16 h-16 rounded-full bg-background flex items-center justify-center mb-4">
+                <Shield className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="font-medium mb-2">Qualité durable</h3>
+              <p className="text-sm text-muted-foreground">
+                Matériaux premium, loin de la fast fashion
+              </p>
             </div>
           </div>
         </div>
@@ -255,88 +307,122 @@ const Home = () => {
 
       {/* New Products Section */}
       {featuredProducts.NEW.length > 0 && (
-        <section className="py-24 bg-background">
+        <section className="py-16 md:py-24 bg-background">
           <div className="container mx-auto px-6">
-            <h2 className="text-4xl font-medium mb-12 text-center">Nouveautés</h2>
-            <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground mb-2">Nouveautés</p>
+              <h2 className="text-3xl md:text-4xl font-light">Derniers modèles</h2>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
               {featuredProducts.NEW.slice(0, 3).map((product) => (
-                <div key={product.id}>
-                  <Link to={`/produit/${product.slug}`}>
-                    <div className="aspect-[3/4] overflow-hidden rounded-lg bg-luxury-cream">
-                      <img
-                        src={product.images[0]}
-                        alt={product.name}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                    <div className="mt-4">
-                      {product.featured_label && (
-                        <Badge className="mb-2">{product.featured_label}</Badge>
-                      )}
-                      <h3 className="font-medium text-lg">{product.name}</h3>
-                      <p className="text-muted-foreground">{product.price} €</p>
-                    </div>
-                  </Link>
-                </div>
+                <Link key={product.id} to={`/produit/${product.slug}`} className="group">
+                  <div className="aspect-[3/4] overflow-hidden rounded-lg bg-luxury-cream mb-4">
+                    <img
+                      src={product.images[0]}
+                      alt={product.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                  <div>
+                    {product.featured_label && (
+                      <Badge variant="secondary" className="mb-2 text-xs">{product.featured_label}</Badge>
+                    )}
+                    <h3 className="font-medium text-foreground group-hover:underline">{product.name}</h3>
+                    <p className="text-muted-foreground">{product.price} €</p>
+                  </div>
+                </Link>
               ))}
             </div>
           </div>
         </section>
       )}
 
-      {/* Best Sellers Section */}
+      {/* Best Sellers - Large Cards */}
       {featuredProducts.BEST.length > 0 && (
-        <section className="py-24 bg-luxury-cream">
+        <section className="py-16 md:py-24 bg-luxury-cream">
           <div className="container mx-auto px-6">
-            <h2 className="text-4xl font-medium mb-12 text-center">Meilleures Ventes</h2>
-            <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground mb-2">Best-sellers</p>
+              <h2 className="text-3xl md:text-4xl font-light">Les plus aimées</h2>
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               {featuredProducts.BEST.slice(0, 2).map((product) => (
-                <div key={product.id}>
-                  <Link to={`/produit/${product.slug}`}>
-                    <div className="aspect-[3/4] overflow-hidden rounded-lg bg-white">
-                      <img
-                        src={product.images[0]}
-                        alt={product.name}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                    <div className="mt-4">
-                      {product.featured_label && (
-                        <Badge className="mb-2">{product.featured_label}</Badge>
-                      )}
-                      <h3 className="font-medium text-xl">{product.name}</h3>
-                      <p className="text-muted-foreground text-lg">{product.price} €</p>
-                    </div>
-                  </Link>
-                </div>
+                <Link key={product.id} to={`/produit/${product.slug}`} className="group">
+                  <div className="aspect-[4/5] overflow-hidden rounded-lg bg-background mb-4">
+                    <img
+                      src={product.images[0]}
+                      alt={product.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                  <div className="text-center">
+                    {product.featured_label && (
+                      <Badge variant="secondary" className="mb-2 text-xs">{product.featured_label}</Badge>
+                    )}
+                    <h3 className="font-medium text-lg text-foreground group-hover:underline">{product.name}</h3>
+                    <p className="text-muted-foreground">{product.price} €</p>
+                  </div>
+                </Link>
               ))}
             </div>
           </div>
         </section>
       )}
 
-      {/* Grid Section */}
-      {featuredProducts.GRID.length > 0 && (
-        <section className="h-screen snap-start grid md:grid-cols-2">
-          {featuredProducts.GRID.slice(0, 2).map((product) => (
-            <Link key={product.id} to={`/produit/${product.slug}`} className="relative group">
-              <div
-                className="bg-cover bg-center h-full relative overflow-hidden"
-                style={{ backgroundImage: `url(${product.images[0]})` }}
-              >
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors" />
-                <div className="absolute bottom-8 left-8 text-white">
-                  {product.featured_label && (
-                    <Badge className="mb-2">{product.featured_label}</Badge>
-                  )}
-                  <h3 className="text-3xl font-medium">{product.name}</h3>
-                  <p className="text-xl">{product.price} €</p>
-                </div>
+      {/* SEO Content Section - Collapsible/Minimal */}
+      <section className="py-16 md:py-24 bg-background border-t border-border">
+        <div className="container mx-auto px-6 max-w-4xl">
+          <div className="prose prose-lg max-w-none text-muted-foreground">
+            <h2 className="text-2xl font-light text-foreground mb-8">
+              Chaussures grandes tailles femme : élégance et exigence
+            </h2>
+            
+            <div className="grid md:grid-cols-2 gap-8 text-sm leading-relaxed">
+              <div>
+                <p className="mb-4">
+                  Trouver de belles chaussures élégantes quand on chausse du 41 au 45 reste un véritable défi.
+                  Chez <strong className="text-foreground">Maison Wydeline</strong>, nous créons des chaussures grandes tailles pour femmes, 
+                  pensées pour sublimer toutes les silhouettes.
+                </p>
+                <p>
+                  Nos modèles s'adressent aux femmes qui recherchent des chaussures élégantes grande taille, 
+                  adaptées au quotidien comme aux occasions spéciales.
+                </p>
               </div>
-            </Link>
-          ))}
-        </section>
-      )}
+              <div>
+                <p className="mb-4">
+                  Toutes nos chaussures sont <strong className="text-foreground">fabriquées au Portugal</strong>, 
+                  pays reconnu pour son excellence artisanale dans la chaussure haut de gamme.
+                </p>
+                <p>
+                  Contrairement aux modèles simplement "agrandis", nos chaussures sont conçues dès le départ 
+                  pour les grandes pointures : cambrure, largeur, stabilité du talon, maintien du pied.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Banner */}
+      <section className="relative py-20 md:py-32 bg-primary text-primary-foreground">
+        <div className="container mx-auto px-6 text-center">
+          <h2 className="text-3xl md:text-5xl font-light mb-6">
+            Prête à découvrir votre paire idéale ?
+          </h2>
+          <p className="text-lg text-primary-foreground/80 mb-8 max-w-xl mx-auto">
+            Explorez notre collection de chaussures élégantes du 41 au 45.
+          </p>
+          <Link to="/collection">
+            <Button size="lg" variant="secondary" className="group">
+              Explorer la collection
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Button>
+          </Link>
+        </div>
+      </section>
     </main>
   );
 };
