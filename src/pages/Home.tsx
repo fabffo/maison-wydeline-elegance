@@ -107,7 +107,6 @@ const Home = () => {
   const categories = [
     { name: 'Bottines', image: bottinesNoires, link: '/collection?category=bottines' },
     { name: 'Bottes', image: bottesVertes, link: '/collection?category=bottes' },
-    { name: 'Escarpins', image: bottinesBordeaux, link: '/collection?category=escarpins' },
     { name: 'Plates', image: platesNoires, link: '/collection?category=plates' },
   ];
 
