@@ -118,8 +118,8 @@ const Home = () => {
               {heroProduct.featured_label && (
                 <Badge className="mb-4 text-lg px-4 py-2">{heroProduct.featured_label}</Badge>
               )}
-              <h1 className="text-5xl md:text-7xl font-medium mb-6 animate-fade-in">
-                {heroProduct.name}
+              <h1 className="text-5xl md:text-7xl font-medium mb-6 animate-fade-in max-w-4xl leading-tight">
+                Chaussures élégantes grandes tailles pour femmes – du 41 au 45 – Fabriquées au Portugal
               </h1>
               <p className="text-xl md:text-2xl mb-8 max-w-2xl animate-fade-in" style={{ animationDelay: '0.2s' }}>
                 {heroProduct.price} €
@@ -132,8 +132,8 @@ const Home = () => {
             </>
           ) : (
             <>
-              <h1 className="text-5xl md:text-7xl font-medium mb-6 animate-fade-in">
-                {t.hero.title}
+              <h1 className="text-4xl md:text-6xl font-medium mb-6 animate-fade-in max-w-4xl leading-tight">
+                Chaussures élégantes grandes tailles pour femmes – du 41 au 45 – Fabriquées au Portugal
               </h1>
               <p className="text-xl md:text-2xl mb-8 max-w-2xl animate-fade-in" style={{ animationDelay: '0.2s' }}>
                 {t.hero.subtitle}
@@ -145,6 +145,56 @@ const Home = () => {
               </Link>
             </>
           )}
+        </div>
+      </section>
+
+      {/* SEO Content Section */}
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-6 max-w-4xl">
+          <div className="prose prose-lg max-w-none text-foreground">
+            <p className="text-lg leading-relaxed mb-8">
+              Trouver de belles chaussures élégantes quand on chausse du 41 au 45 reste encore aujourd'hui un véritable défi.
+              Chez <strong>Maison Wydeline</strong>, nous avons fait le choix de créer une marque dédiée aux femmes qui refusent de choisir entre style, confort et qualité, quelle que soit leur pointure.
+            </p>
+
+            <h2 className="text-3xl font-medium mt-12 mb-6">Chaussures grandes tailles femme : élégance et exigence</h2>
+            <p className="text-lg leading-relaxed mb-6">
+              Maison Wydeline propose une collection de <strong>chaussures grandes tailles pour femmes</strong>, du 41 au 45, pensées pour sublimer toutes les silhouettes. Escarpins, bottines ou sandales sont dessinés avec une attention particulière portée à l'équilibre, au maintien et à la féminité, souvent négligés dans les grandes pointures.
+            </p>
+            <p className="text-lg leading-relaxed mb-8">
+              Nos modèles s'adressent aux femmes qui recherchent des <strong>chaussures élégantes grande taille</strong>, adaptées aussi bien au quotidien qu'aux occasions spéciales : travail, soirée, cérémonie ou mariage.
+            </p>
+
+            <h2 className="text-3xl font-medium mt-12 mb-6">Fabrication européenne : le savoir-faire portugais</h2>
+            <p className="text-lg leading-relaxed mb-6">
+              Toutes nos chaussures sont <strong>fabriquées au Portugal</strong>, pays reconnu pour son excellence artisanale dans la chaussure haut de gamme.
+              Nous travaillons avec des ateliers européens sélectionnés pour leur maîtrise du cuir, la qualité des finitions et le respect des standards de fabrication.
+            </p>
+            <p className="text-lg leading-relaxed mb-4">Choisir Maison Wydeline, c'est faire le choix de :</p>
+            <ul className="list-disc list-inside space-y-2 mb-8 text-lg">
+              <li>Matériaux durables et soigneusement sélectionnés</li>
+              <li>Confort pensé pour les pieds féminins grandes tailles</li>
+              <li>Chaussures conçues pour durer, loin de la fast fashion</li>
+            </ul>
+
+            <h2 className="text-3xl font-medium mt-12 mb-6">Des chaussures pensées pour les grandes pointures</h2>
+            <p className="text-lg leading-relaxed mb-6">
+              Contrairement aux modèles simplement "agrandis", nos chaussures sont <strong>conçues dès le départ pour les grandes pointures</strong>.
+              Chaque détail compte : cambrure, largeur, stabilité du talon, maintien du pied.
+            </p>
+            <p className="text-lg leading-relaxed mb-8">
+              Notre objectif est simple : offrir aux femmes chaussant du 41 au 45 des chaussures aussi élégantes que confortables, sans compromis.
+            </p>
+
+            <h2 className="text-3xl font-medium mt-12 mb-6">Une marque engagée pour les femmes</h2>
+            <p className="text-lg leading-relaxed mb-6">
+              Maison Wydeline est née d'un constat : trop peu de marques proposent de chaussures féminines et raffinées en grande taille.
+              Nous avons choisi de créer une alternative premium, respectueuse du pied, du style et du savoir-faire européen.
+            </p>
+            <p className="text-lg leading-relaxed">
+              Nous livrons en France et en Europe, avec un service client attentif et une expérience d'achat pensée pour vous accompagner en toute confiance.
+            </p>
+          </div>
         </div>
       </section>
 
