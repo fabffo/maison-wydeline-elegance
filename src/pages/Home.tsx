@@ -6,7 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Sparkles, Heart, Shield } from 'lucide-react';
 import heroImage from '@/assets/hero-main.jpg';
-import maisonEngagee from '@/assets/maison-engagee.jpg';
+import saoJoaoMadeira from '@/assets/sao-joao-madeira.jpg';
 import nosValeurs from '@/assets/nos-valeurs.png';
 
 // Import product images for category grid
@@ -241,8 +241,8 @@ const Home = () => {
         <div className="grid lg:grid-cols-2 min-h-[70vh]">
           <div className="relative aspect-square lg:aspect-auto">
             <img
-              src={maisonEngagee}
-              alt="Savoir-faire portugais"
+              src={saoJoaoMadeira}
+              alt="São João da Madeira, capitale portugaise de la chaussure"
               className="w-full h-full object-cover"
             />
           </div>
