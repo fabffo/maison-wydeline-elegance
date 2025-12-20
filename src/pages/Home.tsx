@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Sparkles, Heart, Shield } from "lucide-react";
+import { useCanonicalUrl } from "@/components/SEORedirect";
 import heroImage from "@/assets/hero-main.jpg";
 import saoJoaoMadeira from "@/assets/sao-joao-madeira.jpg";
 import nosValeurs from "@/assets/nos-valeurs.png";
@@ -36,6 +37,9 @@ const Home = () => {
     BEST: [],
   });
   const [loading, setLoading] = useState(true);
+
+  // SEO: Canonical URL
+  useCanonicalUrl('/');
 
   useEffect(() => {
     fetchFeaturedProducts();
@@ -398,7 +402,7 @@ const Home = () => {
                 <p className="mb-4">
                   Trouver de belles{" "}
                   <Link 
-                    to="/collection" 
+                    to="/chaussures-femme-grande-taille" 
                     className="text-primary hover:text-primary/80 underline underline-offset-2 transition-colors"
                   >
                     chaussures femme grande taille
@@ -410,7 +414,7 @@ const Home = () => {
                 <p className="mb-4">
                   Nos{" "}
                   <Link 
-                    to="/collection?category=Bottines" 
+                    to="/bottines-grande-taille-femme" 
                     className="text-primary hover:text-primary/80 underline underline-offset-2 transition-colors"
                   >
                     bottines grande taille femme
@@ -418,7 +422,7 @@ const Home = () => {
                   s'adressent à celles qui recherchent style et confort au quotidien. Pour les journées fraîches, 
                   découvrez également nos{" "}
                   <Link 
-                    to="/collection?category=Bottes" 
+                    to="/bottes-plates-grande-taille" 
                     className="text-primary hover:text-primary/80 underline underline-offset-2 transition-colors"
                   >
                     bottes plates grande taille
@@ -441,14 +445,14 @@ const Home = () => {
                 <p className="mb-4">
                   Contrairement aux modèles simplement "agrandis", nos{" "}
                   <Link 
-                    to="/collection?category=Plates" 
+                    to="/chaussures-plates-grande-taille" 
                     className="text-primary hover:text-primary/80 underline underline-offset-2 transition-colors"
                   >
                     chaussures plates grande taille
                   </Link>{" "}
                   et{" "}
                   <Link 
-                    to="/collection?category=Slingback" 
+                    to="/escarpins-grande-pointure" 
                     className="text-primary hover:text-primary/80 underline underline-offset-2 transition-colors"
                   >
                     escarpins grande pointure

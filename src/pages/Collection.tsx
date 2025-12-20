@@ -1,10 +1,11 @@
-import { useState, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useState, useMemo, useEffect } from 'react';
+import { useSearchParams, Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useProducts } from '@/hooks/useProducts';
 import { ProductCard } from '@/components/ProductCard';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useCanonicalUrl, useSEORedirect } from '@/components/SEORedirect';
 import {
   Pagination,
   PaginationContent,
@@ -20,6 +21,10 @@ const Collection = () => {
   const { t } = useLanguage();
   const { products, loading } = useProducts();
   const [searchParams, setSearchParams] = useSearchParams();
+  
+  // SEO: Redirect anciennes URLs et canonical
+  useSEORedirect();
+  useCanonicalUrl('/collection');
   
   const selectedCategory = searchParams.get('category') || 'all';
   const selectedColor = searchParams.get('color') || 'all';
@@ -217,6 +222,37 @@ const Collection = () => {
             </PaginationContent>
           </Pagination>
         )}
+
+        {/* Liens internes SEO */}
+        <div className="mt-16 pt-8 border-t border-border">
+          <h2 className="text-lg font-medium mb-4">Parcourir par catégorie</h2>
+          <div className="flex flex-wrap gap-4">
+            <Link 
+              to="/bottines-grande-taille-femme" 
+              className="text-sm text-muted-foreground hover:text-primary transition-colors underline underline-offset-2"
+            >
+              Bottines grande taille femme
+            </Link>
+            <Link 
+              to="/bottes-plates-grande-taille" 
+              className="text-sm text-muted-foreground hover:text-primary transition-colors underline underline-offset-2"
+            >
+              Bottes plates grande taille
+            </Link>
+            <Link 
+              to="/chaussures-plates-grande-taille" 
+              className="text-sm text-muted-foreground hover:text-primary transition-colors underline underline-offset-2"
+            >
+              Chaussures plates grande taille
+            </Link>
+            <Link 
+              to="/escarpins-grande-pointure" 
+              className="text-sm text-muted-foreground hover:text-primary transition-colors underline underline-offset-2"
+            >
+              Escarpins grande pointure
+            </Link>
+          </div>
+        </div>
       </div>
     </main>
   );
