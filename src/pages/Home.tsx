@@ -385,7 +385,7 @@ const Home = () => {
         </section>
       )}
 
-      {/* SEO Content Section - Collapsible/Minimal */}
+      {/* SEO Content Section - Maillage interne optimisé */}
       <section className="py-16 md:py-24 bg-background border-t border-border">
         <div className="container mx-auto px-6 max-w-4xl">
           <div className="prose prose-lg max-w-none text-muted-foreground">
@@ -396,23 +396,64 @@ const Home = () => {
             <div className="grid md:grid-cols-2 gap-8 text-sm leading-relaxed">
               <div>
                 <p className="mb-4">
-                  Trouver de belles chaussures élégantes quand on chausse du 41 au 45 reste un véritable défi. Chez{" "}
-                  <strong className="text-foreground">Maison Wydeline</strong>, nous créons des chaussures grandes
-                  tailles pour femmes, pensées pour sublimer toutes les silhouettes.
+                  Trouver de belles{" "}
+                  <Link 
+                    to="/collection" 
+                    className="text-primary hover:text-primary/80 underline underline-offset-2 transition-colors"
+                  >
+                    chaussures femme grande taille
+                  </Link>{" "}
+                  élégantes quand on chausse du 41 au 45 reste un véritable défi. Chez{" "}
+                  <strong className="text-foreground">Maison Wydeline</strong>, nous créons des chaussures pensées 
+                  pour sublimer toutes les silhouettes.
                 </p>
-                <p>
-                  Nos modèles s'adressent aux femmes qui recherchent des chaussures élégantes grande taille, adaptées au
-                  quotidien comme aux occasions spéciales.
+                <p className="mb-4">
+                  Nos{" "}
+                  <Link 
+                    to="/collection?category=Bottines" 
+                    className="text-primary hover:text-primary/80 underline underline-offset-2 transition-colors"
+                  >
+                    bottines grande taille femme
+                  </Link>{" "}
+                  s'adressent à celles qui recherchent style et confort au quotidien. Pour les journées fraîches, 
+                  découvrez également nos{" "}
+                  <Link 
+                    to="/collection?category=Bottes" 
+                    className="text-primary hover:text-primary/80 underline underline-offset-2 transition-colors"
+                  >
+                    bottes plates grande taille
+                  </Link>, 
+                  parfaites pour un look chic et décontracté.
                 </p>
               </div>
               <div>
                 <p className="mb-4">
-                  Toutes nos chaussures sont <strong className="text-foreground">fabriquées au Portugal</strong>, pays
-                  reconnu pour son excellence artisanale dans la chaussure haut de gamme.
+                  Toutes nos chaussures sont{" "}
+                  <Link 
+                    to="/la-marque" 
+                    className="text-primary hover:text-primary/80 underline underline-offset-2 transition-colors"
+                  >
+                    fabriquées au Portugal
+                  </Link>, 
+                  pays reconnu pour son excellence artisanale dans la chaussure haut de gamme. 
+                  Notre atelier de São João da Madeira perpétue un savoir-faire séculaire.
                 </p>
-                <p>
-                  Contrairement aux modèles simplement "agrandis", nos chaussures sont conçues dès le départ pour les
-                  grandes pointures : cambrure, largeur, stabilité du talon, maintien du pied.
+                <p className="mb-4">
+                  Contrairement aux modèles simplement "agrandis", nos{" "}
+                  <Link 
+                    to="/collection?category=Plates" 
+                    className="text-primary hover:text-primary/80 underline underline-offset-2 transition-colors"
+                  >
+                    chaussures plates grande taille
+                  </Link>{" "}
+                  et{" "}
+                  <Link 
+                    to="/collection?category=Slingback" 
+                    className="text-primary hover:text-primary/80 underline underline-offset-2 transition-colors"
+                  >
+                    escarpins grande pointure
+                  </Link>{" "}
+                  sont conçus dès le départ pour les grandes pointures : cambrure, largeur, stabilité du talon.
                 </p>
               </div>
             </div>
