@@ -154,7 +154,7 @@ const Home = () => {
       <section className="bg-primary text-primary-foreground py-4">
         <div className="container mx-auto px-6 text-center">
           <p className="text-sm tracking-wide">
-            <span className="font-medium">Livraison offerte</span> en France métropolitaine • Retours gratuits sous 30 jours
+            <span className="font-medium">Livraison offerte</span> dès 200€ d'achat en France métropolitaine • Retours gratuits sous 30 jours
           </p>
         </div>
       </section>
