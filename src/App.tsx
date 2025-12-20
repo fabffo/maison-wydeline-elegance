@@ -11,6 +11,7 @@ import { COMING_SOON_MODE } from "@/config/siteConfig";
 import Home from "./pages/Home";
 import ComingSoon from "./pages/ComingSoon";
 import Collection from "./pages/Collection";
+import CategoryPage from "./pages/CategoryPage";
 import ProductDetail from "./pages/ProductDetail";
 import LaMarque from "./pages/LaMarque";
 import Contact from "./pages/Contact";
@@ -120,6 +121,12 @@ const App = () => {
                       <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/collection" element={<Collection />} />
+                        {/* Routes SEO-friendly pour les catégories */}
+                        <Route path="/bottines-grande-taille-femme" element={<CategoryPage slug="bottines-grande-taille-femme" />} />
+                        <Route path="/bottes-plates-grande-taille" element={<CategoryPage slug="bottes-plates-grande-taille" />} />
+                        <Route path="/chaussures-plates-grande-taille" element={<CategoryPage slug="chaussures-plates-grande-taille" />} />
+                        <Route path="/escarpins-grande-pointure" element={<CategoryPage slug="escarpins-grande-pointure" />} />
+                        <Route path="/chaussures-femme-grande-taille" element={<CategoryPage slug="chaussures-femme-grande-taille" />} />
                         <Route path="/produit/:slug" element={<ProductDetail />} />
                         <Route path="/la-marque" element={<LaMarque />} />
                         <Route path="/contact" element={<Contact />} />
