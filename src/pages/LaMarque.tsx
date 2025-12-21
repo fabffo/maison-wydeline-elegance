@@ -24,24 +24,24 @@ const LaMarque = () => {
               />
             </div>
             <div>
-              <h2 className="text-3xl font-medium mb-6">QUI SOMMES NOUS</h2>
+              <h2 className="text-3xl font-medium mb-6">{t.brand.whoWeAre}</h2>
               <p className="text-lg text-muted-foreground leading-relaxed mb-4 italic">
-                À nos chères clientes,
+                {t.brand.whoWeAreDear}
               </p>
               <p className="text-lg text-muted-foreground leading-relaxed mb-4">
-                «Se chausser sans compromis — sans se demander si sa taille existera dans le modèle de ses rêves — c'est ce qui a poussé Wydeline à créer, avec son équipe, une marque dédiée aux femmes chaussant du 41 au 45.
+                {t.brand.whoWeAreP1}
               </p>
               <p className="text-lg text-muted-foreground leading-relaxed mb-4">
-                Maison Wydeline est née de cette volonté : offrir à toutes des chaussures élégantes, confortables et durables, conçues avec soin et pensées pour sublimer chaque silhouette.
+                {t.brand.whoWeAreP2}
               </p>
               <p className="text-lg text-muted-foreground leading-relaxed mb-4">
-                Maison Wydeline, c'est avant tout une histoire de confiance — celle que l'on accorde à une marque, mais surtout celle que l'on cultive envers soi-même.
+                {t.brand.whoWeAreP3}
               </p>
               <p className="text-lg text-muted-foreground leading-relaxed mb-4">
-                C'est aussi une question de place : la vôtre.
+                {t.brand.whoWeAreP4}
               </p>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                Parce que vous comptez, parce que vous méritez de trouver votre style, votre confort et votre taille sans concession, nous pensons à vous chaque jour.
+                {t.brand.whoWeAreP5}
               </p>
             </div>
           </section>
@@ -54,21 +54,21 @@ const LaMarque = () => {
               className="w-full h-auto object-cover rounded-2xl"
             />
             <div>
-              <h2 className="text-3xl font-medium mb-6">MAISON ENGAGÉE</h2>
+              <h2 className="text-3xl font-medium mb-6">{t.brand.engaged}</h2>
               <p className="text-lg text-muted-foreground leading-relaxed mb-4">
-                Chez Maison Wydeline, l'élégance rime avec responsabilité.
+                {t.brand.engagedP1}
               </p>
               <p className="text-lg text-muted-foreground leading-relaxed mb-4">
-                Nous nous engageons à faire, avec nos moyens et notre taille, le meilleur pour nos clientes et pour notre environnement.
+                {t.brand.engagedP2}
               </p>
               <p className="text-lg text-muted-foreground leading-relaxed mb-4">
-                Nos chaussures, nos étuis et nos boîtes sont fabriqués en Europe, dans des ateliers que nous avons personnellement visités.
+                {t.brand.engagedP3}
               </p>
               <p className="text-lg text-muted-foreground leading-relaxed mb-4">
-                Chaque détail de nos colis est pensé pour limiter notre empreinte écologique : aucun plastique inutile, des matériaux durables, et une production raisonnée.
+                {t.brand.engagedP4}
               </p>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                Nous savons que le chemin du progrès est continu. Notre promesse : avancer, évoluer et toujours faire mieux.
+                {t.brand.engagedP5}
               </p>
             </div>
           </section>
@@ -83,7 +83,7 @@ const LaMarque = () => {
               />
             </div>
             <div>
-              <h2 className="text-3xl font-medium mb-6">NOS VALEURS</h2>
+              <h2 className="text-3xl font-medium mb-6">{t.brand.ourValues}</h2>
               <p className="text-lg text-muted-foreground leading-relaxed mb-4">
                 <span className="font-medium text-foreground">{t.values.excellence.title}</span> — {t.values.excellence.text}
               </p>
