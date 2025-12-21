@@ -169,7 +169,7 @@ export const translations = {
     },
     pillar: {
       breadcrumbHome: 'Accueil',
-      breadcrumbCurrent: 'Women\'s large size shoes',
+      breadcrumbCurrent: 'Chaussures femme grande taille',
       h1: 'Chaussures femme grande taille : élégance et confort du 41 au 45',
       intro1: 'Trouver de belles chaussures femme grande taille lorsqu\'on chausse du 41 au 45 est souvent un véritable parcours du combattant. Modèles peu élégants, confort approximatif, choix limité…',
       intro2: 'Chez Maison Wydeline, nous avons fait le choix inverse : concevoir des chaussures pensées dès l\'origine pour les grandes pointures, sans compromis entre style, maintien et confort.',
