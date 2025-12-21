@@ -451,6 +451,56 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Social Media Section */}
+      <section className="py-16 md:py-20 bg-luxury-cream">
+        <div className="container mx-auto px-6 text-center">
+          <h2 className="text-2xl md:text-3xl font-light mb-4">{t.home.socialTitle}</h2>
+          <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
+            {t.home.socialText}
+          </p>
+          <div className="flex items-center justify-center gap-6">
+            <a
+              href="https://www.instagram.com/maisonwydeline"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Suivre Maison Wydeline sur Instagram"
+              className="w-12 h-12 flex items-center justify-center rounded-full bg-background text-luxury-dark hover:bg-luxury-dark hover:text-white transition-all duration-300"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="w-5 h-5"
+              >
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+              </svg>
+            </a>
+            <a
+              href="https://www.tiktok.com/@maisonwydeline"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Suivre Maison Wydeline sur TikTok"
+              className="w-12 h-12 flex items-center justify-center rounded-full bg-background text-luxury-dark hover:bg-luxury-dark hover:text-white transition-all duration-300"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="w-5 h-5"
+              >
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Banner */}
       <section className="relative py-20 md:py-32 bg-primary text-primary-foreground">
         <div className="container mx-auto px-6 text-center">
