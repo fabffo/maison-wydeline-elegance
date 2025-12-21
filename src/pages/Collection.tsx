@@ -245,12 +245,6 @@ const Collection = () => {
             >
               Chaussures plates grande taille
             </Link>
-            <Link 
-              to="/escarpins-grande-pointure" 
-              className="text-sm text-muted-foreground hover:text-primary transition-colors underline underline-offset-2"
-            >
-              Escarpins grande pointure
-            </Link>
           </div>
         </div>
       </div>

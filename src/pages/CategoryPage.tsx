@@ -31,19 +31,12 @@ export const CATEGORY_SEO_CONFIG: Record<string, {
     h1: 'Chaussures plates grande taille',
     content: 'Découvrez notre collection de chaussures plates grande taille, idéales pour les femmes actives qui ne veulent pas sacrifier le style au confort. Du 41 au 45, nos modèles sont fabriqués au Portugal avec des matériaux nobles et une attention particulière portée à l\'ergonomie des grandes pointures.',
   },
-  'escarpins-grande-pointure': {
-    category: 'Slingback',
-    title: 'Escarpins grande pointure femme 41 à 45 | Maison Wydeline',
-    description: 'Escarpins et slingbacks grande pointure pour femmes du 41 au 45. Élégance et raffinement, fabrication artisanale portugaise.',
-    h1: 'Escarpins grande pointure',
-    content: 'Nos escarpins et slingbacks grande pointure sont conçus pour les femmes qui recherchent l\'élégance sans compromis. Du 41 au 45, chaque modèle est fabriqué au Portugal avec des cuirs d\'exception. Talon stable, cambrure adaptée : nous avons pensé à tout pour sublimer les grandes pointures.',
-  },
   'chaussures-femme-grande-taille': {
     category: 'all',
     title: 'Chaussures femme grande taille 41 à 45 | Maison Wydeline',
-    description: 'Collection complète de chaussures femme grande taille du 41 au 45. Bottines, bottes, escarpins fabriqués au Portugal.',
+    description: 'Collection complète de chaussures femme grande taille du 41 au 45. Bottines, bottes et chaussures plates fabriquées au Portugal.',
     h1: 'Chaussures femme grande taille',
-    content: 'Bienvenue dans notre collection de chaussures femme grande taille. Du 41 au 45, découvrez nos bottines, bottes, chaussures plates et escarpins fabriqués artisanalement au Portugal. Chaque modèle est conçu spécifiquement pour les grandes pointures, avec une attention particulière portée au confort et à l\'élégance.',
+    content: 'Bienvenue dans notre collection de chaussures femme grande taille. Du 41 au 45, découvrez nos bottines, bottes et chaussures plates fabriquées artisanalement au Portugal. Chaque modèle est conçu spécifiquement pour les grandes pointures, avec une attention particulière portée au confort et à l\'élégance.',
   },
 };
 
@@ -311,12 +304,6 @@ const CollectionContent = ({ category }: { category: string }) => {
             className="text-sm text-muted-foreground hover:text-primary transition-colors underline underline-offset-2"
           >
             Chaussures plates grande taille
-          </Link>
-          <Link 
-            to="/escarpins-grande-pointure" 
-            className="text-sm text-muted-foreground hover:text-primary transition-colors underline underline-offset-2"
-          >
-            Escarpins grande pointure
           </Link>
         </div>
       </div>

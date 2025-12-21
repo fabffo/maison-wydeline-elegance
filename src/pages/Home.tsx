@@ -450,14 +450,7 @@ const Home = () => {
                   >
                     chaussures plates grande taille
                   </Link>{" "}
-                  et{" "}
-                  <Link 
-                    to="/escarpins-grande-pointure" 
-                    className="text-primary hover:text-primary/80 underline underline-offset-2 transition-colors"
-                  >
-                    escarpins grande pointure
-                  </Link>{" "}
-                  sont conçus dès le départ pour les grandes pointures : cambrure, largeur, stabilité du talon.
+                  sont conçues dès le départ pour les grandes pointures : cambrure, largeur et stabilité.
                 </p>
               </div>
             </div>
