@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useProducts } from '@/hooks/useProducts';
 import { ProductCard } from '@/components/ProductCard';
 import { ChevronRight } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 /**
  * Page pilier SEO pour "chaussures femme grande taille"
@@ -11,16 +12,21 @@ import { ChevronRight } from 'lucide-react';
  */
 const PillarPage = () => {
   const { products, loading } = useProducts();
+  const { t, language } = useLanguage();
 
   // Meta SEO dynamiques
   useEffect(() => {
-    document.title = 'Chaussures femme grande taille du 41 au 45 | Maison Wydeline';
+    document.title = language === 'fr' 
+      ? 'Chaussures femme grande taille du 41 au 45 | Maison Wydeline'
+      : 'Women\'s Large Size Shoes 41 to 45 | Maison Wydeline';
     
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       metaDescription.setAttribute(
         'content',
-        'Découvrez notre collection de chaussures femme grande taille du 41 au 45. Bottines, bottes et chaussures plates fabriquées artisanalement au Portugal. Élégance et confort pour les grandes pointures.'
+        language === 'fr'
+          ? 'Découvrez notre collection de chaussures femme grande taille du 41 au 45. Bottines, bottes et chaussures plates fabriquées artisanalement au Portugal. Élégance et confort pour les grandes pointures.'
+          : 'Discover our collection of women\'s large size shoes from 41 to 45. Ankle boots, boots and flat shoes handcrafted in Portugal. Elegance and comfort for larger sizes.'
       );
     }
     
@@ -38,7 +44,7 @@ const PillarPage = () => {
     if (robotsMeta) {
       robotsMeta.remove();
     }
-  }, []);
+  }, [language]);
 
   // Sélection de produits pour affichage
   const featuredProducts = products.slice(0, 6);
@@ -51,51 +57,42 @@ const PillarPage = () => {
         <nav className="mb-8 text-sm" aria-label="Breadcrumb">
           <ol className="flex items-center gap-2 text-muted-foreground">
             <li>
-              <Link to="/" className="hover:text-primary transition-colors">Accueil</Link>
+              <Link to="/" className="hover:text-primary transition-colors">{t.pillar.breadcrumbHome}</Link>
             </li>
             <ChevronRight className="h-3 w-3" />
-            <li className="text-foreground font-medium">Chaussures femme grande taille</li>
+            <li className="text-foreground font-medium">{t.pillar.breadcrumbCurrent}</li>
           </ol>
         </nav>
 
         {/* H1 SEO optimisé */}
         <h1 className="text-4xl md:text-5xl font-medium text-center mb-8">
-          Chaussures femme grande taille : élégance et confort du 41 au 45
+          {t.pillar.h1}
         </h1>
 
         {/* Introduction */}
         <div className="max-w-4xl mx-auto mb-16">
           <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-            Trouver de belles <strong className="text-foreground">chaussures femme grande taille</strong> lorsqu'on 
-            chausse du 41 au 45 est souvent un véritable parcours du combattant. Modèles peu élégants, confort 
-            approximatif, choix limité…
+            {t.pillar.intro1}
           </p>
           <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-            Chez <strong className="text-foreground">Maison Wydeline</strong>, nous avons fait le choix inverse : 
-            concevoir des chaussures pensées dès l'origine pour les grandes pointures, sans compromis entre style, 
-            maintien et confort.
+            {t.pillar.intro2}
           </p>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            Notre collection de <strong className="text-foreground">chaussures femme grande pointure</strong> s'adresse 
-            aux femmes exigeantes, à la recherche de modèles raffinés, durables et parfaitement adaptés à leur morphologie.
+            {t.pillar.intro3}
           </p>
         </div>
 
         {/* Section: Pourquoi choisir */}
         <section className="mb-16">
           <h2 className="text-2xl md:text-3xl font-medium mb-6">
-            Pourquoi choisir des chaussures femme grande taille adaptées ?
+            {t.pillar.whyChooseTitle}
           </h2>
           <div className="max-w-4xl">
             <p className="text-muted-foreground leading-relaxed mb-4">
-              Les <strong className="text-foreground">chaussures grande taille</strong> ne peuvent pas être de simples 
-              modèles agrandis. Lorsqu'on chausse du 41 au 45, le pied nécessite une cambrure adaptée, une largeur 
-              maîtrisée et un équilibre optimal.
+              {t.pillar.whyChoose1}
             </p>
             <p className="text-muted-foreground leading-relaxed">
-              Nos <strong className="text-foreground">chaussures femme grande taille</strong> sont conçues avec ces 
-              contraintes dès la phase de design. Chaque modèle bénéficie d'une attention particulière portée aux 
-              proportions, garantissant ainsi un maintien parfait et un confort durable.
+              {t.pillar.whyChoose2}
             </p>
           </div>
         </section>
@@ -103,7 +100,7 @@ const PillarPage = () => {
         {/* Section: Collection complète avec liens internes */}
         <section className="mb-16 bg-luxury-cream rounded-xl p-8 md:p-12">
           <h2 className="text-2xl md:text-3xl font-medium mb-8 text-center">
-            Une collection complète de chaussures femme grande pointure
+            {t.pillar.collectionTitle}
           </h2>
           
           <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
@@ -112,10 +109,10 @@ const PillarPage = () => {
               className="group bg-background rounded-lg p-6 text-center hover:shadow-lg transition-shadow"
             >
               <h3 className="text-xl font-medium mb-2 group-hover:text-primary transition-colors">
-                Bottines grande taille femme
+                {t.pillar.ankleBoots}
               </h3>
               <p className="text-sm text-muted-foreground">
-                Élégance et caractère pour toutes les occasions
+                {t.pillar.ankleBootsDesc}
               </p>
             </Link>
             
@@ -124,10 +121,10 @@ const PillarPage = () => {
               className="group bg-background rounded-lg p-6 text-center hover:shadow-lg transition-shadow"
             >
               <h3 className="text-xl font-medium mb-2 group-hover:text-primary transition-colors">
-                Bottes plates grande taille
+                {t.pillar.flatBoots}
               </h3>
               <p className="text-sm text-muted-foreground">
-                Confort absolu et style intemporel
+                {t.pillar.flatBootsDesc}
               </p>
             </Link>
             
@@ -136,16 +133,16 @@ const PillarPage = () => {
               className="group bg-background rounded-lg p-6 text-center hover:shadow-lg transition-shadow"
             >
               <h3 className="text-xl font-medium mb-2 group-hover:text-primary transition-colors">
-                Chaussures plates grande taille
+                {t.pillar.flatShoes}
               </h3>
               <p className="text-sm text-muted-foreground">
-                La polyvalence au quotidien
+                {t.pillar.flatShoesDesc}
               </p>
             </Link>
           </div>
           
           <p className="text-center text-muted-foreground mt-8">
-            Chaque modèle est disponible du 41 au 45, avec une attention particulière portée aux proportions et au confort.
+            {t.pillar.collectionNote}
           </p>
         </section>
 
@@ -153,7 +150,7 @@ const PillarPage = () => {
         {!loading && featuredProducts.length > 0 && (
           <section className="mb-16">
             <h2 className="text-2xl md:text-3xl font-medium mb-8 text-center">
-              Découvrez nos modèles
+              {t.pillar.discoverModels}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {featuredProducts.map((product) => (
@@ -165,7 +162,7 @@ const PillarPage = () => {
                 to="/collection"
                 className="inline-flex items-center gap-2 text-primary hover:underline underline-offset-4"
               >
-                Voir toute la collection <ChevronRight className="h-4 w-4" />
+                {t.pillar.seeCollection} <ChevronRight className="h-4 w-4" />
               </Link>
             </div>
           </section>
@@ -174,17 +171,14 @@ const PillarPage = () => {
         {/* Section: Confort, style et stabilité */}
         <section className="mb-16">
           <h2 className="text-2xl md:text-3xl font-medium mb-6">
-            Chaussures femme grande taille : confort, style et stabilité
+            {t.pillar.comfortTitle}
           </h2>
           <div className="max-w-4xl">
             <p className="text-muted-foreground leading-relaxed mb-4">
-              Nos chaussures offrent maintien, stabilité et confort longue durée, tout en restant féminines et élégantes. 
-              Que vous cherchiez des bottines pour le bureau, des bottes pour vos sorties ou des chaussures plates pour 
-              le quotidien, chaque modèle répond aux exigences des femmes qui chaussent grand.
+              {t.pillar.comfort1}
             </p>
             <p className="text-muted-foreground leading-relaxed">
-              Les semelles intérieures sont conçues pour épouser la forme du pied, tandis que les matériaux souples 
-              s'adaptent naturellement à votre morphologie. Le résultat : un confort immédiat, dès le premier port.
+              {t.pillar.comfort2}
             </p>
           </div>
         </section>
@@ -192,22 +186,20 @@ const PillarPage = () => {
         {/* Section: Fabrication portugaise */}
         <section className="mb-16 bg-background border border-border rounded-xl p-8 md:p-12">
           <h2 className="text-2xl md:text-3xl font-medium mb-6">
-            Fabrication portugaise &amp; savoir-faire artisanal
+            {t.pillar.craftTitle}
           </h2>
           <div className="max-w-4xl">
             <p className="text-muted-foreground leading-relaxed mb-4">
-              Toutes nos chaussures sont fabriquées au Portugal, dans la région de <strong className="text-foreground">São João da Madeira</strong>, 
-              reconnue mondialement pour son expertise dans la chaussure de qualité.
+              {t.pillar.craft1}
             </p>
             <p className="text-muted-foreground leading-relaxed mb-4">
-              Nous travaillons avec des ateliers familiaux qui perpétuent un savoir-faire transmis de génération en génération. 
-              Cuirs premium, finitions haut de gamme et contrôle qualité rigoureux garantissent des chaussures durables et élégantes.
+              {t.pillar.craft2}
             </p>
             <Link 
               to="/la-marque"
               className="inline-flex items-center gap-2 text-primary hover:underline underline-offset-4"
             >
-              Découvrir notre histoire <ChevronRight className="h-4 w-4" />
+              {t.pillar.discoverStory} <ChevronRight className="h-4 w-4" />
             </Link>
           </div>
         </section>
@@ -215,25 +207,25 @@ const PillarPage = () => {
         {/* Section: Comment bien choisir */}
         <section className="mb-16">
           <h2 className="text-2xl md:text-3xl font-medium mb-6">
-            Comment bien choisir ses chaussures femme grande taille ?
+            {t.pillar.howToChooseTitle}
           </h2>
           <div className="max-w-4xl">
             <ul className="space-y-4 text-muted-foreground">
               <li className="flex items-start gap-3">
                 <span className="text-primary font-bold">•</span>
-                <span><strong className="text-foreground">Modèles conçus spécifiquement</strong> pour grandes pointures (pas de simples agrandissements)</span>
+                <span><strong className="text-foreground">{t.pillar.tip1Title}</strong> {t.pillar.tip1}</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary font-bold">•</span>
-                <span><strong className="text-foreground">Largeur et stabilité</strong> adaptées à la morphologie du pied</span>
+                <span><strong className="text-foreground">{t.pillar.tip2Title}</strong> {t.pillar.tip2}</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary font-bold">•</span>
-                <span><strong className="text-foreground">Matériaux souples et durables</strong> qui s'adaptent au pied</span>
+                <span><strong className="text-foreground">{t.pillar.tip3Title}</strong> {t.pillar.tip3}</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary font-bold">•</span>
-                <span><strong className="text-foreground">Usage quotidien ou occasionnel</strong> : choisissez selon vos besoins</span>
+                <span><strong className="text-foreground">{t.pillar.tip4Title}</strong>{t.pillar.tip4}</span>
               </li>
             </ul>
           </div>
@@ -242,48 +234,42 @@ const PillarPage = () => {
         {/* FAQ Section */}
         <section className="mb-16 bg-luxury-cream rounded-xl p-8 md:p-12">
           <h2 className="text-2xl md:text-3xl font-medium mb-8">
-            Questions fréquentes
+            {t.pillar.faqTitle}
           </h2>
           <div className="max-w-4xl space-y-6">
             <div>
               <h3 className="font-medium text-lg mb-2">
-                À partir de quelle pointure parle-t-on de grande taille ?
+                {t.pillar.faq1Q}
               </h3>
               <p className="text-muted-foreground">
-                On considère généralement qu'une chaussure femme est en grande taille à partir du 41. 
-                Chez Maison Wydeline, nous proposons des modèles du 41 au 45.
+                {t.pillar.faq1A}
               </p>
             </div>
             
             <div>
               <h3 className="font-medium text-lg mb-2">
-                Les chaussures grande taille sont-elles plus larges ?
+                {t.pillar.faq2Q}
               </h3>
               <p className="text-muted-foreground">
-                Oui, nos chaussures grande taille intègrent une largeur et une cambrure spécifiquement 
-                adaptées aux grandes pointures, pour un maintien et un confort optimaux.
+                {t.pillar.faq2A}
               </p>
             </div>
             
             <div>
               <h3 className="font-medium text-lg mb-2">
-                Où trouver des chaussures femme grande taille élégantes ?
+                {t.pillar.faq3Q}
               </h3>
               <p className="text-muted-foreground">
-                Chez <strong className="text-foreground">Maison Wydeline</strong>, nous proposons une collection 
-                dédiée aux femmes qui chaussent du 41 au 45 : bottines, bottes et chaussures plates, 
-                toutes fabriquées artisanalement au Portugal.
+                {t.pillar.faq3A}
               </p>
             </div>
             
             <div>
               <h3 className="font-medium text-lg mb-2">
-                Sont-elles adaptées à un usage quotidien ?
+                {t.pillar.faq4Q}
               </h3>
               <p className="text-muted-foreground">
-                Absolument. Nos chaussures sont conçues pour offrir un confort durable, que ce soit pour 
-                une journée au bureau ou une sortie en ville. Les matériaux premium et les finitions 
-                soignées garantissent une longévité exceptionnelle.
+                {t.pillar.faq4A}
               </p>
             </div>
           </div>
@@ -291,31 +277,31 @@ const PillarPage = () => {
 
         {/* Bloc maillage interne final */}
         <section className="pt-8 border-t border-border">
-          <h2 className="text-lg font-medium mb-4">Parcourir nos collections</h2>
+          <h2 className="text-lg font-medium mb-4">{t.pillar.browseCollections}</h2>
           <div className="flex flex-wrap gap-4">
             <Link 
               to="/bottines-grande-taille-femme" 
               className="text-sm text-muted-foreground hover:text-primary transition-colors underline underline-offset-2"
             >
-              Bottines grande taille femme
+              {t.pillar.ankleBoots}
             </Link>
             <Link 
               to="/bottes-plates-grande-taille" 
               className="text-sm text-muted-foreground hover:text-primary transition-colors underline underline-offset-2"
             >
-              Bottes plates grande taille
+              {t.pillar.flatBoots}
             </Link>
             <Link 
               to="/chaussures-plates-grande-taille" 
               className="text-sm text-muted-foreground hover:text-primary transition-colors underline underline-offset-2"
             >
-              Chaussures plates grande taille
+              {t.pillar.flatShoes}
             </Link>
             <Link 
               to="/" 
               className="text-sm text-muted-foreground hover:text-primary transition-colors underline underline-offset-2"
             >
-              Accueil
+              {t.pillar.breadcrumbHome}
             </Link>
           </div>
         </section>
