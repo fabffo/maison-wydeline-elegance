@@ -125,7 +125,6 @@ const App = () => {
                         <Route path="/bottines-grande-taille-femme" element={<CategoryPage slug="bottines-grande-taille-femme" />} />
                         <Route path="/bottes-plates-grande-taille" element={<CategoryPage slug="bottes-plates-grande-taille" />} />
                         <Route path="/chaussures-plates-grande-taille" element={<CategoryPage slug="chaussures-plates-grande-taille" />} />
-                        <Route path="/escarpins-grande-pointure" element={<CategoryPage slug="escarpins-grande-pointure" />} />
                         <Route path="/chaussures-femme-grande-taille" element={<CategoryPage slug="chaussures-femme-grande-taille" />} />
                         <Route path="/produit/:slug" element={<ProductDetail />} />
                         <Route path="/la-marque" element={<LaMarque />} />
