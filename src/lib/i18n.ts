@@ -49,6 +49,8 @@ export const translations = {
       engagedP4: 'Chaque détail de nos colis est pensé pour limiter notre empreinte écologique : aucun plastique inutile, des matériaux durables, et une production raisonnée.',
       engagedP5: 'Nous savons que le chemin du progrès est continu. Notre promesse : avancer, évoluer et toujours faire mieux.',
       ourValues: 'NOS VALEURS',
+      socialTitle: 'Retrouvez Maison Wydeline sur Instagram et TikTok',
+      socialText: 'Découvrez nos collections, notre savoir-faire au Portugal et les femmes qui portent nos chaussures.',
     },
     contact: {
       title: 'Contact',
@@ -107,6 +109,7 @@ export const translations = {
       returnsText: 'Sous 30 jours si vous changez d\'avis',
       payment: 'Paiement sécurisé',
       paymentText: 'Transactions protégées par cryptage SSL',
+      followUs: 'Suivez Maison Wydeline',
     },
     home: {
       h1: 'Maison Wydeline – Chaussures du 41 au 45 fabriquées au Portugal',
@@ -161,6 +164,8 @@ export const translations = {
       ctaTitle: 'Prête à découvrir votre paire idéale ?',
       ctaText: 'Explorez notre collection de chaussures élégantes du 41 au 45.',
       ctaButton: 'Explorer la collection',
+      socialTitle: 'Suivez Maison Wydeline',
+      socialText: 'Coulisses de fabrication, nouvelles collections et inspirations au quotidien.',
     },
     pillar: {
       breadcrumbHome: 'Accueil',
@@ -278,6 +283,8 @@ export const translations = {
       engagedP4: 'Every detail of our packages is designed to limit our ecological footprint: no unnecessary plastic, durable materials, and reasoned production.',
       engagedP5: 'We know that the path of progress is continuous. Our promise: to move forward, evolve and always do better.',
       ourValues: 'OUR VALUES',
+      socialTitle: 'Find Maison Wydeline on Instagram and TikTok',
+      socialText: 'Discover our collections, our Portuguese craftsmanship and the women who wear our shoes.',
     },
     contact: {
       title: 'Contact',
@@ -336,6 +343,7 @@ export const translations = {
       returnsText: 'Within 30 days if you change your mind',
       payment: 'Secure payment',
       paymentText: 'Transactions protected by SSL encryption',
+      followUs: 'Follow Maison Wydeline',
     },
     home: {
       h1: 'Maison Wydeline – Shoes from size 41 to 45 made in Portugal',
@@ -390,6 +398,8 @@ export const translations = {
       ctaTitle: 'Ready to discover your ideal pair?',
       ctaText: 'Explore our collection of elegant shoes from size 41 to 45.',
       ctaButton: 'Explore the collection',
+      socialTitle: 'Follow Maison Wydeline',
+      socialText: 'Behind-the-scenes production, new collections and daily inspiration.',
     },
     pillar: {
       breadcrumbHome: 'Home',
