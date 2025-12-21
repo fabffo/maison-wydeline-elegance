@@ -1,6 +1,6 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 import quiSommesNousImg from '@/assets/qui-sommes-nous.png';
-import maisonEngageeImg from '@/assets/maison-engagee.jpg';
+import bottinesBordeauxImg from '@/assets/ankle-boots-bordeaux.jpg';
 import nosValeursImg from '@/assets/nos-valeurs.png';
 
 const LaMarque = () => {
@@ -49,7 +49,7 @@ const LaMarque = () => {
           {/* Maison engagée - Image gauche, texte droite */}
           <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
             <img
-              src={maisonEngageeImg}
+              src={bottinesBordeauxImg}
               alt="Bottines bordeaux Maison Wydeline"
               className="w-full h-auto object-cover rounded-2xl"
             />
