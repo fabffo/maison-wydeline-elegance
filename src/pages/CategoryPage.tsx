@@ -17,7 +17,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 const CATEGORY_MAPPING: Record<string, string> = {
   'bottines-grande-taille-femme': 'Bottines',
   'bottes-plates-grande-taille': 'Bottes',
-  'chaussures-plates-grande-taille': 'Plates',
+  'chaussures-plates-grande-taille': 'Plats',
 };
 
 interface CategoryPageProps {
