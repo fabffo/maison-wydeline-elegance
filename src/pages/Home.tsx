@@ -8,11 +8,9 @@ import { ArrowRight, Sparkles, Heart, Shield } from "lucide-react";
 import { useCanonicalUrl } from "@/components/SEORedirect";
 import heroImage from "@/assets/hero-main.jpg";
 import saoJoaoMadeira from "@/assets/sao-joao-madeira.jpg";
-import nosValeurs from "@/assets/nos-valeurs.png";
 
 // Import product images for category grid
 import bottinesNoires from "@/assets/ankle-boots-black.jpg";
-import bottinesBordeaux from "@/assets/ankle-boots-bordeaux.jpg";
 import bottesVertes from "@/assets/boots-green-suede.jpg";
 import platesNoires from "@/assets/flats-white.jpg";
 
@@ -110,9 +108,9 @@ const Home = () => {
 
   // Category cards for the grid
   const categories = [
-    { name: "Bottines", image: bottinesNoires, link: "/collection?category=bottines" },
-    { name: "Bottes", image: bottesVertes, link: "/collection?category=bottes" },
-    { name: "Plates", image: platesNoires, link: "/collection?category=plates" },
+    { name: t.home.categoryAnkleBoots, image: bottinesNoires, link: "/collection?category=bottines" },
+    { name: t.home.categoryBoots, image: bottesVertes, link: "/collection?category=bottes" },
+    { name: t.home.categoryFlats, image: platesNoires, link: "/collection?category=plates" },
   ];
 
   return (
@@ -133,24 +131,24 @@ const Home = () => {
           <div className="max-w-2xl">
             {/* Micro-accroche */}
             <p className="text-sm uppercase tracking-[0.3em] text-primary-foreground/80 mb-4 animate-fade-in">
-              Du 41 au 45 • Fabriquées au Portugal
+              {t.home.tagline}
             </p>
 
             {/* H1 Branding – éviter cannibalisation avec page pilier */}
-            <h1 className="sr-only">Maison Wydeline – Chaussures du 41 au 45 fabriquées au Portugal</h1>
+            <h1 className="sr-only">{t.home.h1}</h1>
 
             {/* Slogan visuel (branding) */}
             <h2 className="text-4xl md:text-6xl lg:text-7xl font-light text-primary-foreground mb-6 animate-fade-in leading-[1.1]">
-              L'élégance
+              {t.home.heroTitle1}
               <br />
-              <span className="font-medium">n'a pas de pointure</span>
+              <span className="font-medium">{t.home.heroTitle2}</span>
             </h2>
 
             <p
               className="text-lg md:text-xl text-primary-foreground/90 mb-8 animate-fade-in max-w-lg"
               style={{ animationDelay: "0.2s" }}
             >
-              Des chaussures raffinées pour les femmes qui chaussent grand.
+              {t.home.heroSubtitle}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in" style={{ animationDelay: "0.4s" }}>
@@ -159,7 +157,7 @@ const Home = () => {
                   size="lg"
                   className="group bg-primary-foreground text-primary hover:bg-primary-foreground/90 px-8"
                 >
-                  Découvrir la collection
+                  {t.home.discoverCollection}
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
@@ -172,8 +170,7 @@ const Home = () => {
       <section className="bg-primary text-primary-foreground py-4">
         <div className="container mx-auto px-6 text-center">
           <p className="text-sm tracking-wide">
-            <span className="font-medium">Livraison offerte</span> dès 200€ d'achat en France métropolitaine • Retours
-            gratuits sous 30 jours
+            <span className="font-medium">{t.home.announcement}</span> {t.home.announcementText}
           </p>
         </div>
       </section>
@@ -181,9 +178,9 @@ const Home = () => {
       {/* Category Grid - Allbirds Style */}
       <section className="py-16 md:py-24 bg-background">
         <div className="container mx-auto px-6">
-          <h2 className="text-3xl md:text-4xl font-light text-center mb-4">Nos Collections</h2>
+          <h2 className="text-3xl md:text-4xl font-light text-center mb-4">{t.home.collectionsTitle}</h2>
           <p className="text-muted-foreground text-center mb-12 max-w-xl mx-auto">
-            Chaque modèle est pensé dès le départ pour les grandes pointures
+            {t.home.collectionsSubtitle}
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 max-w-5xl mx-auto">
@@ -202,7 +199,7 @@ const Home = () => {
                 <div className="absolute bottom-0 left-0 right-0 p-6">
                   <h3 className="text-xl md:text-2xl font-medium text-primary-foreground mb-2">{category.name}</h3>
                   <span className="inline-flex items-center text-sm text-primary-foreground/90 group-hover:underline">
-                    Découvrir <ArrowRight className="ml-1 h-3 w-3" />
+                    {t.home.discover} <ArrowRight className="ml-1 h-3 w-3" />
                   </span>
                 </div>
               </Link>
@@ -217,11 +214,11 @@ const Home = () => {
           <div className="container mx-auto px-6">
             <div className="flex items-center justify-between mb-12">
               <div>
-                <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground mb-2">Sélection</p>
-                <h2 className="text-3xl md:text-4xl font-light">Nos Incontournables</h2>
+                <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground mb-2">{t.home.selection}</p>
+                <h2 className="text-3xl md:text-4xl font-light">{t.home.essentials}</h2>
               </div>
               <Link to="/collection" className="hidden md:inline-flex items-center text-sm hover:underline">
-                Tout voir <ArrowRight className="ml-1 h-3 w-3" />
+                {t.home.seeAll} <ArrowRight className="ml-1 h-3 w-3" />
               </Link>
             </div>
 
@@ -250,7 +247,7 @@ const Home = () => {
 
             <div className="mt-8 text-center md:hidden">
               <Link to="/collection">
-                <Button variant="outline">Voir toute la collection</Button>
+                <Button variant="outline">{t.home.seeFullCollection}</Button>
               </Link>
             </div>
           </div>
@@ -269,19 +266,18 @@ const Home = () => {
           </div>
           <div className="flex items-center p-8 lg:p-16">
             <div className="max-w-lg">
-              <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground mb-4">Savoir-faire</p>
+              <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground mb-4">{t.home.expertise}</p>
               <h2 className="text-3xl md:text-4xl font-light mb-6 leading-tight">
-                Fabriquées au Portugal,
+                {t.home.madeInPortugal1}
                 <br />
-                <span className="font-medium">avec exigence</span>
+                <span className="font-medium">{t.home.madeInPortugal2}</span>
               </h2>
               <p className="text-muted-foreground mb-8 leading-relaxed">
-                Nous travaillons avec des ateliers portugais reconnus pour leur excellence artisanale. Cuir de qualité,
-                finitions impeccables et respect des standards européens.
+                {t.home.madeInPortugalText}
               </p>
               <Link to="/la-marque">
                 <Button variant="outline" className="group">
-                  Découvrir notre histoire
+                  {t.home.discoverStory}
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
@@ -298,22 +294,22 @@ const Home = () => {
               <div className="w-16 h-16 rounded-full bg-background flex items-center justify-center mb-4">
                 <Sparkles className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="font-medium mb-2">Élégance intemporelle</h3>
-              <p className="text-sm text-muted-foreground">Des designs raffinés qui subliment toutes les silhouettes</p>
+              <h3 className="font-medium mb-2">{t.home.timelessElegance}</h3>
+              <p className="text-sm text-muted-foreground">{t.home.timelessEleganceText}</p>
             </div>
             <div className="flex flex-col items-center">
               <div className="w-16 h-16 rounded-full bg-background flex items-center justify-center mb-4">
                 <Heart className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="font-medium mb-2">Confort pensé</h3>
-              <p className="text-sm text-muted-foreground">Chaque modèle est conçu pour les grandes pointures</p>
+              <h3 className="font-medium mb-2">{t.home.thoughtfulComfort}</h3>
+              <p className="text-sm text-muted-foreground">{t.home.thoughtfulComfortText}</p>
             </div>
             <div className="flex flex-col items-center">
               <div className="w-16 h-16 rounded-full bg-background flex items-center justify-center mb-4">
                 <Shield className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="font-medium mb-2">Qualité durable</h3>
-              <p className="text-sm text-muted-foreground">Matériaux premium, loin de la fast fashion</p>
+              <h3 className="font-medium mb-2">{t.home.lastingQuality}</h3>
+              <p className="text-sm text-muted-foreground">{t.home.lastingQualityText}</p>
             </div>
           </div>
         </div>
@@ -324,8 +320,8 @@ const Home = () => {
         <section className="py-16 md:py-24 bg-background">
           <div className="container mx-auto px-6">
             <div className="text-center mb-12">
-              <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground mb-2">Nouveautés</p>
-              <h2 className="text-3xl md:text-4xl font-light">Derniers modèles</h2>
+              <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground mb-2">{t.home.newArrivals}</p>
+              <h2 className="text-3xl md:text-4xl font-light">{t.home.latestModels}</h2>
             </div>
 
             <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
@@ -359,8 +355,8 @@ const Home = () => {
         <section className="py-16 md:py-24 bg-luxury-cream">
           <div className="container mx-auto px-6">
             <div className="text-center mb-12">
-              <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground mb-2">Best-sellers</p>
-              <h2 className="text-3xl md:text-4xl font-light">Les plus aimées</h2>
+              <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground mb-2">{t.home.bestSellers}</p>
+              <h2 className="text-3xl md:text-4xl font-light">{t.home.mostLoved}</h2>
             </div>
 
             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -394,63 +390,60 @@ const Home = () => {
         <div className="container mx-auto px-6 max-w-4xl">
           <div className="prose prose-lg max-w-none text-muted-foreground">
             <h2 className="text-2xl font-light text-foreground mb-8">
-              Chaussures grandes tailles femme : élégance et exigence
+              {t.home.seoTitle}
             </h2>
 
             <div className="grid md:grid-cols-2 gap-8 text-sm leading-relaxed">
               <div>
                 <p className="mb-4">
-                  Trouver de belles{" "}
+                  {t.home.seoParagraph1}{" "}
                   <Link 
                     to="/chaussures-femme-grande-taille" 
                     className="text-primary hover:text-primary/80 underline underline-offset-2 transition-colors"
                   >
-                    chaussures femme grande taille
+                    {t.home.seoLink1}
                   </Link>{" "}
-                  élégantes quand on chausse du 41 au 45 reste un véritable défi. Chez{" "}
-                  <strong className="text-foreground">Maison Wydeline</strong>, nous créons des chaussures pensées 
-                  pour sublimer toutes les silhouettes.
+                  {t.home.seoParagraph2}{" "}
+                  <strong className="text-foreground">Maison Wydeline</strong>{t.home.seoParagraph3}
                 </p>
                 <p className="mb-4">
-                  Nos{" "}
+                  {t.home.seoParagraph4}{" "}
                   <Link 
                     to="/bottines-grande-taille-femme" 
                     className="text-primary hover:text-primary/80 underline underline-offset-2 transition-colors"
                   >
-                    bottines grande taille femme
+                    {t.home.seoLink2}
                   </Link>{" "}
-                  s'adressent à celles qui recherchent style et confort au quotidien. Pour les journées fraîches, 
-                  découvrez également nos{" "}
+                  {t.home.seoParagraph5}{" "}
                   <Link 
                     to="/bottes-plates-grande-taille" 
                     className="text-primary hover:text-primary/80 underline underline-offset-2 transition-colors"
                   >
-                    bottes plates grande taille
-                  </Link>, 
-                  parfaites pour un look chic et décontracté.
+                    {t.home.seoLink3}
+                  </Link>
+                  {t.home.seoParagraph6}
                 </p>
               </div>
               <div>
                 <p className="mb-4">
-                  Toutes nos chaussures sont{" "}
+                  {t.home.seoParagraph7}{" "}
                   <Link 
                     to="/la-marque" 
                     className="text-primary hover:text-primary/80 underline underline-offset-2 transition-colors"
                   >
-                    fabriquées au Portugal
-                  </Link>, 
-                  pays reconnu pour son excellence artisanale dans la chaussure haut de gamme. 
-                  Notre atelier de São João da Madeira perpétue un savoir-faire séculaire.
+                    {t.home.seoLink4}
+                  </Link>
+                  {t.home.seoParagraph8}
                 </p>
                 <p className="mb-4">
-                  Contrairement aux modèles simplement "agrandis", nos{" "}
+                  {t.home.seoParagraph9}{" "}
                   <Link 
                     to="/chaussures-plates-grande-taille" 
                     className="text-primary hover:text-primary/80 underline underline-offset-2 transition-colors"
                   >
-                    chaussures plates grande taille
+                    {t.home.seoLink5}
                   </Link>{" "}
-                  sont conçues dès le départ pour les grandes pointures : cambrure, largeur et stabilité.
+                  {t.home.seoParagraph10}
                 </p>
               </div>
             </div>
@@ -461,13 +454,13 @@ const Home = () => {
       {/* CTA Banner */}
       <section className="relative py-20 md:py-32 bg-primary text-primary-foreground">
         <div className="container mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-5xl font-light mb-6">Prête à découvrir votre paire idéale ?</h2>
+          <h2 className="text-3xl md:text-5xl font-light mb-6">{t.home.ctaTitle}</h2>
           <p className="text-lg text-primary-foreground/80 mb-8 max-w-xl mx-auto">
-            Explorez notre collection de chaussures élégantes du 41 au 45.
+            {t.home.ctaText}
           </p>
           <Link to="/collection">
             <Button size="lg" variant="secondary" className="group">
-              Explorer la collection
+              {t.home.ctaButton}
               <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Button>
           </Link>
