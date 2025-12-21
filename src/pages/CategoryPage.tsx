@@ -31,14 +31,9 @@ export const CATEGORY_SEO_CONFIG: Record<string, {
     h1: 'Chaussures plates grande taille',
     content: 'Découvrez notre collection de chaussures plates grande taille, idéales pour les femmes actives qui ne veulent pas sacrifier le style au confort. Du 41 au 45, nos modèles sont fabriqués au Portugal avec des matériaux nobles et une attention particulière portée à l\'ergonomie des grandes pointures.',
   },
-  'chaussures-femme-grande-taille': {
-    category: 'all',
-    title: 'Chaussures femme grande taille 41 à 45 | Maison Wydeline',
-    description: 'Collection complète de chaussures femme grande taille du 41 au 45. Bottines, bottes et chaussures plates fabriquées au Portugal.',
-    h1: 'Chaussures femme grande taille',
-    content: 'Bienvenue dans notre collection de chaussures femme grande taille. Du 41 au 45, découvrez nos bottines, bottes et chaussures plates fabriquées artisanalement au Portugal. Chaque modèle est conçu spécifiquement pour les grandes pointures, avec une attention particulière portée au confort et à l\'élégance.',
-  },
 };
+
+// Note: La page /chaussures-femme-grande-taille est maintenant gérée par PillarPage.tsx
 
 interface CategoryPageProps {
   slug: string;
@@ -283,10 +278,30 @@ const CollectionContent = ({ category }: { category: string }) => {
         </Pagination>
       )}
 
+      {/* Lien contextuel vers page pilier */}
+      <div className="mt-12 p-6 bg-luxury-cream rounded-xl text-center">
+        <p className="text-muted-foreground mb-3">
+          Découvrez notre collection complète de{' '}
+          <Link 
+            to="/chaussures-femme-grande-taille" 
+            className="text-primary font-medium hover:underline underline-offset-2"
+          >
+            chaussures femme grande taille
+          </Link>{' '}
+          du 41 au 45.
+        </p>
+      </div>
+
       {/* Liens internes SEO */}
       <div className="mt-16 pt-8 border-t border-border">
         <h2 className="text-lg font-medium mb-4">Découvrez également</h2>
         <div className="flex flex-wrap gap-3">
+          <Link 
+            to="/chaussures-femme-grande-taille" 
+            className="text-sm text-muted-foreground hover:text-primary transition-colors underline underline-offset-2"
+          >
+            Chaussures femme grande taille
+          </Link>
           <Link 
             to="/bottines-grande-taille-femme" 
             className="text-sm text-muted-foreground hover:text-primary transition-colors underline underline-offset-2"

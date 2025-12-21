@@ -136,8 +136,8 @@ const Home = () => {
               Du 41 au 45 • Fabriquées au Portugal
             </p>
 
-            {/* H1 SEO – invisible visuellement, parfait sémantiquement */}
-            <h1 className="sr-only">Chaussures élégantes grandes tailles femme du 41 au 45, fabriquées au Portugal</h1>
+            {/* H1 Branding – éviter cannibalisation avec page pilier */}
+            <h1 className="sr-only">Maison Wydeline – Chaussures du 41 au 45 fabriquées au Portugal</h1>
 
             {/* Slogan visuel (branding) */}
             <h2 className="text-4xl md:text-6xl lg:text-7xl font-light text-primary-foreground mb-6 animate-fade-in leading-[1.1]">

@@ -22,9 +22,28 @@ const Collection = () => {
   const { products, loading } = useProducts();
   const [searchParams, setSearchParams] = useSearchParams();
   
-  // SEO: Redirect anciennes URLs et canonical
+  // SEO: Redirect anciennes URLs et canonical fixe (sans paramètres)
   useSEORedirect();
   useCanonicalUrl('/collection');
+  
+  // SEO: Ajouter meta robots noindex, follow pour éviter cannibalisation
+  useEffect(() => {
+    let robotsMeta = document.querySelector('meta[name="robots"]') as HTMLMetaElement;
+    if (!robotsMeta) {
+      robotsMeta = document.createElement('meta');
+      robotsMeta.name = 'robots';
+      document.head.appendChild(robotsMeta);
+    }
+    robotsMeta.content = 'noindex, follow';
+    
+    // Cleanup: retirer le noindex quand on quitte la page
+    return () => {
+      const meta = document.querySelector('meta[name="robots"]');
+      if (meta) {
+        meta.remove();
+      }
+    };
+  }, []);
   
   const selectedCategory = searchParams.get('category') || 'all';
   const selectedColor = searchParams.get('color') || 'all';
@@ -223,10 +242,30 @@ const Collection = () => {
           </Pagination>
         )}
 
+        {/* Lien contextuel vers page pilier */}
+        <div className="mt-12 p-6 bg-luxury-cream rounded-xl text-center">
+          <p className="text-muted-foreground mb-3">
+            Vous cherchez des{' '}
+            <Link 
+              to="/chaussures-femme-grande-taille" 
+              className="text-primary font-medium hover:underline underline-offset-2"
+            >
+              chaussures femme grande taille
+            </Link>{' '}
+            ? Découvrez notre guide complet pour trouver le modèle parfait du 41 au 45.
+          </p>
+        </div>
+
         {/* Liens internes SEO */}
         <div className="mt-16 pt-8 border-t border-border">
           <h2 className="text-lg font-medium mb-4">Parcourir par catégorie</h2>
           <div className="flex flex-wrap gap-4">
+            <Link 
+              to="/chaussures-femme-grande-taille" 
+              className="text-sm text-muted-foreground hover:text-primary transition-colors underline underline-offset-2"
+            >
+              Chaussures femme grande taille
+            </Link>
             <Link 
               to="/bottines-grande-taille-femme" 
               className="text-sm text-muted-foreground hover:text-primary transition-colors underline underline-offset-2"

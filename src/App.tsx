@@ -12,6 +12,7 @@ import Home from "./pages/Home";
 import ComingSoon from "./pages/ComingSoon";
 import Collection from "./pages/Collection";
 import CategoryPage from "./pages/CategoryPage";
+import PillarPage from "./pages/PillarPage";
 import ProductDetail from "./pages/ProductDetail";
 import LaMarque from "./pages/LaMarque";
 import Contact from "./pages/Contact";
@@ -125,7 +126,8 @@ const App = () => {
                         <Route path="/bottines-grande-taille-femme" element={<CategoryPage slug="bottines-grande-taille-femme" />} />
                         <Route path="/bottes-plates-grande-taille" element={<CategoryPage slug="bottes-plates-grande-taille" />} />
                         <Route path="/chaussures-plates-grande-taille" element={<CategoryPage slug="chaussures-plates-grande-taille" />} />
-                        <Route path="/chaussures-femme-grande-taille" element={<CategoryPage slug="chaussures-femme-grande-taille" />} />
+                        {/* Page pilier SEO principale */}
+                        <Route path="/chaussures-femme-grande-taille" element={<PillarPage />} />
                         <Route path="/produit/:slug" element={<ProductDetail />} />
                         <Route path="/la-marque" element={<LaMarque />} />
                         <Route path="/contact" element={<Contact />} />
