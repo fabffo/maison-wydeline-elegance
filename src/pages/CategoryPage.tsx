@@ -17,23 +17,24 @@ import { useLanguage } from '@/contexts/LanguageContext';
 const CATEGORY_MAPPING: Record<string, string> = {
   'bottines-grande-taille-femme': 'Bottines',
   'bottes-plates-grande-taille': 'Bottes',
-  'ballerines-grande-taille-femme': 'Ballerines',
+  // La catégorie "Plats" est affichée comme "Ballerines" côté UI
+  'chaussures-plates-grande-taille': 'Plats',
   'chaussures-femme-grande-taille': 'all',
 };
 
 // Mapping category value -> SEO slug
 const CATEGORY_TO_SLUG: Record<string, string> = {
-  'all': '/chaussures-femme-grande-taille',
-  'bottines': '/bottines-grande-taille-femme',
-  'bottes': '/bottes-plates-grande-taille',
-  'ballerines': '/ballerines-grande-taille-femme',
+  all: '/chaussures-femme-grande-taille',
+  bottines: '/bottines-grande-taille-femme',
+  bottes: '/bottes-plates-grande-taille',
+  ballerines: '/chaussures-plates-grande-taille',
 };
 
 // Mapping slug -> select value
 const SLUG_TO_SELECT_VALUE: Record<string, string> = {
   'bottines-grande-taille-femme': 'bottines',
   'bottes-plates-grande-taille': 'bottes',
-  'ballerines-grande-taille-femme': 'ballerines',
+  'chaussures-plates-grande-taille': 'ballerines',
   'chaussures-femme-grande-taille': 'all',
 };
 
