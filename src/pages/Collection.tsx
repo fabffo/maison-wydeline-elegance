@@ -151,7 +151,7 @@ const Collection = () => {
                 <SelectItem value="all">{t.collection.allCategories}</SelectItem>
                 {categories.map((cat) => (
                   <SelectItem key={cat} value={cat}>
-                    {cat}
+                    {cat === 'Plats' ? 'Ballerines' : cat}
                   </SelectItem>
                 ))}
               </SelectContent>

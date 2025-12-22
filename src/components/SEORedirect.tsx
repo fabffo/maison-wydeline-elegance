@@ -5,6 +5,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 const REDIRECT_MAP: Record<string, string> = {
   '/collection?category=Bottines': '/bottines-grande-taille-femme',
   '/collection?category=Bottes': '/bottes-plates-grande-taille',
+  // Ancien libellé "Plats" -> page SEO (affichée comme "Ballerines")
+  '/collection?category=Plats': '/chaussures-plates-grande-taille',
   '/collection?category=Plates': '/chaussures-plates-grande-taille',
 };
 
