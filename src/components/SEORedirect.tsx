@@ -16,6 +16,7 @@ const CATEGORY_TO_SEO_URL: Record<string, string> = {
 /**
  * Hook qui gère les redirections SEO côté client
  * Conserve tous les query params (color, size, sort, page) sauf category
+ * Si le param `noredirect=1` est présent, ne redirige pas (pour le lien retour)
  */
 export const useSEORedirect = () => {
   const navigate = useNavigate();
@@ -26,8 +27,17 @@ export const useSEORedirect = () => {
     if (location.pathname !== '/collection') return;
 
     const currentParams = new URLSearchParams(location.search);
-    const category = currentParams.get('category');
+    
+    // Si noredirect est présent, ne pas rediriger (retour explicite de l'utilisateur)
+    if (currentParams.get('noredirect') === '1') {
+      // Supprimer le param noredirect de l'URL pour garder l'URL propre
+      currentParams.delete('noredirect');
+      const cleanUrl = currentParams.toString() ? `/collection?${currentParams.toString()}` : '/collection';
+      navigate(cleanUrl, { replace: true });
+      return;
+    }
 
+    const category = currentParams.get('category');
     if (!category) return;
 
     // Trouver l'URL SEO correspondante
