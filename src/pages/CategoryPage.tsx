@@ -145,11 +145,12 @@ const CategoryPage = ({ slug }: CategoryPageProps) => {
     );
   }
 
-  // Construire le lien retour vers /collection avec tous les params
+  // Construire le lien retour vers /collection avec tous les params + noredirect
   const buildCollectionLink = () => {
     const collectionCategory = SLUG_TO_COLLECTION_CATEGORY[slug];
     const params = new URLSearchParams(searchParams);
     params.set('category', collectionCategory);
+    params.set('noredirect', '1'); // Empêche la redirection automatique
     return `/collection?${params.toString()}`;
   };
 
