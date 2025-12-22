@@ -126,7 +126,7 @@ const App = () => {
                         {/* Routes SEO-friendly pour les catégories */}
                         <Route path="/bottines-grande-taille-femme" element={<CategoryPage slug="bottines-grande-taille-femme" />} />
                         <Route path="/bottes-plates-grande-taille" element={<CategoryPage slug="bottes-plates-grande-taille" />} />
-                        <Route path="/chaussures-plates-grande-taille" element={<CategoryPage slug="chaussures-plates-grande-taille" />} />
+                        <Route path="/ballerines-grande-taille-femme" element={<CategoryPage slug="ballerines-grande-taille-femme" />} />
                         {/* Page pilier SEO principale */}
                         <Route path="/chaussures-femme-grande-taille" element={<PillarPage />} />
                         <Route path="/guide-des-tailles" element={<SizeGuidePage />} />

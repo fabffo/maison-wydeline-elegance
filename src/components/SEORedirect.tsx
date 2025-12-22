@@ -5,9 +5,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 const REDIRECT_MAP: Record<string, string> = {
   '/collection?category=Bottines': '/bottines-grande-taille-femme',
   '/collection?category=Bottes': '/bottes-plates-grande-taille',
-  // Ancien libellé "Plats" -> page SEO (affichée comme "Ballerines")
-  '/collection?category=Plats': '/chaussures-plates-grande-taille',
-  '/collection?category=Plates': '/chaussures-plates-grande-taille',
+  '/collection?category=Ballerines': '/ballerines-grande-taille-femme',
+  // Anciennes URLs -> nouvelles URLs
+  '/collection?category=Plats': '/ballerines-grande-taille-femme',
+  '/collection?category=Plates': '/ballerines-grande-taille-femme',
+  '/chaussures-plates-grande-taille': '/ballerines-grande-taille-femme',
 };
 
 /**

@@ -166,14 +166,14 @@ const PillarPage = () => {
             </Link>
             
             <Link 
-              to="/chaussures-plates-grande-taille"
+              to="/ballerines-grande-taille-femme"
               className="group bg-background rounded-xl p-6 text-center border border-transparent hover:border-primary/30 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col min-h-[180px]"
             >
               <h3 className="text-xl font-medium mb-3 group-hover:text-primary transition-colors">
-                {t.pillar.flatShoes}
+                {t.pillar.ballerinas}
               </h3>
               <p className="text-sm text-muted-foreground flex-1">
-                {t.pillar.flatShoesDesc}
+                {t.pillar.ballerinasDesc}
               </p>
               <span className="inline-flex items-center justify-center gap-1 mt-4 text-sm text-primary opacity-0 group-hover:opacity-100 transition-opacity">
                 {language === 'fr' ? 'Découvrir' : 'Discover'} <ArrowRight className="h-4 w-4" />
@@ -334,10 +334,10 @@ const PillarPage = () => {
             </Link>
             <span className="text-border">•</span>
             <Link 
-              to="/chaussures-plates-grande-taille" 
+              to="/ballerines-grande-taille-femme" 
               className="text-sm text-muted-foreground hover:text-primary transition-colors underline underline-offset-4 decoration-primary/40 hover:decoration-primary"
             >
-              {t.pillar.flatShoes}
+              {t.pillar.ballerinas}
             </Link>
             <span className="text-border">•</span>
             <Link 

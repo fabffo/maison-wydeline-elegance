@@ -151,7 +151,7 @@ const Collection = () => {
                 <SelectItem value="all">{t.collection.allCategories}</SelectItem>
                 {categories.map((cat) => (
                   <SelectItem key={cat} value={cat}>
-                    {cat === 'Plats' ? 'Ballerines' : cat}
+                    {cat}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -279,10 +279,10 @@ const Collection = () => {
               Bottes plates grande taille
             </Link>
             <Link 
-              to="/chaussures-plates-grande-taille" 
+              to="/ballerines-grande-taille-femme" 
               className="text-sm text-muted-foreground hover:text-primary transition-colors underline underline-offset-2"
             >
-              Chaussures plates grande taille
+              Ballerines grande taille femme
             </Link>
           </div>
         </div>

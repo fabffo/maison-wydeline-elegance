@@ -17,8 +17,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 const CATEGORY_MAPPING: Record<string, string> = {
   'bottines-grande-taille-femme': 'Bottines',
   'bottes-plates-grande-taille': 'Bottes',
-  // La catégorie "Plats" est affichée comme "Ballerines" côté UI
-  'chaussures-plates-grande-taille': 'Plats',
+  'ballerines-grande-taille-femme': 'Ballerines',
   'chaussures-femme-grande-taille': 'all',
 };
 
@@ -27,14 +26,14 @@ const CATEGORY_TO_SLUG: Record<string, string> = {
   all: '/chaussures-femme-grande-taille',
   bottines: '/bottines-grande-taille-femme',
   bottes: '/bottes-plates-grande-taille',
-  ballerines: '/chaussures-plates-grande-taille',
+  ballerines: '/ballerines-grande-taille-femme',
 };
 
 // Mapping slug -> select value
 const SLUG_TO_SELECT_VALUE: Record<string, string> = {
   'bottines-grande-taille-femme': 'bottines',
   'bottes-plates-grande-taille': 'bottes',
-  'chaussures-plates-grande-taille': 'ballerines',
+  'ballerines-grande-taille-femme': 'ballerines',
   'chaussures-femme-grande-taille': 'all',
 };
 
@@ -323,10 +322,10 @@ const CategoryPage = ({ slug }: CategoryPageProps) => {
               {t.category['bottes-plates-grande-taille'].h1}
             </Link>
             <Link 
-              to="/chaussures-plates-grande-taille" 
+              to="/ballerines-grande-taille-femme" 
               className="text-sm text-muted-foreground hover:text-primary transition-colors underline underline-offset-2"
             >
-              {t.category['chaussures-plates-grande-taille'].h1}
+              {t.category['ballerines-grande-taille-femme'].h1}
             </Link>
           </div>
         </div>
