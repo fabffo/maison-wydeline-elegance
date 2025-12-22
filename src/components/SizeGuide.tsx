@@ -21,17 +21,20 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 // Tableau d'équivalences pointures
 const sizeEquivalences = [
-  { eu: 41, cm: 26.5 },
-  { eu: 42, cm: 27.0 },
-  { eu: 43, cm: 27.5 },
-  { eu: 44, cm: 28.5 },
-  { eu: 45, cm: 29.0 },
+  { france: 41, uk: 7, usa: "9.5–10", cm: "26.4" },
+  { france: 42, uk: 8, usa: "9", cm: "27.0" },
+  { france: 43, uk: 9, usa: "10", cm: "27.7" },
+  { france: 44, uk: 10, usa: "11", cm: "28.3" },
+  { france: 45, uk: 11, usa: "12", cm: "29.6" },
+  { france: 46, uk: 12, usa: "13", cm: "29.5" },
+  { france: 47, uk: 13, usa: "14", cm: "30.0" },
 ];
 
 const steps = [
   "Scotchez deux feuilles de papier A4 ou prenez une feuille A3",
   "Posez votre pied à plat sur la grande feuille de papier",
-  "Tracez un trait juste derrière votre talon et un autre au bout de votre orteil le plus long",
+  "Tracez un trait juste derrière votre talon",
+  "Tracez un trait au bout de votre orteil le plus long",
   "Mesurez l'écart entre les deux points : c'est votre pointure en centimètre",
 ];
 
@@ -74,16 +77,20 @@ const SizeGuideContent = () => (
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-border">
-              <th className="py-2 px-3 text-left font-medium">Pointure EU</th>
-              <th className="py-2 px-3 text-left font-medium">Longueur (cm)</th>
+            <tr className="bg-muted/50">
+              <th className="py-3 px-3 text-center font-semibold border-b border-border">FRANCE</th>
+              <th className="py-3 px-3 text-center font-semibold border-b border-border">UK</th>
+              <th className="py-3 px-3 text-center font-semibold border-b border-border">USA</th>
+              <th className="py-3 px-3 text-center font-semibold border-b border-border">LONGUEUR (CM)</th>
             </tr>
           </thead>
           <tbody>
             {sizeEquivalences.map((row) => (
-              <tr key={row.eu} className="border-b border-border/50 last:border-0">
-                <td className="py-2 px-3">{row.eu}</td>
-                <td className="py-2 px-3">{row.cm}</td>
+              <tr key={row.france} className="border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors">
+                <td className="py-2.5 px-3 text-center">{row.france}</td>
+                <td className="py-2.5 px-3 text-center">{row.uk}</td>
+                <td className="py-2.5 px-3 text-center">{row.usa}</td>
+                <td className="py-2.5 px-3 text-center">{row.cm} cm</td>
               </tr>
             ))}
           </tbody>
