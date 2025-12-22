@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Truck, RotateCcw, CreditCard } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import logo from '@/assets/logo-wydeline-white.png';
@@ -86,6 +87,25 @@ export const Footer = () => {
             >
               <TikTokIcon className="w-5 h-5" />
             </a>
+          </div>
+        </div>
+
+        {/* Links Section */}
+        <div className="text-center pb-8 mb-8 border-b border-border">
+          <h3 className="font-medium text-foreground mb-4">Aide</h3>
+          <div className="flex items-center justify-center gap-6 text-sm">
+            <Link 
+              to="/guide-des-tailles" 
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Guide des tailles
+            </Link>
+            <Link 
+              to="/contact" 
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Nous contacter
+            </Link>
           </div>
         </div>
 

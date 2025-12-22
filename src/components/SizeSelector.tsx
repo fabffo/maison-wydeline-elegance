@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { SizeGuideDialog } from '@/components/SizeGuide';
 
 interface SizeSelectorProps {
   sizes: number[];
@@ -16,7 +17,10 @@ export const SizeSelector = ({ sizes, stock, selectedSize, onSizeSelect, lowStoc
 
   return (
     <div className="space-y-3">
-      <label className="text-sm font-medium">{t.product.selectSize}</label>
+      <div className="flex items-center justify-between">
+        <label className="text-sm font-medium">{t.product.selectSize}</label>
+        <SizeGuideDialog />
+      </div>
       <div className="flex flex-wrap gap-2">
         {sizes.map((size) => {
           const sizeStock = stock[size.toString()] || 0;
