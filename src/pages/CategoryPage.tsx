@@ -18,6 +18,23 @@ const CATEGORY_MAPPING: Record<string, string> = {
   'bottines-grande-taille-femme': 'Bottines',
   'bottes-plates-grande-taille': 'Bottes',
   'chaussures-plates-grande-taille': 'Plats',
+  'chaussures-femme-grande-taille': 'all',
+};
+
+// Mapping category value -> SEO slug
+const CATEGORY_TO_SLUG: Record<string, string> = {
+  'all': '/chaussures-femme-grande-taille',
+  'bottines': '/bottines-grande-taille-femme',
+  'bottes': '/bottes-plates-grande-taille',
+  'plates': '/chaussures-plates-grande-taille',
+};
+
+// Mapping slug -> select value
+const SLUG_TO_SELECT_VALUE: Record<string, string> = {
+  'bottines-grande-taille-femme': 'bottines',
+  'bottes-plates-grande-taille': 'bottes',
+  'chaussures-plates-grande-taille': 'plates',
+  'chaussures-femme-grande-taille': 'all',
 };
 
 interface CategoryPageProps {
@@ -86,19 +103,20 @@ const CategoryPage = ({ slug }: CategoryPageProps) => {
   };
 
   const colors = useMemo(() => {
-    const filtered = products.filter(p => p.category === category);
+    const filtered = category === 'all' ? products : products.filter(p => p.category === category);
     return Array.from(new Set(filtered.map((p) => p.color)));
   }, [products, category]);
 
   const sizes = useMemo(() => {
-    const filtered = products.filter(p => p.category === category);
+    const filtered = category === 'all' ? products : products.filter(p => p.category === category);
     const allSizes = new Set<number>();
     filtered.forEach((p) => p.sizes.forEach((s) => allSizes.add(s)));
     return Array.from(allSizes).sort((a, b) => a - b);
   }, [products, category]);
 
   const filteredAndSorted = useMemo(() => {
-    let result = products.filter(p => p.category === category);
+    // Si "all", ne pas filtrer par catégorie
+    let result = category === 'all' ? [...products] : products.filter(p => p.category === category);
 
     if (selectedColor !== 'all') {
       result = result.filter((p) => p.color === selectedColor);
@@ -156,6 +174,34 @@ const CategoryPage = ({ slug }: CategoryPageProps) => {
         {/* Filters */}
         <div className="mb-12 space-y-4">
           <div className="flex flex-wrap gap-4 items-center">
+            {/* Category Selector SEO-friendly */}
+            <Select 
+              value={SLUG_TO_SELECT_VALUE[slug] || 'all'} 
+              onValueChange={(value) => {
+                const targetSlug = CATEGORY_TO_SLUG[value];
+                if (targetSlug) {
+                  // Préserver les query params
+                  const params = new URLSearchParams(searchParams);
+                  const queryString = params.toString();
+                  navigate(queryString ? `${targetSlug}?${queryString}` : targetSlug);
+                }
+              }}
+            >
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder={language === 'fr' ? 'Catégorie' : 'Category'} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">
+                  {language === 'fr' ? 'Toutes les chaussures' : 'All shoes'}
+                </SelectItem>
+                <SelectItem value="bottines">Bottines</SelectItem>
+                <SelectItem value="bottes">Bottes</SelectItem>
+                <SelectItem value="plates">
+                  {language === 'fr' ? 'Chaussures plates' : 'Flat shoes'}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+
             <Select value={selectedColor} onValueChange={(v) => updateFilter('color', v)}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder={t.collection.allColors} />
