@@ -13,6 +13,7 @@ import ComingSoon from "./pages/ComingSoon";
 import Collection from "./pages/Collection";
 import CategoryPage from "./pages/CategoryPage";
 import PillarPage from "./pages/PillarPage";
+import { SizeGuidePage } from "./components/SizeGuide";
 import ProductDetail from "./pages/ProductDetail";
 import LaMarque from "./pages/LaMarque";
 import Contact from "./pages/Contact";
@@ -128,6 +129,7 @@ const App = () => {
                         <Route path="/chaussures-plates-grande-taille" element={<CategoryPage slug="chaussures-plates-grande-taille" />} />
                         {/* Page pilier SEO principale */}
                         <Route path="/chaussures-femme-grande-taille" element={<PillarPage />} />
+                        <Route path="/guide-des-tailles" element={<SizeGuidePage />} />
                         <Route path="/produit/:slug" element={<ProductDetail />} />
                         <Route path="/la-marque" element={<LaMarque />} />
                         <Route path="/contact" element={<Contact />} />
