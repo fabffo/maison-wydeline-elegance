@@ -30,6 +30,82 @@ const sizeEquivalences = [
   { france: 47, uk: 13, usa: "14", cm: "30.0" },
 ];
 
+// Illustrations SVG pour chaque étape
+const StepIllustration1 = () => (
+  <svg viewBox="0 0 80 60" className="w-16 h-12 text-muted-foreground">
+    {/* Deux feuilles A4 */}
+    <rect x="10" y="5" width="28" height="40" fill="none" stroke="currentColor" strokeWidth="1.5" rx="1" />
+    <rect x="12" y="7" width="28" height="40" fill="none" stroke="currentColor" strokeWidth="1.5" rx="1" />
+    {/* Ligne de séparation (scotch) */}
+    <line x1="10" y1="25" x2="40" y2="25" stroke="currentColor" strokeWidth="1" strokeDasharray="2,2" />
+    {/* Stylo */}
+    <line x1="55" y1="8" x2="65" y2="45" stroke="currentColor" strokeWidth="2" />
+    <polygon points="65,45 62,50 68,50" fill="currentColor" />
+  </svg>
+);
+
+const StepIllustration2 = () => (
+  <svg viewBox="0 0 80 70" className="w-16 h-14 text-muted-foreground">
+    {/* Pied de profil */}
+    <path d="M15 55 Q10 50 12 40 Q15 25 25 20 Q35 15 45 18 L50 22 Q55 25 58 30 L60 35 Q62 45 58 52 Q55 58 45 60 L20 60 Q15 58 15 55" fill="none" stroke="currentColor" strokeWidth="1.5" />
+    {/* Papier sous le pied */}
+    <rect x="5" y="58" width="70" height="8" fill="none" stroke="currentColor" strokeWidth="1" rx="1" />
+  </svg>
+);
+
+const StepIllustration3 = () => (
+  <svg viewBox="0 0 80 70" className="w-16 h-14 text-muted-foreground">
+    {/* Pied de profil */}
+    <path d="M15 55 Q10 50 12 40 Q15 25 25 20 Q35 15 45 18 L50 22 Q55 25 58 30 L60 35 Q62 45 58 52 Q55 58 45 60 L20 60 Q15 58 15 55" fill="none" stroke="currentColor" strokeWidth="1.5" />
+    {/* Ligne talon */}
+    <line x1="10" y1="15" x2="10" y2="65" stroke="currentColor" strokeWidth="2" />
+    {/* Stylo */}
+    <line x1="5" y1="10" x2="12" y2="25" stroke="currentColor" strokeWidth="1.5" />
+  </svg>
+);
+
+const StepIllustration4 = () => (
+  <svg viewBox="0 0 80 70" className="w-16 h-14 text-muted-foreground">
+    {/* Pied vu du dessus */}
+    <ellipse cx="40" cy="35" rx="18" ry="28" fill="none" stroke="currentColor" strokeWidth="1.5" />
+    {/* Orteils */}
+    <ellipse cx="32" cy="10" rx="4" ry="6" fill="none" stroke="currentColor" strokeWidth="1" />
+    <ellipse cx="40" cy="8" rx="4" ry="7" fill="none" stroke="currentColor" strokeWidth="1" />
+    <ellipse cx="48" cy="10" rx="4" ry="6" fill="none" stroke="currentColor" strokeWidth="1" />
+    {/* Ligne orteil */}
+    <line x1="40" y1="2" x2="40" y2="18" stroke="currentColor" strokeWidth="2" />
+    {/* Stylo */}
+    <line x1="50" y1="2" x2="42" y2="12" stroke="currentColor" strokeWidth="1.5" />
+  </svg>
+);
+
+const StepIllustration5 = () => (
+  <svg viewBox="0 0 100 50" className="w-20 h-10 text-muted-foreground">
+    {/* Pied horizontal */}
+    <path d="M10 30 Q5 28 8 22 L15 18 Q25 15 40 15 L70 18 Q80 20 85 25 Q88 30 85 35 L15 35 Q8 34 10 30" fill="none" stroke="currentColor" strokeWidth="1.5" />
+    {/* Ligne de mesure */}
+    <line x1="8" y1="42" x2="88" y2="42" stroke="currentColor" strokeWidth="1.5" />
+    {/* Flèches */}
+    <polygon points="8,42 12,39 12,45" fill="currentColor" />
+    <polygon points="88,42 84,39 84,45" fill="currentColor" />
+    {/* Règle graduée */}
+    <line x1="20" y1="42" x2="20" y2="46" stroke="currentColor" strokeWidth="1" />
+    <line x1="35" y1="42" x2="35" y2="46" stroke="currentColor" strokeWidth="1" />
+    <line x1="50" y1="42" x2="50" y2="48" stroke="currentColor" strokeWidth="1" />
+    <line x1="65" y1="42" x2="65" y2="46" stroke="currentColor" strokeWidth="1" />
+    <line x1="80" y1="42" x2="80" y2="46" stroke="currentColor" strokeWidth="1" />
+    <text x="92" y="46" fontSize="8" fill="currentColor">cm</text>
+  </svg>
+);
+
+const stepIllustrations = [
+  StepIllustration1,
+  StepIllustration2,
+  StepIllustration3,
+  StepIllustration4,
+  StepIllustration5,
+];
+
 const steps = [
   "Scotchez deux feuilles de papier A4 ou prenez une feuille A3",
   "Posez votre pied à plat sur la grande feuille de papier",
@@ -44,27 +120,48 @@ const SizeGuideContent = () => (
       Prenez 2 minutes pour vérifier votre pointure avant commande.
     </p>
 
-    {/* Section Mensurations */}
-    <div className="bg-muted/30 border border-border rounded-2xl p-5">
-      <h3 className="font-medium text-base mb-2">Mensurations</h3>
-      <p className="text-sm text-muted-foreground">
-        Vous trouverez ici les mensurations auxquelles correspondent les chaussures Maison Wydeline.
-      </p>
-    </div>
-
     {/* Section Comment mesurer */}
     <div className="bg-muted/30 border border-border rounded-2xl p-5">
-      <h3 className="font-medium text-base mb-4">Comment mesurer et connaître sa pointure</h3>
-      <ol className="space-y-3">
-        {steps.map((step, index) => (
-          <li key={index} className="flex gap-3 text-sm">
-            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">
-              {index + 1}
-            </span>
-            <span className="text-muted-foreground pt-0.5">{step}</span>
-          </li>
-        ))}
-      </ol>
+      <h3 className="font-semibold text-lg mb-1 text-center">Comment mesurer et connaître sa pointure</h3>
+      <div className="w-16 h-0.5 bg-foreground mx-auto mb-6" />
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Colonne gauche : étapes 1-3 */}
+        <div className="space-y-5">
+          {steps.slice(0, 3).map((step, index) => {
+            const Illustration = stepIllustrations[index];
+            return (
+              <div key={index} className="flex items-start gap-4">
+                <div className="flex-shrink-0 w-20 h-16 flex items-center justify-center bg-muted/50 rounded-lg">
+                  <Illustration />
+                </div>
+                <div className="flex gap-2 pt-1">
+                  <span className="flex-shrink-0 text-sm font-semibold">{index + 1}.</span>
+                  <span className="text-sm text-muted-foreground">{step}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        
+        {/* Colonne droite : étapes 4-5 */}
+        <div className="space-y-5">
+          {steps.slice(3).map((step, index) => {
+            const Illustration = stepIllustrations[index + 3];
+            return (
+              <div key={index + 3} className="flex items-start gap-4">
+                <div className="flex-shrink-0 w-20 h-16 flex items-center justify-center bg-muted/50 rounded-lg">
+                  <Illustration />
+                </div>
+                <div className="flex gap-2 pt-1">
+                  <span className="flex-shrink-0 text-sm font-semibold">{index + 4}.</span>
+                  <span className="text-sm text-muted-foreground">{step}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
 
     {/* Section Équivalences */}
