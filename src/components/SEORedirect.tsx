@@ -1,55 +1,38 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-// Mapping catégorie -> URL SEO
-const CATEGORY_TO_SEO_URL: Record<string, string> = {
-  'Bottines': '/bottines-grande-taille-femme',
-  'bottines': '/bottines-grande-taille-femme',
-  'Bottes': '/bottes-plates-grande-taille',
-  'bottes': '/bottes-plates-grande-taille',
-  'Plates': '/chaussures-plates-grande-taille',
-  'plates': '/chaussures-plates-grande-taille',
-  'Plats': '/chaussures-plates-grande-taille',
-  'plats': '/chaussures-plates-grande-taille',
+// Mapping des anciennes URLs vers les nouvelles URLs SEO-friendly
+const REDIRECT_MAP: Record<string, string> = {
+  '/collection?category=Bottines': '/bottines-grande-taille-femme',
+  '/collection?category=Bottes': '/bottes-plates-grande-taille',
+  '/collection?category=Plates': '/chaussures-plates-grande-taille',
 };
 
 /**
- * Hook qui gère les redirections SEO côté client
- * Conserve tous les query params (color, size, sort, page) sauf category
- * Si le param `noredirect=1` est présent, ne redirige pas (pour le lien retour)
+ * Composant qui gère les redirections 301 côté client
+ * Pour une vraie redirection 301, il faudrait configurer le serveur (nginx, Vercel, etc.)
  */
 export const useSEORedirect = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    // Vérifier si on est sur /collection avec un paramètre category
-    if (location.pathname !== '/collection') return;
-
-    const currentParams = new URLSearchParams(location.search);
+    const fullPath = `${location.pathname}${location.search}`;
     
-    // Si noredirect est présent, ne pas rediriger (retour explicite de l'utilisateur)
-    if (currentParams.get('noredirect') === '1') {
-      // Supprimer le param noredirect de l'URL pour garder l'URL propre
-      currentParams.delete('noredirect');
-      const cleanUrl = currentParams.toString() ? `/collection?${currentParams.toString()}` : '/collection';
-      navigate(cleanUrl, { replace: true });
-      return;
+    // Vérifier si l'URL actuelle doit être redirigée
+    for (const [oldUrl, newUrl] of Object.entries(REDIRECT_MAP)) {
+      if (fullPath === oldUrl || fullPath.startsWith(oldUrl + '&')) {
+        // Préserver les autres paramètres de recherche
+        const currentParams = new URLSearchParams(location.search);
+        currentParams.delete('category');
+        
+        const remainingParams = currentParams.toString();
+        const redirectUrl = remainingParams ? `${newUrl}?${remainingParams}` : newUrl;
+        
+        navigate(redirectUrl, { replace: true });
+        return;
+      }
     }
-
-    const category = currentParams.get('category');
-    if (!category) return;
-
-    // Trouver l'URL SEO correspondante
-    const seoUrl = CATEGORY_TO_SEO_URL[category];
-    if (!seoUrl) return;
-
-    // Supprimer category et conserver tous les autres params
-    currentParams.delete('category');
-    const remainingParams = currentParams.toString();
-    const redirectUrl = remainingParams ? `${seoUrl}?${remainingParams}` : seoUrl;
-
-    navigate(redirectUrl, { replace: true });
   }, [location, navigate]);
 };
 

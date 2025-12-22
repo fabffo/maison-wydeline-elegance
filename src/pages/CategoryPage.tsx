@@ -20,13 +20,6 @@ const CATEGORY_MAPPING: Record<string, string> = {
   'chaussures-plates-grande-taille': 'Plats',
 };
 
-// Mapping inverse pour le lien retour
-const SLUG_TO_COLLECTION_CATEGORY: Record<string, string> = {
-  'bottines-grande-taille-femme': 'Bottines',
-  'bottes-plates-grande-taille': 'Bottes',
-  'chaussures-plates-grande-taille': 'Plats',
-};
-
 interface CategoryPageProps {
   slug: string;
 }
@@ -145,29 +138,9 @@ const CategoryPage = ({ slug }: CategoryPageProps) => {
     );
   }
 
-  // Construire le lien retour vers /collection avec tous les params + noredirect
-  const buildCollectionLink = () => {
-    const collectionCategory = SLUG_TO_COLLECTION_CATEGORY[slug];
-    const params = new URLSearchParams(searchParams);
-    params.set('category', collectionCategory);
-    params.set('noredirect', '1'); // Empêche la redirection automatique
-    return `/collection?${params.toString()}`;
-  };
-
   return (
     <main className="min-h-screen pt-24 pb-16">
       <div className="container mx-auto px-6">
-        {/* Lien retour à la collection */}
-        <div className="mb-6">
-          <Link 
-            to={buildCollectionLink()} 
-            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors"
-          >
-            <span>←</span>
-            <span>{language === 'fr' ? 'Retour à la collection' : 'Back to collection'}</span>
-          </Link>
-        </div>
-
         {/* H1 SEO optimisé */}
         <h1 className="text-4xl md:text-5xl font-medium text-center mb-6">
           {categoryConfig.h1}
