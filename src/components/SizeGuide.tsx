@@ -56,19 +56,10 @@ const StepIllustration3 = () => (
   <img src={footMeasurementStep3Img} alt="Tracé derrière le talon" className="w-16 h-14 object-contain" />
 );
 
+import footMeasurementStep4Img from '@/assets/foot-measurement-step4.png';
+
 const StepIllustration4 = () => (
-  <svg viewBox="0 0 80 70" className="w-16 h-14 text-muted-foreground">
-    {/* Pied vu du dessus */}
-    <ellipse cx="40" cy="35" rx="18" ry="28" fill="none" stroke="currentColor" strokeWidth="1.5" />
-    {/* Orteils */}
-    <ellipse cx="32" cy="10" rx="4" ry="6" fill="none" stroke="currentColor" strokeWidth="1" />
-    <ellipse cx="40" cy="8" rx="4" ry="7" fill="none" stroke="currentColor" strokeWidth="1" />
-    <ellipse cx="48" cy="10" rx="4" ry="6" fill="none" stroke="currentColor" strokeWidth="1" />
-    {/* Ligne orteil */}
-    <line x1="40" y1="2" x2="40" y2="18" stroke="currentColor" strokeWidth="2" />
-    {/* Stylo */}
-    <line x1="50" y1="2" x2="42" y2="12" stroke="currentColor" strokeWidth="1.5" />
-  </svg>
+  <img src={footMeasurementStep4Img} alt="Tracé devant l'orteil" className="w-16 h-14 object-contain" />
 );
 
 const StepIllustration5 = () => (
