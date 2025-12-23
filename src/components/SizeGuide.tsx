@@ -50,15 +50,10 @@ const StepIllustration2 = () => (
   <img src={footMeasurementImg} alt="Pied posé sur le papier" className="w-16 h-14 object-contain" />
 );
 
+import footMeasurementStep3Img from '@/assets/foot-measurement-step3.png';
+
 const StepIllustration3 = () => (
-  <svg viewBox="0 0 80 70" className="w-16 h-14 text-muted-foreground">
-    {/* Pied de profil */}
-    <path d="M15 55 Q10 50 12 40 Q15 25 25 20 Q35 15 45 18 L50 22 Q55 25 58 30 L60 35 Q62 45 58 52 Q55 58 45 60 L20 60 Q15 58 15 55" fill="none" stroke="currentColor" strokeWidth="1.5" />
-    {/* Ligne talon */}
-    <line x1="10" y1="15" x2="10" y2="65" stroke="currentColor" strokeWidth="2" />
-    {/* Stylo */}
-    <line x1="5" y1="10" x2="12" y2="25" stroke="currentColor" strokeWidth="1.5" />
-  </svg>
+  <img src={footMeasurementStep3Img} alt="Tracé derrière le talon" className="w-16 h-14 object-contain" />
 );
 
 const StepIllustration4 = () => (
