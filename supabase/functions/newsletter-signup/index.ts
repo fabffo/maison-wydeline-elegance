@@ -299,7 +299,7 @@ const handler = async (req: Request): Promise<Response> => {
         );
 
         const { error: resendError } = await resend.emails.send({
-          from: "Maison Wydeline <contact@maisonwydeline.com>",
+          from: "Maison Wydeline <no-reply@wavyservices.fr>",
           to: [email],
           subject: "Bienvenue chez Maison Wydeline — votre avantage exclusif",
           html: emailHtml
