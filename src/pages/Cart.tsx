@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Trash2, ShoppingBag } from 'lucide-react';
+import { Trash2, ShoppingBag, Tag, X, Check, Loader2 } from 'lucide-react';
 import {
   Form,
   FormControl,
@@ -19,6 +19,15 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+
+interface AppliedPromo {
+  id: string;
+  code: string;
+  type: 'percent' | 'fixed' | 'free_shipping';
+  value: number | null;
+  minCartAmount: number | null;
+  label: string | null;
+}
 
 const checkoutSchema = z.object({
   nomComplet: z.string().trim().min(1, 'Le nom est requis').max(100, 'Maximum 100 caractères'),
@@ -38,6 +47,10 @@ const Cart = () => {
   const { products } = useProducts();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [promoCode, setPromoCode] = useState('');
+  const [promoLoading, setPromoLoading] = useState(false);
+  const [appliedPromo, setAppliedPromo] = useState<AppliedPromo | null>(null);
+  const [promoError, setPromoError] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof checkoutSchema>>({
     resolver: zodResolver(checkoutSchema),
@@ -58,9 +71,98 @@ const Cart = () => {
     return product ? { ...item, product } : null;
   }).filter(Boolean);
 
-  const total = cartItems.reduce((sum, item) => {
+  const subtotal = cartItems.reduce((sum, item) => {
     return sum + (item!.product.price * item!.quantity);
   }, 0);
+
+  // Calculate discount
+  const calculateDiscount = (): number => {
+    if (!appliedPromo) return 0;
+    
+    if (appliedPromo.minCartAmount && subtotal < appliedPromo.minCartAmount) {
+      return 0;
+    }
+    
+    if (appliedPromo.type === 'percent' && appliedPromo.value) {
+      return subtotal * (appliedPromo.value / 100);
+    }
+    if (appliedPromo.type === 'fixed' && appliedPromo.value) {
+      return Math.min(appliedPromo.value, subtotal);
+    }
+    return 0;
+  };
+
+  const discount = calculateDiscount();
+  const total = subtotal - discount;
+
+  const handleApplyPromo = async () => {
+    if (!promoCode.trim()) return;
+    
+    setPromoLoading(true);
+    setPromoError(null);
+    
+    try {
+      const { data, error } = await supabase
+        .from('promo_codes')
+        .select('*')
+        .eq('code', promoCode.trim().toUpperCase())
+        .eq('is_active', true)
+        .single();
+      
+      if (error || !data) {
+        setPromoError('Code promo invalide ou expiré');
+        return;
+      }
+      
+      // Check dates
+      const now = new Date();
+      if (data.starts_at && new Date(data.starts_at) > now) {
+        setPromoError('Ce code promo n\'est pas encore actif');
+        return;
+      }
+      if (data.ends_at && new Date(data.ends_at) < now) {
+        setPromoError('Ce code promo a expiré');
+        return;
+      }
+      
+      // Check usage limit
+      if (data.usage_limit_total && data.used_count >= data.usage_limit_total) {
+        setPromoError('Ce code promo a atteint sa limite d\'utilisation');
+        return;
+      }
+      
+      // Check min cart amount
+      if (data.min_cart_amount && subtotal < data.min_cart_amount) {
+        setPromoError(`Minimum d'achat requis: €${data.min_cart_amount}`);
+        return;
+      }
+      
+      setAppliedPromo({
+        id: data.id,
+        code: data.code,
+        type: data.type as 'percent' | 'fixed' | 'free_shipping',
+        value: data.value,
+        minCartAmount: data.min_cart_amount,
+        label: data.label,
+      });
+      
+      toast({
+        title: 'Code promo appliqué',
+        description: data.label || `${data.code} activé`,
+      });
+      
+      setPromoCode('');
+    } catch (err) {
+      setPromoError('Erreur lors de la validation du code');
+    } finally {
+      setPromoLoading(false);
+    }
+  };
+
+  const handleRemovePromo = () => {
+    setAppliedPromo(null);
+    setPromoError(null);
+  };
 
   const handleCheckout = async (values: z.infer<typeof checkoutSchema>) => {
     if (cartItems.length === 0) {
@@ -99,6 +201,7 @@ const Cart = () => {
           phone: values.telephone,
           shippingAddress,
           items: orderItems,
+          promoCode: appliedPromo?.code || null,
         },
       });
 
@@ -321,13 +424,93 @@ const Cart = () => {
                   />
                 </div>
 
+                {/* Promo Code Section */}
+                <div className="p-6 bg-card rounded-lg border space-y-4">
+                  <h2 className="text-xl font-medium flex items-center gap-2">
+                    <Tag size={20} />
+                    Code promo
+                  </h2>
+                  
+                  {appliedPromo ? (
+                    <div className="flex items-center justify-between p-3 bg-primary/10 rounded-lg border border-primary/20">
+                      <div className="flex items-center gap-2">
+                        <Check size={16} className="text-primary" />
+                        <div>
+                          <span className="font-medium">{appliedPromo.code}</span>
+                          {appliedPromo.type === 'percent' && appliedPromo.value && (
+                            <span className="text-sm text-muted-foreground ml-2">
+                              (-{appliedPromo.value}%)
+                            </span>
+                          )}
+                          {appliedPromo.type === 'fixed' && appliedPromo.value && (
+                            <span className="text-sm text-muted-foreground ml-2">
+                              (-€{appliedPromo.value})
+                            </span>
+                          )}
+                          {appliedPromo.type === 'free_shipping' && (
+                            <span className="text-sm text-muted-foreground ml-2">
+                              (Livraison offerte)
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleRemovePromo}
+                      >
+                        <X size={16} />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Entrez votre code"
+                        value={promoCode}
+                        onChange={(e) => {
+                          setPromoCode(e.target.value.toUpperCase());
+                          setPromoError(null);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleApplyPromo();
+                          }
+                        }}
+                        className="uppercase"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleApplyPromo}
+                        disabled={promoLoading || !promoCode.trim()}
+                      >
+                        {promoLoading ? <Loader2 size={16} className="animate-spin" /> : 'Appliquer'}
+                      </Button>
+                    </div>
+                  )}
+                  
+                  {promoError && (
+                    <p className="text-sm text-destructive">{promoError}</p>
+                  )}
+                </div>
+
                 <div className="p-6 bg-card rounded-lg border space-y-4">
                   <h2 className="text-xl font-medium">Récapitulatif</h2>
                   <div className="flex justify-between">
                     <span>Sous-total</span>
-                    <span>€{total.toFixed(2)}</span>
+                    <span>€{subtotal.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between font-medium text-lg">
+                  
+                  {appliedPromo && discount > 0 && (
+                    <div className="flex justify-between text-primary">
+                      <span>Réduction ({appliedPromo.code})</span>
+                      <span>-€{discount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  
+                  <div className="flex justify-between font-medium text-lg border-t pt-4">
                     <span>Total</span>
                     <span>€{total.toFixed(2)}</span>
                   </div>
