@@ -30,17 +30,9 @@ const sizeEquivalences = [
   { france: 47, uk: 13, usa: "14", cm: "30.0" },
 ];
 
-import footMeasurementImg from '@/assets/foot-measurement.png';
-import footMeasurementStep3Img from '@/assets/foot-measurement-step3.png';
-import footMeasurementStep4Img from '@/assets/foot-measurement-step4.png';
-import footMeasurementStep5Img from '@/assets/foot-measurement-step5.png';
-
-// Style uniforme pour toutes les images d'étapes
-const stepImageClass = "w-14 h-14 object-contain";
-
 // Illustrations SVG pour chaque étape
 const StepIllustration1 = () => (
-  <svg viewBox="0 0 80 60" className="w-14 h-14 text-muted-foreground">
+  <svg viewBox="0 0 80 60" className="w-16 h-12 text-muted-foreground">
     {/* Deux feuilles A4 */}
     <rect x="10" y="5" width="28" height="40" fill="none" stroke="currentColor" strokeWidth="1.5" rx="1" />
     <rect x="12" y="7" width="28" height="40" fill="none" stroke="currentColor" strokeWidth="1.5" rx="1" />
@@ -52,20 +44,28 @@ const StepIllustration1 = () => (
   </svg>
 );
 
+import footMeasurementImg from '@/assets/foot-measurement.png';
+
 const StepIllustration2 = () => (
-  <img src={footMeasurementImg} alt="Pied posé sur le papier" className={stepImageClass} />
+  <img src={footMeasurementImg} alt="Pied posé sur le papier" className="w-16 h-14 object-contain" />
 );
+
+import footMeasurementStep3Img from '@/assets/foot-measurement-step3.png';
 
 const StepIllustration3 = () => (
-  <img src={footMeasurementStep3Img} alt="Tracé derrière le talon" className={stepImageClass} />
+  <img src={footMeasurementStep3Img} alt="Tracé derrière le talon" className="w-16 h-14 object-contain" />
 );
+
+import footMeasurementStep4Img from '@/assets/foot-measurement-step4.png';
 
 const StepIllustration4 = () => (
-  <img src={footMeasurementStep4Img} alt="Tracé devant l'orteil" className={stepImageClass} />
+  <img src={footMeasurementStep4Img} alt="Tracé devant l'orteil" className="w-16 h-14 object-contain" />
 );
 
+import footMeasurementStep5Img from '@/assets/foot-measurement-step5.png';
+
 const StepIllustration5 = () => (
-  <img src={footMeasurementStep5Img} alt="Mesure du pied en cm" className={stepImageClass} />
+  <img src={footMeasurementStep5Img} alt="Mesure du pied en cm" className="w-20 h-10 object-contain" />
 );
 
 const stepIllustrations = [
