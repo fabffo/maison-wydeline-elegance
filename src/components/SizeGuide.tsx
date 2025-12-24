@@ -30,59 +30,7 @@ const sizeEquivalences = [
   { france: 47, uk: 13, usa: "14", cm: "30.0" },
 ];
 
-// Illustrations SVG pour chaque étape
-const StepIllustration1 = () => (
-  <svg viewBox="0 0 80 60" className="w-16 h-12 text-muted-foreground">
-    {/* Deux feuilles A4 */}
-    <rect x="10" y="5" width="28" height="40" fill="none" stroke="currentColor" strokeWidth="1.5" rx="1" />
-    <rect x="12" y="7" width="28" height="40" fill="none" stroke="currentColor" strokeWidth="1.5" rx="1" />
-    {/* Ligne de séparation (scotch) */}
-    <line x1="10" y1="25" x2="40" y2="25" stroke="currentColor" strokeWidth="1" strokeDasharray="2,2" />
-    {/* Stylo */}
-    <line x1="55" y1="8" x2="65" y2="45" stroke="currentColor" strokeWidth="2" />
-    <polygon points="65,45 62,50 68,50" fill="currentColor" />
-  </svg>
-);
-
-import footMeasurementImg from '@/assets/foot-measurement.png';
-
-const StepIllustration2 = () => (
-  <img src={footMeasurementImg} alt="Pied posé sur le papier" className="w-16 h-14 object-contain" />
-);
-
-import footMeasurementStep3Img from '@/assets/foot-measurement-step3.png';
-
-const StepIllustration3 = () => (
-  <img src={footMeasurementStep3Img} alt="Tracé derrière le talon" className="w-16 h-14 object-contain" />
-);
-
-import footMeasurementStep4Img from '@/assets/foot-measurement-step4.png';
-
-const StepIllustration4 = () => (
-  <img src={footMeasurementStep4Img} alt="Tracé devant l'orteil" className="w-16 h-14 object-contain" />
-);
-
-import footMeasurementStep5Img from '@/assets/foot-measurement-step5.png';
-
-const StepIllustration5 = () => (
-  <img src={footMeasurementStep5Img} alt="Mesure du pied en cm" className="w-20 h-10 object-contain" />
-);
-
-const stepIllustrations = [
-  StepIllustration1,
-  StepIllustration2,
-  StepIllustration3,
-  StepIllustration4,
-  StepIllustration5,
-];
-
-const steps = [
-  "Scotchez deux feuilles de papier A4 ou prenez une feuille A3",
-  "Posez votre pied à plat sur la grande feuille de papier",
-  "Tracez un trait juste derrière votre talon",
-  "Tracez un trait au bout de votre orteil le plus long",
-  "Mesurez l'écart entre les deux points : c'est votre pointure en centimètre",
-];
+import sizeGuideCompleteImg from '@/assets/size-guide-complete.png';
 
 const SizeGuideContent = () => (
   <div className="space-y-6">
@@ -92,45 +40,13 @@ const SizeGuideContent = () => (
 
     {/* Section Comment mesurer */}
     <div className="bg-muted/30 border border-border rounded-2xl p-5">
-      <h3 className="font-semibold text-lg mb-1 text-center">Comment mesurer et connaître sa pointure</h3>
-      <div className="w-16 h-0.5 bg-foreground mx-auto mb-6" />
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Colonne gauche : étapes 1-3 */}
-        <div className="space-y-5">
-          {steps.slice(0, 3).map((step, index) => {
-            const Illustration = stepIllustrations[index];
-            return (
-              <div key={index} className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-20 h-16 flex items-center justify-center bg-muted/50 rounded-lg">
-                  <Illustration />
-                </div>
-                <div className="flex gap-2 pt-1">
-                  <span className="flex-shrink-0 text-sm font-semibold">{index + 1}.</span>
-                  <span className="text-sm text-muted-foreground">{step}</span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-        
-        {/* Colonne droite : étapes 4-5 */}
-        <div className="space-y-5">
-          {steps.slice(3).map((step, index) => {
-            const Illustration = stepIllustrations[index + 3];
-            return (
-              <div key={index + 3} className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-20 h-16 flex items-center justify-center bg-muted/50 rounded-lg">
-                  <Illustration />
-                </div>
-                <div className="flex gap-2 pt-1">
-                  <span className="flex-shrink-0 text-sm font-semibold">{index + 4}.</span>
-                  <span className="text-sm text-muted-foreground">{step}</span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+      <h3 className="font-semibold text-lg mb-4 text-center">Comment mesurer et connaître sa pointure</h3>
+      <div className="flex justify-center">
+        <img 
+          src={sizeGuideCompleteImg} 
+          alt="Guide complet pour mesurer votre pointure" 
+          className="max-w-full h-auto rounded-lg"
+        />
       </div>
     </div>
 
