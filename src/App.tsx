@@ -40,6 +40,7 @@ import Emails from "./pages/admin/Emails";
 import TvaRates from "./pages/admin/TvaRates";
 import ContactRecipients from "./pages/admin/ContactRecipients";
 import Newsletter from "./pages/admin/Newsletter";
+import PopupNewsletter from "./pages/admin/PopupNewsletter";
 
 const queryClient = new QueryClient();
 
@@ -69,6 +70,7 @@ const App = () => {
                 <Route path="tva" element={<TvaRates />} />
                 <Route path="contact-recipients" element={<ContactRecipients />} />
                 <Route path="newsletter" element={<Newsletter />} />
+                <Route path="popup-newsletter" element={<PopupNewsletter />} />
                 <Route path="reports" element={<Reports />} />
                 <Route path="users" element={<Users />} />
               </Route>
@@ -109,6 +111,7 @@ const App = () => {
               <Route path="tva" element={<TvaRates />} />
               <Route path="contact-recipients" element={<ContactRecipients />} />
               <Route path="newsletter" element={<Newsletter />} />
+              <Route path="popup-newsletter" element={<PopupNewsletter />} />
               <Route path="reports" element={<Reports />} />
               <Route path="users" element={<Users />} />
             </Route>

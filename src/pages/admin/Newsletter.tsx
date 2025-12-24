@@ -41,7 +41,7 @@ const Newsletter = () => {
         sub.email,
         format(new Date(sub.subscribed_at), 'dd/MM/yyyy HH:mm'),
         sub.is_active ? 'Oui' : 'Non',
-        sub.source || 'coming_soon'
+        sub.source_path || 'coming_soon'
       ].join(','))
     ].join('\n');
 
@@ -138,7 +138,7 @@ const Newsletter = () => {
                       {format(new Date(subscriber.subscribed_at), "d MMMM yyyy 'à' HH:mm", { locale: fr })}
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline">{subscriber.source || 'coming_soon'}</Badge>
+                      <Badge variant="outline">{subscriber.source_path || 'coming_soon'}</Badge>
                     </TableCell>
                     <TableCell>
                       <Badge variant={subscriber.is_active ? 'default' : 'secondary'}>

@@ -38,6 +38,7 @@ const menuItems = [
   { icon: Percent, label: 'TVA', path: '/admin/tva' },
   { icon: Contact, label: 'Contacts', path: '/admin/contact-recipients' },
   { icon: Mail, label: 'Newsletter', path: '/admin/newsletter' },
+  { icon: Bell, label: 'Popup Newsletter', path: '/admin/popup-newsletter' },
   { icon: BarChart3, label: 'Rapports', path: '/admin/reports' },
   { icon: Users, label: 'Utilisateurs', path: '/admin/users' },
 ];
