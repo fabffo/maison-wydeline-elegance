@@ -48,9 +48,13 @@ export type Database = {
           error_message: string | null
           id: string
           metadata: Json | null
+          provider: string | null
           recipient_email: string
+          related_id: string | null
+          related_table: string | null
           status: string
           subject: string
+          template_key: string | null
         }
         Insert: {
           created_at?: string
@@ -58,9 +62,13 @@ export type Database = {
           error_message?: string | null
           id?: string
           metadata?: Json | null
+          provider?: string | null
           recipient_email: string
+          related_id?: string | null
+          related_table?: string | null
           status?: string
           subject: string
+          template_key?: string | null
         }
         Update: {
           created_at?: string
@@ -68,9 +76,13 @@ export type Database = {
           error_message?: string | null
           id?: string
           metadata?: Json | null
+          provider?: string | null
           recipient_email?: string
+          related_id?: string | null
+          related_table?: string | null
           status?: string
           subject?: string
+          template_key?: string | null
         }
         Relationships: []
       }
@@ -115,9 +127,12 @@ export type Database = {
           id: string
           incentive_id: string | null
           is_active: boolean
+          last_email_sent_at: string | null
           last_seen_at: string | null
           promo_code: string | null
+          promo_code_id: string | null
           source_path: string | null
+          status: string
           subscribed_at: string
         }
         Insert: {
@@ -125,9 +140,12 @@ export type Database = {
           id?: string
           incentive_id?: string | null
           is_active?: boolean
+          last_email_sent_at?: string | null
           last_seen_at?: string | null
           promo_code?: string | null
+          promo_code_id?: string | null
           source_path?: string | null
+          status?: string
           subscribed_at?: string
         }
         Update: {
@@ -135,9 +153,12 @@ export type Database = {
           id?: string
           incentive_id?: string | null
           is_active?: boolean
+          last_email_sent_at?: string | null
           last_seen_at?: string | null
           promo_code?: string | null
+          promo_code_id?: string | null
           source_path?: string | null
+          status?: string
           subscribed_at?: string
         }
         Relationships: [
@@ -146,6 +167,13 @@ export type Database = {
             columns: ["incentive_id"]
             isOneToOne: false
             referencedRelation: "popup_incentives"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "newsletter_subscribers_promo_code_id_fkey"
+            columns: ["promo_code_id"]
+            isOneToOne: false
+            referencedRelation: "promo_codes"
             referencedColumns: ["id"]
           },
         ]
@@ -548,6 +576,96 @@ export type Database = {
           id?: string
           last_name?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      promo_assignments: {
+        Row: {
+          assigned_at: string
+          email: string
+          id: string
+          promo_code_id: string
+          subscriber_id: string
+        }
+        Insert: {
+          assigned_at?: string
+          email: string
+          id?: string
+          promo_code_id: string
+          subscriber_id: string
+        }
+        Update: {
+          assigned_at?: string
+          email?: string
+          id?: string
+          promo_code_id?: string
+          subscriber_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "promo_assignments_promo_code_id_fkey"
+            columns: ["promo_code_id"]
+            isOneToOne: false
+            referencedRelation: "promo_codes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "promo_assignments_subscriber_id_fkey"
+            columns: ["subscriber_id"]
+            isOneToOne: false
+            referencedRelation: "newsletter_subscribers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      promo_codes: {
+        Row: {
+          code: string
+          created_at: string
+          ends_at: string | null
+          id: string
+          is_active: boolean
+          label: string | null
+          min_cart_amount: number | null
+          starts_at: string | null
+          type: string
+          updated_at: string
+          usage_limit_per_email: number
+          usage_limit_total: number | null
+          used_count: number
+          value: number | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          label?: string | null
+          min_cart_amount?: number | null
+          starts_at?: string | null
+          type: string
+          updated_at?: string
+          usage_limit_per_email?: number
+          usage_limit_total?: number | null
+          used_count?: number
+          value?: number | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          label?: string | null
+          min_cart_amount?: number | null
+          starts_at?: string | null
+          type?: string
+          updated_at?: string
+          usage_limit_per_email?: number
+          usage_limit_total?: number | null
+          used_count?: number
+          value?: number | null
         }
         Relationships: []
       }

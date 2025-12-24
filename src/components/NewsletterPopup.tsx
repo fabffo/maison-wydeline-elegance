@@ -4,8 +4,6 @@ import { X, Copy, Check, Gift, ArrowRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { z } from 'zod';
@@ -24,13 +22,16 @@ interface PopupConfig {
   exclude_paths: string[] | null;
 }
 
-interface PopupIncentive {
-  id: string;
-  label: string;
-  promo_code: string;
-  short_desc: string | null;
-  sort_order: number;
-  is_active: boolean;
+interface SignupResponse {
+  ok: boolean;
+  error?: string;
+  promo_code?: string;
+  promo_type?: string;
+  promo_value?: number;
+  min_cart_amount?: number;
+  ends_at?: string;
+  already_subscribed?: boolean;
+  already_assigned?: boolean;
 }
 
 const emailSchema = z.string().email('Veuillez entrer une adresse email valide');
@@ -40,36 +41,37 @@ const STORAGE_KEY = 'newsletter_popup_dismissed_until';
 export const NewsletterPopup = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [config, setConfig] = useState<PopupConfig | null>(null);
-  const [incentives, setIncentives] = useState<PopupIncentive[]>([]);
-  const [selectedIncentiveId, setSelectedIncentiveId] = useState<string>('');
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [promoCode, setPromoCode] = useState('');
+  const [promoDetails, setPromoDetails] = useState<{
+    type?: string;
+    value?: number;
+    min_cart_amount?: number;
+    ends_at?: string;
+  }>({});
   const [copied, setCopied] = useState(false);
   const [alreadySubscribed, setAlreadySubscribed] = useState(false);
   const location = useLocation();
   const { toast } = useToast();
 
-  // Fetch config and incentives
+  // Fetch config
   useEffect(() => {
-    const fetchData = async () => {
-      const [configResult, incentivesResult] = await Promise.all([
-        supabase.from('popup_config').select('*').limit(1).maybeSingle(),
-        supabase.from('popup_incentives').select('*').eq('is_active', true).order('sort_order')
-      ]);
+    const fetchConfig = async () => {
+      const { data } = await supabase
+        .from('popup_config')
+        .select('*')
+        .limit(1)
+        .maybeSingle();
 
-      if (configResult.data) {
-        setConfig(configResult.data);
-      }
-      if (incentivesResult.data && incentivesResult.data.length > 0) {
-        setIncentives(incentivesResult.data);
-        setSelectedIncentiveId(incentivesResult.data[0].id);
+      if (data) {
+        setConfig(data);
       }
     };
 
-    fetchData();
+    fetchConfig();
   }, []);
 
   // Check if popup should be shown
@@ -150,6 +152,7 @@ export const NewsletterPopup = () => {
     setEmailError('');
     setIsSubscribed(false);
     setPromoCode('');
+    setPromoDetails({});
     setAlreadySubscribed(false);
     setCopied(false);
   };
@@ -169,49 +172,36 @@ export const NewsletterPopup = () => {
     setIsSubmitting(true);
 
     try {
-      // Check if already subscribed
-      const { data: existingSubscriber } = await supabase
-        .from('newsletter_subscribers')
-        .select('id, promo_code')
-        .eq('email', cleanEmail)
-        .maybeSingle();
+      // Call edge function
+      const { data, error } = await supabase.functions.invoke('newsletter-signup', {
+        body: {
+          email: cleanEmail,
+          source_path: location.pathname
+        }
+      });
 
-      if (existingSubscriber) {
-        // Already subscribed - show existing code
-        setPromoCode(existingSubscriber.promo_code || '');
-        setAlreadySubscribed(true);
-        setIsSubscribed(true);
+      if (error) {
+        throw error;
+      }
+
+      const response = data as SignupResponse;
+
+      if (!response.ok) {
+        setEmailError(response.error || 'Une erreur est survenue');
         return;
       }
 
-      // Get selected incentive promo code
-      const selectedIncentive = incentives.find(i => i.id === selectedIncentiveId);
-      const code = selectedIncentive?.promo_code || '';
-
-      // Insert new subscriber
-      const { error } = await supabase
-        .from('newsletter_subscribers')
-        .insert({
-          email: cleanEmail,
-          incentive_id: selectedIncentiveId,
-          promo_code: code,
-          source_path: location.pathname,
-          is_active: true
-        });
-
-      if (error) {
-        if (error.code === '23505') {
-          // Duplicate email (race condition)
-          setAlreadySubscribed(true);
-          setPromoCode(code);
-        } else {
-          throw error;
-        }
-      } else {
-        setPromoCode(code);
-      }
-
+      // Success
+      setPromoCode(response.promo_code || '');
+      setPromoDetails({
+        type: response.promo_type,
+        value: response.promo_value,
+        min_cart_amount: response.min_cart_amount,
+        ends_at: response.ends_at
+      });
+      setAlreadySubscribed(response.already_subscribed || response.already_assigned || false);
       setIsSubscribed(true);
+
     } catch (error) {
       console.error('Error subscribing:', error);
       toast({
@@ -246,7 +236,14 @@ export const NewsletterPopup = () => {
     }
   };
 
-  if (!config || incentives.length === 0) return null;
+  const formatPromoValue = () => {
+    if (promoDetails.type === 'percent') return `-${promoDetails.value}%`;
+    if (promoDetails.type === 'fixed') return `-${promoDetails.value}€`;
+    if (promoDetails.type === 'free_shipping') return 'Livraison offerte';
+    return '';
+  };
+
+  if (!config) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
@@ -279,43 +276,6 @@ export const NewsletterPopup = () => {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-5">
-                {/* Incentive selection */}
-                <div>
-                  <Label className="text-sm font-medium mb-3 block">
-                    Choisissez votre avantage :
-                  </Label>
-                  <RadioGroup
-                    value={selectedIncentiveId}
-                    onValueChange={setSelectedIncentiveId}
-                    className="space-y-2"
-                  >
-                    {incentives.map((incentive) => (
-                      <div
-                        key={incentive.id}
-                        className={`flex items-center space-x-3 p-3 rounded-lg border transition-colors cursor-pointer ${
-                          selectedIncentiveId === incentive.id
-                            ? 'border-primary bg-primary/5'
-                            : 'border-border hover:border-primary/50'
-                        }`}
-                        onClick={() => setSelectedIncentiveId(incentive.id)}
-                      >
-                        <RadioGroupItem value={incentive.id} id={incentive.id} />
-                        <Label
-                          htmlFor={incentive.id}
-                          className="flex-1 cursor-pointer text-sm font-medium"
-                        >
-                          {incentive.label}
-                          {incentive.short_desc && (
-                            <span className="block text-xs text-muted-foreground font-normal mt-0.5">
-                              {incentive.short_desc}
-                            </span>
-                          )}
-                        </Label>
-                      </div>
-                    ))}
-                  </RadioGroup>
-                </div>
-
                 {/* Email input */}
                 <div>
                   <Input
@@ -379,7 +339,7 @@ export const NewsletterPopup = () => {
                     Merci !
                   </h2>
                   <p className="text-muted-foreground text-sm mb-6">
-                    Voici votre avantage exclusif :
+                    Voici votre avantage exclusif {formatPromoValue()} :
                   </p>
                 </>
               )}
@@ -390,6 +350,17 @@ export const NewsletterPopup = () => {
                   <p className="text-2xl font-mono font-bold text-primary tracking-wider">
                     {promoCode}
                   </p>
+                  
+                  {/* Conditions */}
+                  <div className="text-xs text-muted-foreground mt-2 space-y-1">
+                    {promoDetails.min_cart_amount && (
+                      <p>Valable dès {promoDetails.min_cart_amount}€ d'achat</p>
+                    )}
+                    {promoDetails.ends_at && (
+                      <p>Offre valable jusqu'au {new Date(promoDetails.ends_at).toLocaleDateString('fr-FR')}</p>
+                    )}
+                  </div>
+                  
                   <Button
                     variant="outline"
                     size="sm"
