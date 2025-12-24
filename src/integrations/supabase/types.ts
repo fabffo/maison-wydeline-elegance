@@ -113,25 +113,42 @@ export type Database = {
         Row: {
           email: string
           id: string
+          incentive_id: string | null
           is_active: boolean
-          source: string | null
+          last_seen_at: string | null
+          promo_code: string | null
+          source_path: string | null
           subscribed_at: string
         }
         Insert: {
           email: string
           id?: string
+          incentive_id?: string | null
           is_active?: boolean
-          source?: string | null
+          last_seen_at?: string | null
+          promo_code?: string | null
+          source_path?: string | null
           subscribed_at?: string
         }
         Update: {
           email?: string
           id?: string
+          incentive_id?: string | null
           is_active?: boolean
-          source?: string | null
+          last_seen_at?: string | null
+          promo_code?: string | null
+          source_path?: string | null
           subscribed_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "newsletter_subscribers_incentive_id_fkey"
+            columns: ["incentive_id"]
+            isOneToOne: false
+            referencedRelation: "popup_incentives"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notifications: {
         Row: {
@@ -252,6 +269,87 @@ export type Database = {
           total_amount?: number
           updated_at?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      popup_config: {
+        Row: {
+          cooldown_days: number
+          cta_label: string
+          display_delay_seconds: number
+          display_scroll_percent: number
+          exclude_paths: string[] | null
+          id: string
+          include_paths: string[] | null
+          is_active: boolean
+          rgpd_text: string
+          subtitle: string
+          title: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          cooldown_days?: number
+          cta_label?: string
+          display_delay_seconds?: number
+          display_scroll_percent?: number
+          exclude_paths?: string[] | null
+          id?: string
+          include_paths?: string[] | null
+          is_active?: boolean
+          rgpd_text?: string
+          subtitle?: string
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          cooldown_days?: number
+          cta_label?: string
+          display_delay_seconds?: number
+          display_scroll_percent?: number
+          exclude_paths?: string[] | null
+          id?: string
+          include_paths?: string[] | null
+          is_active?: boolean
+          rgpd_text?: string
+          subtitle?: string
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      popup_incentives: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          label: string
+          promo_code: string
+          short_desc: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          label: string
+          promo_code: string
+          short_desc?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          label?: string
+          promo_code?: string
+          short_desc?: string | null
+          sort_order?: number
+          updated_at?: string
         }
         Relationships: []
       }

@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Sparkles, Heart, Shield } from "lucide-react";
 import { useCanonicalUrl } from "@/components/SEORedirect";
+import { NewsletterPopup } from "@/components/NewsletterPopup";
 import heroImage from "@/assets/hero-main.jpg";
 import saoJoaoMadeira from "@/assets/sao-joao-madeira.jpg";
 
@@ -115,6 +116,8 @@ const Home = () => {
 
   return (
     <main className="min-h-screen">
+      {/* Newsletter Popup */}
+      <NewsletterPopup />
       {/* Hero Section - Full Width Banner */}
       <section className="relative min-h-[90vh] flex items-center">
         <div
