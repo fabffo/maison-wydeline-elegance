@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ShoppingCart, User, Settings } from 'lucide-react';
+import { ShoppingCart, User, Settings, Menu } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +12,11 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from '@/components/ui/hover-card';
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -110,7 +115,51 @@ export const Header = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4 md:gap-6">
+          {/* Mobile burger menu */}
+          <Sheet>
+            <SheetTrigger asChild>
+              <button
+                className={`md:hidden transition-colors ${
+                  isHomePage 
+                    ? 'text-white hover:text-luxury-beige'
+                    : 'text-luxury-dark hover:text-luxury-beige'
+                }`}
+                aria-label="Menu"
+              >
+                <Menu size={24} />
+              </button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[280px] bg-white">
+              <nav className="flex flex-col gap-6 mt-8">
+                <Link
+                  to="/collection"
+                  className={`text-lg font-medium transition-colors hover:text-luxury-beige ${
+                    isActive('/collection') ? 'text-luxury-beige' : 'text-luxury-dark'
+                  }`}
+                >
+                  {t.nav.collection}
+                </Link>
+                <Link
+                  to="/la-marque"
+                  className={`text-lg font-medium transition-colors hover:text-luxury-beige ${
+                    isActive('/la-marque') ? 'text-luxury-beige' : 'text-luxury-dark'
+                  }`}
+                >
+                  {t.nav.brand}
+                </Link>
+                <Link
+                  to="/contact"
+                  className={`text-lg font-medium transition-colors hover:text-luxury-beige ${
+                    isActive('/contact') ? 'text-luxury-beige' : 'text-luxury-dark'
+                  }`}
+                >
+                  {t.nav.contact}
+                </Link>
+              </nav>
+            </SheetContent>
+          </Sheet>
+
           <button
             onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')}
             className={`text-sm font-medium transition-colors ${
