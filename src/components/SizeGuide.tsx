@@ -62,23 +62,10 @@ const StepIllustration4 = () => (
   <img src={footMeasurementStep4Img} alt="Tracé devant l'orteil" className="w-16 h-14 object-contain" />
 );
 
+import footMeasurementStep5Img from '@/assets/foot-measurement-step5.png';
+
 const StepIllustration5 = () => (
-  <svg viewBox="0 0 100 50" className="w-20 h-10 text-muted-foreground">
-    {/* Pied horizontal */}
-    <path d="M10 30 Q5 28 8 22 L15 18 Q25 15 40 15 L70 18 Q80 20 85 25 Q88 30 85 35 L15 35 Q8 34 10 30" fill="none" stroke="currentColor" strokeWidth="1.5" />
-    {/* Ligne de mesure */}
-    <line x1="8" y1="42" x2="88" y2="42" stroke="currentColor" strokeWidth="1.5" />
-    {/* Flèches */}
-    <polygon points="8,42 12,39 12,45" fill="currentColor" />
-    <polygon points="88,42 84,39 84,45" fill="currentColor" />
-    {/* Règle graduée */}
-    <line x1="20" y1="42" x2="20" y2="46" stroke="currentColor" strokeWidth="1" />
-    <line x1="35" y1="42" x2="35" y2="46" stroke="currentColor" strokeWidth="1" />
-    <line x1="50" y1="42" x2="50" y2="48" stroke="currentColor" strokeWidth="1" />
-    <line x1="65" y1="42" x2="65" y2="46" stroke="currentColor" strokeWidth="1" />
-    <line x1="80" y1="42" x2="80" y2="46" stroke="currentColor" strokeWidth="1" />
-    <text x="92" y="46" fontSize="8" fill="currentColor">cm</text>
-  </svg>
+  <img src={footMeasurementStep5Img} alt="Mesure du pied en cm" className="w-20 h-10 object-contain" />
 );
 
 const stepIllustrations = [
