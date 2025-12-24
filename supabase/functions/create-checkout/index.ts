@@ -37,6 +37,7 @@ serve(async (req) => {
         unitPrice: z.number().positive(),
         isPreorder: z.boolean().optional(),
       })).min(1).max(20),
+      promoCode: z.string().nullable().optional(),
     });
 
     // Validate input
@@ -51,7 +52,7 @@ serve(async (req) => {
       });
     }
 
-    const { customerName, customerEmail, phone, shippingAddress, items } = validationResult.data;
+    const { customerName, customerEmail, phone, shippingAddress, items, promoCode } = validationResult.data;
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2025-08-27.basil",
@@ -94,12 +95,54 @@ serve(async (req) => {
       }
     }
 
-    // Calculate total
-    const totalAmount = items.reduce((sum: number, item: any) => {
+    // Calculate subtotal
+    const subtotal = items.reduce((sum: number, item: any) => {
       return sum + (item.unitPrice * item.quantity);
     }, 0);
 
-    // Create order in database with shipping address
+    // Handle promo code validation and discount calculation
+    let appliedPromo: any = null;
+    let discountAmount = 0;
+    let discountPercent = 0;
+
+    if (promoCode) {
+      const { data: promo, error: promoError } = await supabase
+        .from("promo_codes")
+        .select("*")
+        .eq("code", promoCode.toUpperCase())
+        .eq("is_active", true)
+        .single();
+
+      if (!promoError && promo) {
+        const now = new Date();
+        const startsAt = promo.starts_at ? new Date(promo.starts_at) : null;
+        const endsAt = promo.ends_at ? new Date(promo.ends_at) : null;
+
+        const isValidDate = (!startsAt || startsAt <= now) && (!endsAt || endsAt >= now);
+        const isUnderLimit = !promo.usage_limit_total || promo.used_count < promo.usage_limit_total;
+        const meetsMinCart = !promo.min_cart_amount || subtotal >= promo.min_cart_amount;
+
+        if (isValidDate && isUnderLimit && meetsMinCart) {
+          appliedPromo = promo;
+
+          if (promo.type === 'percent' && promo.value) {
+            discountPercent = promo.value;
+            discountAmount = subtotal * (promo.value / 100);
+          } else if (promo.type === 'fixed' && promo.value) {
+            discountAmount = Math.min(promo.value, subtotal);
+          }
+          // free_shipping handled separately by Stripe
+
+          console.log(`Promo code ${promoCode} applied: -€${discountAmount.toFixed(2)}`);
+        } else {
+          console.log(`Promo code ${promoCode} validation failed: date=${isValidDate}, limit=${isUnderLimit}, minCart=${meetsMinCart}`);
+        }
+      }
+    }
+
+    const totalAmount = subtotal - discountAmount;
+
+    // Create order in database with shipping address and promo info
     const { data: order, error: orderError } = await supabase
       .from("orders")
       .insert({
@@ -110,12 +153,22 @@ serve(async (req) => {
         shipping_address: {
           ...shippingAddress,
           phone,
+          promoCode: appliedPromo?.code || null,
+          discountAmount: discountAmount,
         },
       })
       .select()
       .single();
 
     if (orderError) throw orderError;
+
+    // Increment promo code usage if applied
+    if (appliedPromo) {
+      await supabase
+        .from("promo_codes")
+        .update({ used_count: appliedPromo.used_count + 1 })
+        .eq("id", appliedPromo.id);
+    }
 
     // Create order items
     const orderItems = items.map((item: any) => ({
@@ -143,8 +196,8 @@ serve(async (req) => {
 
     let customerId = customers.data.length > 0 ? customers.data[0].id : undefined;
 
-    // Create Stripe checkout session
-    const lineItems = items.map((item: any) => ({
+    // Create Stripe checkout session line items
+    const lineItems: any[] = items.map((item: any) => ({
       price_data: {
         currency: "eur",
         product_data: {
@@ -154,6 +207,20 @@ serve(async (req) => {
       },
       quantity: item.quantity,
     }));
+
+    // Add discount line item if promo code applied
+    if (discountAmount > 0 && appliedPromo) {
+      lineItems.push({
+        price_data: {
+          currency: "eur",
+          product_data: {
+            name: `Réduction (${appliedPromo.code})`,
+          },
+          unit_amount: -Math.round(discountAmount * 100),
+        },
+        quantity: 1,
+      });
+    }
 
     // Get origin from request headers or fallback to referer
     let origin = req.headers.get("origin");
@@ -172,10 +239,11 @@ serve(async (req) => {
 
     console.log("Creating checkout session with origin:", origin);
     
-    const session = await stripe.checkout.sessions.create({
+    // Create checkout session with or without Stripe coupon
+    const sessionConfig: any = {
       customer: customerId,
       customer_email: customerId ? undefined : customerEmail,
-      line_items: lineItems,
+      line_items: lineItems.filter(li => li.price_data.unit_amount >= 0), // Only positive amounts
       mode: "payment",
       success_url: `${origin}/order-confirmation?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/panier`,
@@ -183,8 +251,24 @@ serve(async (req) => {
         orderId: order.id,
         phone,
         shippingAddress: JSON.stringify(shippingAddress),
+        promoCode: appliedPromo?.code || null,
+        discountAmount: discountAmount.toFixed(2),
       },
-    });
+    };
+
+    // Apply discount as Stripe coupon if applicable
+    if (discountAmount > 0 && appliedPromo) {
+      // Create a one-time coupon for this specific discount
+      const coupon = await stripe.coupons.create({
+        amount_off: Math.round(discountAmount * 100),
+        currency: "eur",
+        duration: "once",
+        name: `${appliedPromo.code} (-€${discountAmount.toFixed(2)})`,
+      });
+      sessionConfig.discounts = [{ coupon: coupon.id }];
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionConfig);
 
     console.log("Checkout session created:", session.id, "URL:", session.url, "for order:", order.id);
 
