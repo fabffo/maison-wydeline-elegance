@@ -114,7 +114,7 @@ serve(async (req) => {
 
       console.log("Invoice created:", invoiceNumber);
 
-      // Get shipping address for invoice
+      // Get shipping address and promo info for invoice
       const shippingAddress = order.shipping_address as {
         nomComplet?: string;
         adresse1?: string;
@@ -122,7 +122,12 @@ serve(async (req) => {
         codePostal?: string;
         ville?: string;
         pays?: string;
+        promoCode?: string;
+        discountAmount?: number;
       } | null;
+
+      const promoCode = shippingAddress?.promoCode || null;
+      const discountAmount = shippingAddress?.discountAmount || 0;
 
       // Get order items for email and preorder processing
       const { data: orderItems, error: itemsError } = await supabase
@@ -168,6 +173,9 @@ serve(async (req) => {
         }
       }
 
+      // Calculate subtotal (before discount)
+      const subtotal = orderItems?.reduce((sum: number, item: any) => sum + Number(item.total_price), 0) || Number(order.total_amount) + discountAmount;
+
       // Send confirmation email
       try {
         const { data: emailData, error: emailError } = await supabase.functions.invoke(
@@ -185,6 +193,9 @@ serve(async (req) => {
                 totalPrice: Number(item.total_price),
                 tvaRate: tvaRate,
               })) || [],
+              subtotal: subtotal,
+              discountAmount: discountAmount,
+              promoCode: promoCode,
               totalAmount: Number(order.total_amount),
               invoiceNumber: invoiceNumber,
             },
@@ -219,6 +230,9 @@ serve(async (req) => {
                 totalPrice: Number(item.total_price),
                 tvaRate: tvaRate,
               })) || [],
+              subtotal: subtotal,
+              discountAmount: discountAmount,
+              promoCode: promoCode,
               totalAmount: Number(order.total_amount),
               shippingAddress: shippingAddress ? {
                 adresse1: shippingAddress.adresse1 || '',

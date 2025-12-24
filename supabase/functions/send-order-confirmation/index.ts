@@ -36,6 +36,9 @@ interface OrderConfirmationRequest {
     totalPrice: number;
     tvaRate?: number;
   }>;
+  subtotal?: number;
+  discountAmount?: number;
+  promoCode?: string;
   totalAmount: number;
   invoiceNumber?: string;
   shippingAddress?: {
@@ -146,8 +149,13 @@ function generateOrderPdf(data: OrderConfirmationRequest): string {
     ? data.items[0].tvaRate / 100
     : 0.20;
   const tvaRateDisplay = avgTvaRate * 100;
-  const totalHT = data.totalAmount / (1 + avgTvaRate);
-  const tvaAmount = data.totalAmount - totalHT;
+  
+  // Calculate amounts with discount
+  const subtotal = data.subtotal || data.items.reduce((sum, item) => sum + item.totalPrice, 0);
+  const discountAmount = data.discountAmount || 0;
+  const totalAfterDiscount = subtotal - discountAmount;
+  const totalHT = totalAfterDiscount / (1 + avgTvaRate);
+  const tvaAmount = totalAfterDiscount - totalHT;
   
   // Total section
   yPos += 15;
@@ -157,6 +165,21 @@ function generateOrderPdf(data: OrderConfirmationRequest): string {
   
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
+  
+  // Subtotal before discount
+  doc.text("Sous-total", 135, yPos + 2);
+  doc.text(`${subtotal.toFixed(2)} €`, 170, yPos + 2);
+  
+  // Discount line if applicable
+  if (discountAmount > 0) {
+    yPos += 7;
+    doc.setTextColor(0, 128, 0);
+    doc.text(`Réduction${data.promoCode ? ` (${data.promoCode})` : ''}`, 135, yPos + 2);
+    doc.text(`-${discountAmount.toFixed(2)} €`, 170, yPos + 2);
+    doc.setTextColor(0, 0, 0);
+  }
+  
+  yPos += 7;
   doc.text("Total HT", 135, yPos + 2);
   doc.text(`${totalHT.toFixed(2)} €`, 170, yPos + 2);
   
@@ -198,6 +221,9 @@ const handler = async (req: Request): Promise<Response> => {
       customerEmail, 
       orderNumber, 
       items, 
+      subtotal,
+      discountAmount,
+      promoCode,
       totalAmount,
       invoiceNumber,
       shippingAddress
@@ -205,11 +231,16 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log("Sending order confirmation to:", customerEmail);
 
+    // Calculate amounts with discount
+    const calculatedSubtotal = subtotal || items.reduce((sum, item) => sum + item.totalPrice, 0);
+    const discount = discountAmount || 0;
+
     // Calculate TVA rate from items
     const tvaRateValue = items.length > 0 && items[0].tvaRate !== undefined ? items[0].tvaRate : 20;
     const tvaMultiplier = 1 + (tvaRateValue / 100);
-    const totalHT = totalAmount / tvaMultiplier;
-    const tvaAmount = totalAmount - totalHT;
+    const totalAfterDiscount = calculatedSubtotal - discount;
+    const totalHT = totalAfterDiscount / tvaMultiplier;
+    const tvaAmount = totalAfterDiscount - totalHT;
 
     // Generate PDF
     const pdfBase64 = generateOrderPdf(requestData);
@@ -272,6 +303,8 @@ const handler = async (req: Request): Promise<Response> => {
               </table>
               
               <div style="text-align: right; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
+                <p style="margin: 5px 0;">Sous-total : ${calculatedSubtotal.toFixed(2)} €</p>
+                ${discount > 0 ? `<p style="margin: 5px 0; color: #2e7d32; font-weight: 600;">Réduction${promoCode ? ` (${promoCode})` : ''} : -${discount.toFixed(2)} €</p>` : ''}
                 <p style="margin: 5px 0;">Total HT : ${totalHT.toFixed(2)} €</p>
                 <p style="margin: 5px 0;">TVA ${tvaRateValue}% : ${tvaAmount.toFixed(2)} €</p>
                 <p style="font-size: 18px; font-weight: bold; margin: 10px 0;">Total TTC : ${totalAmount.toFixed(2)} €</p>
