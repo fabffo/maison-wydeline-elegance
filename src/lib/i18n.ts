@@ -221,11 +221,11 @@ export const translations = {
         h1: 'Bottines grande taille femme',
         content: 'Nos bottines grande taille sont spécialement conçues pour les femmes qui chaussent du 41 au 45. Fabriquées au Portugal avec des cuirs de première qualité, elles allient style contemporain et confort exceptionnel. Chaque modèle est pensé pour les grandes pointures : cambrure adaptée, largeur optimisée et maintien parfait du pied.',
       },
-      'bottes-plates-grande-taille': {
-        title: 'Bottes plates grande taille femme 41 à 45 | Maison Wydeline',
-        description: 'Bottes plates grande taille pour femmes du 41 au 45. Élégance intemporelle et confort absolu, fabriquées artisanalement au Portugal.',
-        h1: 'Bottes plates grande taille',
-        content: 'Nos bottes plates grande taille incarnent l\'élégance décontractée. Parfaites pour le quotidien comme pour les occasions spéciales, elles sont fabriquées au Portugal avec un savoir-faire artisanal. Du 41 au 45, chaque paire est conçue pour offrir un confort optimal aux grandes pointures.',
+      'bottes-grande-taille-femme': {
+        title: 'Bottes grande taille femme 41 à 45 | Maison Wydeline',
+        description: 'Bottes grande taille pour femmes du 41 au 45. Élégance intemporelle et confort absolu, fabriquées artisanalement au Portugal.',
+        h1: 'Bottes grande taille femme',
+        content: 'Nos bottes grande taille incarnent l\'élégance décontractée. Parfaites pour le quotidien comme pour les occasions spéciales, elles sont fabriquées au Portugal avec un savoir-faire artisanal. Du 41 au 45, chaque paire est conçue pour offrir un confort optimal aux grandes pointures.',
       },
       'ballerines-grande-taille-femme': {
         title: 'Ballerines grande taille femme 41 à 45 | Maison Wydeline',
@@ -455,11 +455,11 @@ export const translations = {
         h1: 'Women\'s large size ankle boots',
         content: 'Our large size ankle boots are specially designed for women who wear sizes 41 to 45. Made in Portugal with premium leathers, they combine contemporary style and exceptional comfort. Each model is designed for larger sizes: adapted arch, optimized width and perfect foot support.',
       },
-      'bottes-plates-grande-taille': {
-        title: 'Women\'s large size flat boots 41 to 45 | Maison Wydeline',
-        description: 'Large size flat boots for women from 41 to 45. Timeless elegance and absolute comfort, handcrafted in Portugal.',
-        h1: 'Large size flat boots',
-        content: 'Our large size flat boots embody casual elegance. Perfect for everyday as well as special occasions, they are made in Portugal with artisanal know-how. From 41 to 45, each pair is designed to offer optimal comfort for larger sizes.',
+      'bottes-grande-taille-femme': {
+        title: 'Women\'s large size boots 41 to 45 | Maison Wydeline',
+        description: 'Large size boots for women from 41 to 45. Timeless elegance and absolute comfort, handcrafted in Portugal.',
+        h1: 'Large size boots',
+        content: 'Our large size boots embody casual elegance. Perfect for everyday as well as special occasions, they are made in Portugal with artisanal know-how. From 41 to 45, each pair is designed to offer optimal comfort for larger sizes.',
       },
       'ballerines-grande-taille-femme': {
         title: 'Women\'s large size ballerinas 41 to 45 | Maison Wydeline',

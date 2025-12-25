@@ -4,12 +4,13 @@ import { useNavigate, useLocation } from 'react-router-dom';
 // Mapping des anciennes URLs vers les nouvelles URLs SEO-friendly
 const REDIRECT_MAP: Record<string, string> = {
   '/collection?category=Bottines': '/bottines-grande-taille-femme',
-  '/collection?category=Bottes': '/bottes-plates-grande-taille',
+  '/collection?category=Bottes': '/bottes-grande-taille-femme',
   '/collection?category=Ballerines': '/ballerines-grande-taille-femme',
   // Anciennes URLs -> nouvelles URLs
   '/collection?category=Plats': '/ballerines-grande-taille-femme',
   '/collection?category=Plates': '/ballerines-grande-taille-femme',
   '/chaussures-plates-grande-taille': '/ballerines-grande-taille-femme',
+  '/bottes-plates-grande-taille': '/bottes-grande-taille-femme',
 };
 
 /**
