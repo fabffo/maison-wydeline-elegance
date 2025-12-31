@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useNavigate, useLocation, useSearchParams, Link } from 'react-router-dom';
 import { useProducts } from '@/hooks/useProducts';
 import { ProductCard } from '@/components/ProductCard';
@@ -12,6 +12,7 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { Seo } from '@/components/Seo';
 
 // Mapping slug -> category filter value
 const CATEGORY_MAPPING: Record<string, string> = {
@@ -59,20 +60,8 @@ const CategoryPage = ({ slug }: CategoryPageProps) => {
     return null;
   }
 
-  // Mettre à jour les meta tags dynamiquement
-  useEffect(() => {
-    document.title = categoryConfig.title;
-    
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', categoryConfig.description);
-    }
-    
-    const canonical = document.querySelector('link[rel="canonical"]');
-    if (canonical) {
-      canonical.setAttribute('href', `https://maisonwydeline.com${location.pathname}`);
-    }
-  }, [categoryConfig, location.pathname]);
+  // Construire l'URL canonical
+  const canonical = `https://maisonwydeline.com${location.pathname}`;
 
   const selectedColor = searchParams.get('color') || 'all';
   const selectedSize = searchParams.get('size') || 'all';
@@ -157,7 +146,13 @@ const CategoryPage = ({ slug }: CategoryPageProps) => {
   }
 
   return (
-    <main className="min-h-screen pt-24 pb-16">
+    <>
+      <Seo
+        title={categoryConfig.title}
+        description={categoryConfig.description}
+        canonical={canonical}
+      />
+      <main className="min-h-screen pt-24 pb-16">
       <div className="container mx-auto px-6">
         {/* H1 SEO optimisé */}
         <h1 className="text-4xl md:text-5xl font-medium text-center mb-6">
@@ -331,6 +326,7 @@ const CategoryPage = ({ slug }: CategoryPageProps) => {
         </div>
       </div>
     </main>
+    </>
   );
 };
 

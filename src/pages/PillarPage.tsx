@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useProducts } from '@/hooks/useProducts';
 import { ProductCard } from '@/components/ProductCard';
 import { ChevronRight, ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { Seo } from '@/components/Seo';
 
 /**
  * Page pilier SEO pour "chaussures femme grande taille"
@@ -14,37 +14,14 @@ const PillarPage = () => {
   const { products, loading } = useProducts();
   const { t, language } = useLanguage();
 
-  // Meta SEO dynamiques
-  useEffect(() => {
-    document.title = language === 'fr' 
-      ? 'Chaussures femme grande taille du 41 au 45 | Maison Wydeline'
-      : 'Women\'s Large Size Shoes 41 to 45 | Maison Wydeline';
-    
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute(
-        'content',
-        language === 'fr'
-          ? 'Découvrez notre collection de chaussures femme grande taille du 41 au 45. Bottines, bottes et chaussures plates fabriquées artisanalement au Portugal. Élégance et confort pour les grandes pointures.'
-          : 'Discover our collection of women\'s large size shoes from 41 to 45. Ankle boots, boots and flat shoes handcrafted in Portugal. Elegance and comfort for larger sizes.'
-      );
-    }
-    
-    // Canonical self
-    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
-    if (!canonical) {
-      canonical = document.createElement('link');
-      canonical.rel = 'canonical';
-      document.head.appendChild(canonical);
-    }
-    canonical.href = 'https://maisonwydeline.com/chaussures-femme-grande-taille';
-
-    // S'assurer qu'il n'y a pas de noindex sur cette page
-    const robotsMeta = document.querySelector('meta[name="robots"]');
-    if (robotsMeta) {
-      robotsMeta.remove();
-    }
-  }, [language]);
+  // SEO Meta dynamiques
+  const seoTitle = language === 'fr' 
+    ? 'Chaussures femme grande taille 41 à 45 – Élégance & confort | Maison Wydeline'
+    : 'Women\'s Large Size Shoes 41 to 45 – Elegance & Comfort | Maison Wydeline';
+  
+  const seoDescription = language === 'fr'
+    ? 'Découvrez notre collection de chaussures femme grande taille du 41 au 45 : bottes, bottines et chaussures plates fabriquées au Portugal.'
+    : 'Discover our collection of women\'s large size shoes from 41 to 45: boots, ankle boots and flat shoes made in Portugal.';
 
   // Sélection de produits pour affichage
   const featuredProducts = products.slice(0, 6);
@@ -61,7 +38,13 @@ const PillarPage = () => {
   ];
 
   return (
-    <main className="min-h-screen pt-24 pb-16">
+    <>
+      <Seo
+        title={seoTitle}
+        description={seoDescription}
+        canonical="https://maisonwydeline.com/chaussures-femme-grande-taille"
+      />
+      <main className="min-h-screen pt-24 pb-16">
       
       {/* Hero discret avec fond léger */}
       <div className="bg-muted/30 py-12 md:py-16 mb-12">
@@ -351,6 +334,7 @@ const PillarPage = () => {
 
       </div>
     </main>
+    </>
   );
 };
 
