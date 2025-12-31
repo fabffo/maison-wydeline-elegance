@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Sparkles, Heart, Shield } from "lucide-react";
-import { useCanonicalUrl } from "@/components/SEORedirect";
+import { Seo } from "@/components/Seo";
 import { NewsletterPopup } from "@/components/NewsletterPopup";
 import heroImage from "@/assets/hero-main.jpg";
 import saoJoaoMadeira from "@/assets/sao-joao-madeira.jpg";
@@ -36,9 +36,6 @@ const Home = () => {
     BEST: [],
   });
   const [loading, setLoading] = useState(true);
-
-  // SEO: Canonical URL
-  useCanonicalUrl('/');
 
   useEffect(() => {
     fetchFeaturedProducts();
@@ -115,7 +112,13 @@ const Home = () => {
   ];
 
   return (
-    <main className="min-h-screen">
+    <>
+      <Seo
+        title="Chaussures femme grande taille 41 à 45 – Maison Wydeline"
+        description="Maison Wydeline propose des chaussures élégantes pour femmes chaussant du 41 au 45, fabriquées au Portugal avec un confort premium."
+        canonical="https://maisonwydeline.com/"
+      />
+      <main className="min-h-screen">
       {/* Newsletter Popup */}
       <NewsletterPopup />
       {/* Hero Section - Full Width Banner */}
@@ -520,6 +523,7 @@ const Home = () => {
         </div>
       </section>
     </main>
+    </>
   );
 };
 
