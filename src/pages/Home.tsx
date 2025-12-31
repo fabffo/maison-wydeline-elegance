@@ -107,7 +107,7 @@ const Home = () => {
   // Category cards for the grid
   const categories = [
     { name: t.home.categoryAnkleBoots, image: bottinesNoires, link: "/bottines-grande-taille-femme" },
-    { name: t.home.categoryBoots, image: bottesVertes, link: "/bottes-plates-grande-taille" },
+    { name: t.home.categoryBoots, image: bottesVertes, link: "/bottes-grande-taille-femme" },
     { name: t.home.categoryBallerinas, image: platesNoires, link: "/ballerines-grande-taille-femme" },
   ];
 
@@ -422,7 +422,7 @@ const Home = () => {
                   </Link>{" "}
                   {t.home.seoParagraph5}{" "}
                   <Link 
-                    to="/bottes-plates-grande-taille" 
+                    to="/bottes-grande-taille-femme"
                     className="text-primary hover:text-primary/80 underline underline-offset-2 transition-colors"
                   >
                     {t.home.seoLink3}
