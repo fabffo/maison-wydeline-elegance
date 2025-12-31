@@ -134,7 +134,7 @@ const PillarPage = () => {
             </Link>
             
             <Link 
-              to="/bottes-plates-grande-taille"
+              to="/bottes-grande-taille-femme"
               className="group bg-background rounded-xl p-6 text-center border border-transparent hover:border-primary/30 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col min-h-[180px]"
             >
               <h3 className="text-xl font-medium mb-3 group-hover:text-primary transition-colors">
@@ -310,7 +310,7 @@ const PillarPage = () => {
             </Link>
             <span className="text-border">•</span>
             <Link 
-              to="/bottes-plates-grande-taille" 
+              to="/bottes-grande-taille-femme"
               className="text-sm text-muted-foreground hover:text-primary transition-colors underline underline-offset-4 decoration-primary/40 hover:decoration-primary"
             >
               {t.pillar.flatBoots}
