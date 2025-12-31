@@ -1,0 +1,14 @@
+{
+  "redirects": [
+    {
+      "source": "/bottes-plates-grande-taille",
+      "destination": "/bottes-grande-taille-femme",
+      "permanent": true
+    },
+    {
+      "source": "/chaussures-plates-grande-taille",
+      "destination": "/ballerines-grande-taille-femme",
+      "permanent": true
+    }
+  ]
+}
