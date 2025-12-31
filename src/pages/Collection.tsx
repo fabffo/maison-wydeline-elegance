@@ -273,10 +273,10 @@ const Collection = () => {
               Bottines grande taille femme
             </Link>
             <Link 
-              to="/bottes-plates-grande-taille" 
+              to="/bottes-grande-taille-femme" 
               className="text-sm text-muted-foreground hover:text-primary transition-colors underline underline-offset-2"
             >
-              Bottes plates grande taille
+              Bottes grande taille femme
             </Link>
             <Link 
               to="/ballerines-grande-taille-femme" 
