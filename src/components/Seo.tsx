@@ -1,41 +1,47 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { getSeoConfig, getCanonicalUrl, BASE_URL } from '@/config/seoConfig';
 
 interface SeoProps {
-  title: string;
-  description: string;
-  canonical?: string; // Optionnel - sera généré automatiquement si non fourni
+  title?: string;
+  description?: string;
+  canonical?: string;
   ogTitle?: string;
   ogDescription?: string;
   ogImage?: string;
 }
 
-const BASE_URL = 'https://maisonwydeline.com';
-
 /**
  * Composant SEO réutilisable
  * Injecte dynamiquement les meta tags dans le <head>
+ * 
+ * IMPORTANT: Pour le pré-rendu SSG, les valeurs par défaut sont récupérées
+ * depuis la configuration centralisée (seoConfig.ts) basée sur le pathname
+ * 
  * og:url est TOUJOURS égal à canonical
- * Si canonical n'est pas fourni, il est généré automatiquement depuis location.pathname
  */
 export const Seo = ({
-  title,
-  description,
-  canonical,
-  ogTitle,
-  ogDescription,
-  ogImage = `${BASE_URL}/og-image.jpg`,
+  title: titleProp,
+  description: descriptionProp,
+  canonical: canonicalProp,
+  ogTitle: ogTitleProp,
+  ogDescription: ogDescriptionProp,
+  ogImage,
 }: SeoProps) => {
   const location = useLocation();
   
-  // Générer le canonical automatiquement si non fourni
-  // Utilise location.pathname pour obtenir l'URL actuelle sans query string
-  const computedCanonical = canonical || `${BASE_URL}${location.pathname}`;
+  // Récupérer la config SEO depuis le fichier centralisé si disponible
+  const seoConfig = getSeoConfig(location.pathname);
   
-  // S'assurer que le canonical ne se termine pas par / sauf pour la home
-  const finalCanonical = computedCanonical === `${BASE_URL}/` 
-    ? `${BASE_URL}/` 
-    : computedCanonical.replace(/\/$/, '');
+  // Utiliser les props fournis ou les valeurs de la config centralisée
+  const title = titleProp || seoConfig?.title || 'Maison Wydeline | Chaussures de Luxe Grandes Pointures';
+  const description = descriptionProp || seoConfig?.description || 'Excellence artisanale pour grandes pointures.';
+  const ogTitle = ogTitleProp || seoConfig?.ogTitle || title;
+  const ogDescription = ogDescriptionProp || seoConfig?.ogDescription || description;
+  const finalOgImage = ogImage || seoConfig?.ogImage || `${BASE_URL}/og-image.jpg`;
+  
+  // Générer le canonical automatiquement depuis le pathname
+  const finalCanonical = canonicalProp || getCanonicalUrl(location.pathname);
 
   useEffect(() => {
     // Update title
@@ -70,16 +76,16 @@ export const Seo = ({
     document.head.appendChild(canonicalLink);
 
     // Update og:title
-    updateMeta('meta[property="og:title"]', 'content', ogTitle || title);
+    updateMeta('meta[property="og:title"]', 'content', ogTitle);
 
     // Update og:description
-    updateMeta('meta[property="og:description"]', 'content', ogDescription || description);
+    updateMeta('meta[property="og:description"]', 'content', ogDescription);
 
     // Update og:url - TOUJOURS égal à canonical
     updateMeta('meta[property="og:url"]', 'content', finalCanonical);
 
     // Update og:image
-    updateMeta('meta[property="og:image"]', 'content', ogImage);
+    updateMeta('meta[property="og:image"]', 'content', finalOgImage);
 
     // S'assurer qu'il n'y a pas de noindex
     const robotsMeta = document.querySelector('meta[name="robots"]');
@@ -89,7 +95,7 @@ export const Seo = ({
 
     // Cleanup on unmount - ne rien supprimer pour éviter les flashs
     return () => {};
-  }, [title, description, finalCanonical, ogTitle, ogDescription, ogImage]);
+  }, [title, description, finalCanonical, ogTitle, ogDescription, finalOgImage]);
 
   return null;
 };

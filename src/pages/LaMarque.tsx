@@ -1,4 +1,5 @@
 import { useLanguage } from '@/contexts/LanguageContext';
+import { Seo } from '@/components/Seo';
 import quiSommesNousImg from '@/assets/qui-sommes-nous.png';
 import bottinesBordeauxImg from '@/assets/ankle-boots-bordeaux.jpg';
 import nosValeursImg from '@/assets/nos-valeurs.png';
@@ -7,7 +8,9 @@ const LaMarque = () => {
   const { t } = useLanguage();
 
   return (
-    <main className="min-h-screen pt-24 pb-16">
+    <>
+      <Seo />
+      <main className="min-h-screen pt-24 pb-16">
       <div className="mx-auto px-8 md:px-12 lg:px-16">
         <h1 className="text-4xl md:text-5xl font-medium text-center mb-16">
           {t.brand.title}
@@ -148,6 +151,7 @@ const LaMarque = () => {
         </div>
       </div>
     </main>
+    </>
   );
 };
 
