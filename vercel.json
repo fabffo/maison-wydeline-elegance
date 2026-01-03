@@ -10,5 +10,11 @@
       "destination": "/ballerines-grande-taille-femme",
       "permanent": true
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }
