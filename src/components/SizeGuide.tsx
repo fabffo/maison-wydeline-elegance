@@ -18,6 +18,7 @@ import {
   DrawerClose,
 } from '@/components/ui/drawer';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Seo } from '@/components/Seo';
 
 // Tableau d'équivalences pointures
 const sizeEquivalences = [
@@ -146,14 +147,17 @@ export const SizeGuideDialog = () => {
 
 // Composant pour la page dédiée (sans modale)
 export const SizeGuidePage = () => (
-  <main className="min-h-screen pt-24 pb-16">
-    <div className="container mx-auto px-6 max-w-2xl">
-      <h1 className="text-3xl md:text-4xl font-medium text-center mb-2">
-        Guide des tailles
-      </h1>
-      <SizeGuideContent />
-    </div>
-  </main>
+  <>
+    <Seo />
+    <main className="min-h-screen pt-24 pb-16">
+      <div className="container mx-auto px-6 max-w-2xl">
+        <h1 className="text-3xl md:text-4xl font-medium text-center mb-2">
+          Guide des tailles
+        </h1>
+        <SizeGuideContent />
+      </div>
+    </main>
+  </>
 );
 
 export default SizeGuideDialog;

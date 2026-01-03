@@ -13,6 +13,34 @@
   ],
   "rewrites": [
     {
+      "source": "/chaussures-femme-grande-taille",
+      "destination": "/chaussures-femme-grande-taille.html"
+    },
+    {
+      "source": "/bottines-grande-taille-femme",
+      "destination": "/bottines-grande-taille-femme.html"
+    },
+    {
+      "source": "/bottes-grande-taille-femme",
+      "destination": "/bottes-grande-taille-femme.html"
+    },
+    {
+      "source": "/ballerines-grande-taille-femme",
+      "destination": "/ballerines-grande-taille-femme.html"
+    },
+    {
+      "source": "/la-marque",
+      "destination": "/la-marque.html"
+    },
+    {
+      "source": "/contact",
+      "destination": "/contact.html"
+    },
+    {
+      "source": "/guide-des-tailles",
+      "destination": "/guide-des-tailles.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
