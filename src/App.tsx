@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { Header } from "@/components/Header";
@@ -129,10 +129,37 @@ const App = () => {
                       <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/collection" element={<Collection />} />
+                        {/* Redirects SEO (fallback SPA) */}
+                        <Route
+                          path="/bottes-plates-grande-taille"
+                          element={<Navigate to="/bottes-grande-taille-femme" replace />}
+                        />
+                        <Route
+                          path="/bottes-plates-grande-taille/"
+                          element={<Navigate to="/bottes-grande-taille-femme" replace />}
+                        />
+                        <Route
+                          path="/chaussures-plates-grande-taille"
+                          element={<Navigate to="/ballerines-grande-taille-femme" replace />}
+                        />
+                        <Route
+                          path="/chaussures-plates-grande-taille/"
+                          element={<Navigate to="/ballerines-grande-taille-femme" replace />}
+                        />
+
                         {/* Routes SEO-friendly pour les catégories */}
-                        <Route path="/bottines-grande-taille-femme" element={<CategoryPage slug="bottines-grande-taille-femme" />} />
-                        <Route path="/bottes-grande-taille-femme" element={<CategoryPage slug="bottes-grande-taille-femme" />} />
-                        <Route path="/ballerines-grande-taille-femme" element={<CategoryPage slug="ballerines-grande-taille-femme" />} />
+                        <Route
+                          path="/bottines-grande-taille-femme"
+                          element={<CategoryPage slug="bottines-grande-taille-femme" />}
+                        />
+                        <Route
+                          path="/bottes-grande-taille-femme"
+                          element={<CategoryPage slug="bottes-grande-taille-femme" />}
+                        />
+                        <Route
+                          path="/ballerines-grande-taille-femme"
+                          element={<CategoryPage slug="ballerines-grande-taille-femme" />}
+                        />
                         {/* Page pilier SEO principale */}
                         <Route path="/chaussures-femme-grande-taille" element={<PillarPage />} />
                         <Route path="/guide-des-tailles" element={<SizeGuidePage />} />
