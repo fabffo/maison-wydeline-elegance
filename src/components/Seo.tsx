@@ -1,18 +1,22 @@
 import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 interface SeoProps {
   title: string;
   description: string;
-  canonical: string;
+  canonical?: string; // Optionnel - sera généré automatiquement si non fourni
   ogTitle?: string;
   ogDescription?: string;
   ogImage?: string;
 }
 
+const BASE_URL = 'https://maisonwydeline.com';
+
 /**
  * Composant SEO réutilisable
  * Injecte dynamiquement les meta tags dans le <head>
  * og:url est TOUJOURS égal à canonical
+ * Si canonical n'est pas fourni, il est généré automatiquement depuis location.pathname
  */
 export const Seo = ({
   title,
@@ -20,20 +24,40 @@ export const Seo = ({
   canonical,
   ogTitle,
   ogDescription,
-  ogImage = 'https://maisonwydeline.com/og-image.jpg',
+  ogImage = `${BASE_URL}/og-image.jpg`,
 }: SeoProps) => {
+  const location = useLocation();
+  
+  // Générer le canonical automatiquement si non fourni
+  // Utilise location.pathname pour obtenir l'URL actuelle sans query string
+  const computedCanonical = canonical || `${BASE_URL}${location.pathname}`;
+  
+  // S'assurer que le canonical ne se termine pas par / sauf pour la home
+  const finalCanonical = computedCanonical === `${BASE_URL}/` 
+    ? `${BASE_URL}/` 
+    : computedCanonical.replace(/\/$/, '');
+
   useEffect(() => {
     // Update title
     document.title = title;
 
+    // Helper pour créer ou mettre à jour une meta tag
+    const updateMeta = (selector: string, attribute: string, value: string) => {
+      let meta = document.querySelector(selector) as HTMLMetaElement;
+      if (!meta) {
+        meta = document.createElement('meta');
+        if (selector.includes('property=')) {
+          meta.setAttribute('property', selector.match(/property="([^"]+)"/)?.[1] || '');
+        } else if (selector.includes('name=')) {
+          meta.name = selector.match(/name="([^"]+)"/)?.[1] || '';
+        }
+        document.head.appendChild(meta);
+      }
+      meta.content = value;
+    };
+
     // Update meta description
-    let metaDescription = document.querySelector('meta[name="description"]') as HTMLMetaElement;
-    if (!metaDescription) {
-      metaDescription = document.createElement('meta');
-      metaDescription.name = 'description';
-      document.head.appendChild(metaDescription);
-    }
-    metaDescription.content = description;
+    updateMeta('meta[name="description"]', 'content', description);
 
     // Update canonical - supprimer l'ancien et créer le nouveau
     const existingCanonical = document.querySelector('link[rel="canonical"]');
@@ -42,44 +66,20 @@ export const Seo = ({
     }
     const canonicalLink = document.createElement('link');
     canonicalLink.rel = 'canonical';
-    canonicalLink.href = canonical;
+    canonicalLink.href = finalCanonical;
     document.head.appendChild(canonicalLink);
 
     // Update og:title
-    let ogTitleMeta = document.querySelector('meta[property="og:title"]') as HTMLMetaElement;
-    if (!ogTitleMeta) {
-      ogTitleMeta = document.createElement('meta');
-      ogTitleMeta.setAttribute('property', 'og:title');
-      document.head.appendChild(ogTitleMeta);
-    }
-    ogTitleMeta.content = ogTitle || title;
+    updateMeta('meta[property="og:title"]', 'content', ogTitle || title);
 
     // Update og:description
-    let ogDescMeta = document.querySelector('meta[property="og:description"]') as HTMLMetaElement;
-    if (!ogDescMeta) {
-      ogDescMeta = document.createElement('meta');
-      ogDescMeta.setAttribute('property', 'og:description');
-      document.head.appendChild(ogDescMeta);
-    }
-    ogDescMeta.content = ogDescription || description;
+    updateMeta('meta[property="og:description"]', 'content', ogDescription || description);
 
     // Update og:url - TOUJOURS égal à canonical
-    let ogUrlMeta = document.querySelector('meta[property="og:url"]') as HTMLMetaElement;
-    if (!ogUrlMeta) {
-      ogUrlMeta = document.createElement('meta');
-      ogUrlMeta.setAttribute('property', 'og:url');
-      document.head.appendChild(ogUrlMeta);
-    }
-    ogUrlMeta.content = canonical;
+    updateMeta('meta[property="og:url"]', 'content', finalCanonical);
 
     // Update og:image
-    let ogImageMeta = document.querySelector('meta[property="og:image"]') as HTMLMetaElement;
-    if (!ogImageMeta) {
-      ogImageMeta = document.createElement('meta');
-      ogImageMeta.setAttribute('property', 'og:image');
-      document.head.appendChild(ogImageMeta);
-    }
-    ogImageMeta.content = ogImage;
+    updateMeta('meta[property="og:image"]', 'content', ogImage);
 
     // S'assurer qu'il n'y a pas de noindex
     const robotsMeta = document.querySelector('meta[name="robots"]');
@@ -89,7 +89,7 @@ export const Seo = ({
 
     // Cleanup on unmount - ne rien supprimer pour éviter les flashs
     return () => {};
-  }, [title, description, canonical, ogTitle, ogDescription, ogImage]);
+  }, [title, description, finalCanonical, ogTitle, ogDescription, ogImage]);
 
   return null;
 };
