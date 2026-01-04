@@ -3,82 +3,25 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 import fs from "fs/promises";
+import { SEO_PAGES as APP_SEO_PAGES, getCanonicalUrl, BASE_URL } from "./src/config/seoConfig";
 
 // Configuration SEO pour les pages à pré-rendre
-const SEO_PAGES = [
-  {
-    path: '/',
-    outputFile: 'index.html',
-    title: 'Chaussures femme grande taille 41 à 45 – Maison Wydeline',
-    description: 'Maison Wydeline propose des chaussures élégantes pour femmes chaussant du 41 au 45, fabriquées au Portugal avec un confort premium.',
-    canonical: 'https://maisonwydeline.com/',
-    ogTitle: 'Maison Wydeline | Chaussures de Luxe Grandes Pointures',
-    ogDescription: 'Excellence artisanale, élégance intemporelle et confort sans compromis pour grandes pointures.',
-  },
-  {
-    path: '/chaussures-femme-grande-taille',
-    outputFile: 'chaussures-femme-grande-taille.html',
-    title: 'Chaussures Femme Grande Taille 41-45 | Maison Wydeline',
-    description: 'Découvrez notre collection complète de chaussures femme grande taille (41 à 45). Bottines, bottes, ballerines fabriquées au Portugal avec confort et élégance.',
-    canonical: 'https://maisonwydeline.com/chaussures-femme-grande-taille',
-    ogTitle: 'Chaussures Femme Grande Taille | Maison Wydeline',
-    ogDescription: 'Collection complète de chaussures grandes pointures pour femme. Qualité artisanale portugaise.',
-  },
-  {
-    path: '/bottines-grande-taille-femme',
-    outputFile: 'bottines-grande-taille-femme.html',
-    title: 'Bottines Grande Taille Femme 41-45 | Maison Wydeline',
-    description: 'Bottines élégantes pour femmes en grandes pointures (41 à 45). Cuir de qualité, fabrication portugaise artisanale. Livraison offerte.',
-    canonical: 'https://maisonwydeline.com/bottines-grande-taille-femme',
-    ogTitle: 'Bottines Grande Taille Femme | Maison Wydeline',
-    ogDescription: 'Bottines femme grandes pointures en cuir, fabriquées au Portugal.',
-  },
-  {
-    path: '/bottes-grande-taille-femme',
-    outputFile: 'bottes-grande-taille-femme.html',
-    title: 'Bottes Grande Taille Femme 41-45 | Maison Wydeline',
-    description: 'Bottes plates et à talons pour femmes en grandes pointures (41 à 45). Cuir souple, confort optimal. Fabrication artisanale portugaise.',
-    canonical: 'https://maisonwydeline.com/bottes-grande-taille-femme',
-    ogTitle: 'Bottes Grande Taille Femme | Maison Wydeline',
-    ogDescription: 'Bottes femme grandes pointures en cuir, fabriquées au Portugal.',
-  },
-  {
-    path: '/ballerines-grande-taille-femme',
-    outputFile: 'ballerines-grande-taille-femme.html',
-    title: 'Ballerines Grande Taille Femme 41-45 | Maison Wydeline',
-    description: 'Ballerines et chaussures plates pour femmes en grandes pointures (41 à 45). Confort et élégance au quotidien. Fabrication portugaise.',
-    canonical: 'https://maisonwydeline.com/ballerines-grande-taille-femme',
-    ogTitle: 'Ballerines Grande Taille Femme | Maison Wydeline',
-    ogDescription: 'Ballerines et chaussures plates grandes pointures, fabriquées au Portugal.',
-  },
-  {
-    path: '/la-marque',
-    outputFile: 'la-marque.html',
-    title: 'La Marque | Maison Wydeline – Chaussures Grandes Pointures',
-    description: 'Découvrez l\'histoire de Maison Wydeline, marque française de chaussures grandes pointures fabriquées artisanalement au Portugal.',
-    canonical: 'https://maisonwydeline.com/la-marque',
-    ogTitle: 'La Marque | Maison Wydeline',
-    ogDescription: 'Notre histoire, nos valeurs et notre engagement pour des chaussures de qualité.',
-  },
-  {
-    path: '/contact',
-    outputFile: 'contact.html',
-    title: 'Contact | Maison Wydeline – Chaussures Grandes Pointures',
-    description: 'Contactez Maison Wydeline pour toute question sur nos chaussures grandes pointures. Service client réactif et personnalisé.',
-    canonical: 'https://maisonwydeline.com/contact',
-    ogTitle: 'Contact | Maison Wydeline',
-    ogDescription: 'Contactez notre équipe pour toute question.',
-  },
-  {
-    path: '/guide-des-tailles',
-    outputFile: 'guide-des-tailles.html',
-    title: 'Guide des Tailles | Maison Wydeline – Chaussures Grandes Pointures',
-    description: 'Trouvez votre pointure idéale avec notre guide des tailles. Conseils pour mesurer votre pied et choisir la bonne taille.',
-    canonical: 'https://maisonwydeline.com/guide-des-tailles',
-    ogTitle: 'Guide des Tailles | Maison Wydeline',
-    ogDescription: 'Comment mesurer votre pied et trouver votre pointure.',
-  },
-];
+// Source of truth: src/config/seoConfig.ts
+const SEO_STATIC_PAGES = APP_SEO_PAGES.map((p) => {
+  const canonical = getCanonicalUrl(p.path);
+  const outputFile = p.path === "/" ? "index.html" : `${p.path.replace(/^\//, "")}.html`;
+
+  return {
+    path: p.path,
+    outputFile,
+    title: p.title,
+    description: p.description,
+    canonical,
+    ogTitle: p.ogTitle ?? p.title,
+    ogDescription: p.ogDescription ?? p.description,
+    ogImage: p.ogImage ?? `${BASE_URL}/og-image.jpg`,
+  };
+});
 
 /**
  * Plugin Vite pour générer des fichiers HTML statiques avec SEO
@@ -99,7 +42,7 @@ function seoStaticPages(): Plugin {
         // Lire le template index.html généré
         let indexHtml = await fs.readFile(indexPath, 'utf-8');
         
-        for (const page of SEO_PAGES) {
+        for (const page of SEO_STATIC_PAGES) {
           let html = indexHtml;
           
           // Remplacer le title
@@ -137,6 +80,12 @@ function seoStaticPages(): Plugin {
             /<meta property="og:url" content="[^"]*"/,
             `<meta property="og:url" content="${page.canonical}"`
           );
+
+          // Mettre à jour og:image si disponible
+          html = html.replace(
+            /<meta property="og:image" content="[^"]*"/,
+            `<meta property="og:image" content="${page.ogImage}"`
+          );
           
           // Écrire le fichier HTML
           const outputPath = path.resolve(distDir, page.outputFile);
@@ -153,15 +102,15 @@ function seoStaticPages(): Plugin {
 }
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig(({ command, mode }) => ({
   server: {
     host: "::",
     port: 8080,
   },
   plugins: [
     react(),
-    mode === "development" && componentTagger(),
-    mode === "production" && seoStaticPages(),
+    command === "serve" && mode === "development" && componentTagger(),
+    command === "build" && seoStaticPages(),
   ].filter(Boolean) as Plugin[],
   resolve: {
     alias: {
