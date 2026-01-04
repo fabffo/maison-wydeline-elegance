@@ -108,31 +108,17 @@ function seoStaticPages(): Plugin {
             `<title>${page.title}</title>`
           );
           
-          // Remplacer/ajouter meta description
-          if (html.includes('<meta name="description"')) {
-            html = html.replace(
-              /<meta name="description" content="[^"]*"/,
-              `<meta name="description" content="${page.description}"`
-            );
-          } else {
-            html = html.replace(
-              '</title>',
-              `</title>\n    <meta name="description" content="${page.description}" />`
-            );
-          }
+          // Remplacer meta description
+          html = html.replace(
+            /<meta name="description" content="[^"]*"/,
+            `<meta name="description" content="${page.description}"`
+          );
           
-          // Ajouter canonical link
-          if (!html.includes('<link rel="canonical"')) {
-            html = html.replace(
-              '</title>',
-              `</title>\n    <link rel="canonical" href="${page.canonical}" />`
-            );
-          } else {
-            html = html.replace(
-              /<link rel="canonical" href="[^"]*"/,
-              `<link rel="canonical" href="${page.canonical}"`
-            );
-          }
+          // Remplacer canonical link
+          html = html.replace(
+            /<link rel="canonical" href="[^"]*"/,
+            `<link rel="canonical" href="${page.canonical}"`
+          );
           
           // Mettre à jour og:title
           html = html.replace(
@@ -146,18 +132,11 @@ function seoStaticPages(): Plugin {
             `<meta property="og:description" content="${page.ogDescription}"`
           );
           
-          // Ajouter og:url (égal à canonical)
-          if (html.includes('<meta property="og:url"')) {
-            html = html.replace(
-              /<meta property="og:url" content="[^"]*"/,
-              `<meta property="og:url" content="${page.canonical}"`
-            );
-          } else {
-            html = html.replace(
-              /<meta property="og:image"/,
-              `<meta property="og:url" content="${page.canonical}" />\n    <meta property="og:image"`
-            );
-          }
+          // Mettre à jour og:url (égal à canonical)
+          html = html.replace(
+            /<meta property="og:url" content="[^"]*"/,
+            `<meta property="og:url" content="${page.canonical}"`
+          );
           
           // Écrire le fichier HTML
           const outputPath = path.resolve(distDir, page.outputFile);
