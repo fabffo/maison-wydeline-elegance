@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/pagination';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Seo } from '@/components/Seo';
-
+import { SeoCategoryContent } from '@/components/SeoCategoryContent';
 // Mapping slug -> category filter value
 const CATEGORY_MAPPING: Record<string, string> = {
   'bottines-grande-taille-femme': 'Bottines',
@@ -60,8 +60,12 @@ const CategoryPage = ({ slug }: CategoryPageProps) => {
     return null;
   }
 
-  // Construire l'URL canonical
-  const canonical = `https://maisonwydeline.com${location.pathname}`;
+  // Gestion SEO : canonical vers URL sans paramètres de pagination
+  const basePath = `https://maisonwydeline.com${location.pathname}`;
+  const canonical = basePath; // Toujours pointer vers la page principale
+  
+  // Vérifier si on est sur une page paginée
+  const isPaginated = searchParams.has('page') && searchParams.get('page') !== '1';
 
   const selectedColor = searchParams.get('color') || 'all';
   const selectedSize = searchParams.get('size') || 'all';
@@ -151,6 +155,7 @@ const CategoryPage = ({ slug }: CategoryPageProps) => {
         title={categoryConfig.title}
         description={categoryConfig.description}
         canonical={canonical}
+        noIndex={isPaginated}
       />
       <main className="min-h-screen pt-24 pb-16">
       <div className="container mx-auto px-6">
@@ -293,6 +298,9 @@ const CategoryPage = ({ slug }: CategoryPageProps) => {
             {t.collection.from41to45}
           </p>
         </div>
+
+        {/* Contenu SEO éditorial (après la grille produits) */}
+        <SeoCategoryContent slug={slug} />
 
         {/* Liens internes SEO */}
         <div className="mt-16 pt-8 border-t border-border">
