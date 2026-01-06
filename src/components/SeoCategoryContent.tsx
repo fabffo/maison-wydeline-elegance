@@ -73,6 +73,35 @@ const SEO_CONTENT: Record<string, {
       ],
     },
   },
+  'bottes-grande-taille-femme': {
+    sections: [
+      {
+        h2: "Bottes grande taille femme : élégance et confort pour l'hiver",
+        paragraphs: [
+          "Les bottes grande taille femme sont essentielles pour affronter la saison hivernale avec élégance. Chez Maison Wydeline, nos bottes grandes pointures sont conçues pour offrir un chaussant confortable, une bonne stabilité et une silhouette harmonieuse, même en pointure 44 ou 45. Elles s'adressent aux femmes qui recherchent des chaussures à la fois pratiques et raffinées.",
+        ],
+      },
+      {
+        h2: 'Des bottes grandes pointures fabriquées au Portugal',
+        paragraphs: [
+          "Fabriquées au Portugal, nos bottes grande taille pour femme bénéficient d'un savoir-faire artisanal reconnu. Les cuirs sélectionnés, les semelles robustes et les finitions soignées garantissent des bottes durables, confortables et adaptées à un usage quotidien.",
+        ],
+      },
+      {
+        h2: 'Bottes femme du 41 au 45 pensées pour le confort',
+        paragraphs: [
+          "Disponibles du 41 au 45, nos bottes femme grande taille sont pensées pour respecter la morphologie du pied et offrir un confort optimal tout au long de la journée. Elles s'intègrent facilement à différentes tenues, du look urbain au style plus habillé.",
+        ],
+      },
+    ],
+    internalLinks: {
+      text: 'Explorez également nos',
+      links: [
+        { href: '/bottines-grande-taille-femme', label: 'bottines grande taille femme' },
+        { href: '/chaussures-femme-grande-taille', label: 'chaussures femme grande taille' },
+      ],
+    },
+  },
   // Extensible : ajouter d'autres catégories ici
 };
 
