@@ -9,6 +9,7 @@ interface SeoProps {
   ogTitle?: string;
   ogDescription?: string;
   ogImage?: string;
+  noIndex?: boolean;
 }
 
 /**
@@ -27,6 +28,7 @@ export const Seo = ({
   ogTitle: ogTitleProp,
   ogDescription: ogDescriptionProp,
   ogImage,
+  noIndex = false,
 }: SeoProps) => {
   const location = useLocation();
   
@@ -87,15 +89,27 @@ export const Seo = ({
     // Update og:image
     updateMeta('meta[property="og:image"]', 'content', finalOgImage);
 
-    // S'assurer qu'il n'y a pas de noindex
-    const robotsMeta = document.querySelector('meta[name="robots"]');
-    if (robotsMeta && robotsMeta.getAttribute('content')?.includes('noindex')) {
-      robotsMeta.remove();
+    // Gérer robots meta (noindex pour les pages paginées)
+    const robotsMeta = document.querySelector('meta[name="robots"]') as HTMLMetaElement;
+    if (noIndex) {
+      if (!robotsMeta) {
+        const meta = document.createElement('meta');
+        meta.name = 'robots';
+        meta.content = 'noindex, follow';
+        document.head.appendChild(meta);
+      } else {
+        robotsMeta.content = 'noindex, follow';
+      }
+    } else {
+      // S'assurer qu'il n'y a pas de noindex si on n'en veut pas
+      if (robotsMeta && robotsMeta.getAttribute('content')?.includes('noindex')) {
+        robotsMeta.remove();
+      }
     }
 
     // Cleanup on unmount - ne rien supprimer pour éviter les flashs
     return () => {};
-  }, [title, description, finalCanonical, ogTitle, ogDescription, finalOgImage]);
+  }, [title, description, finalCanonical, ogTitle, ogDescription, finalOgImage, noIndex]);
 
   return null;
 };
