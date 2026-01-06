@@ -44,6 +44,35 @@ const SEO_CONTENT: Record<string, {
       ],
     },
   },
+  'bottines-grande-taille-femme': {
+    sections: [
+      {
+        h2: 'Bottines grande taille femme : style et maintien du 41 au 45',
+        paragraphs: [
+          "Les bottines grande taille femme sont une pièce incontournable du dressing, notamment lorsque l'on recherche élégance, stabilité et confort. Chez Maison Wydeline, nos bottines grandes pointures sont conçues pour offrir un chaussant adapté, un bon maintien de la cheville et une allure raffinée, même en pointure 44 ou 45. Elles accompagnent les femmes au quotidien, en ville comme au travail.",
+        ],
+      },
+      {
+        h2: 'Des bottines grandes pointures fabriquées au Portugal',
+        paragraphs: [
+          'Toutes nos bottines grande taille pour femme sont fabriquées au Portugal dans des ateliers reconnus pour leur savoir-faire. Nous sélectionnons des cuirs de qualité et des finitions soignées afin de proposer des bottines durables, confortables et élégantes, pensées pour être portées tout au long de la saison.',
+        ],
+      },
+      {
+        h2: 'Bottines femme du 41 au 45 adaptées à toutes les occasions',
+        paragraphs: [
+          "Disponibles du 41 au 45, nos bottines femme grande taille s'adaptent aux différentes morphologies de pied. Qu'elles soient plates ou légèrement talonnées, elles offrent une alternative élégante pour les femmes aux grandes pointures qui souhaitent concilier style et confort.",
+        ],
+      },
+    ],
+    internalLinks: {
+      text: 'Découvrez également notre collection de',
+      links: [
+        { href: '/chaussures-femme-grande-taille', label: 'chaussures femme grande taille' },
+        { href: '/ballerines-grande-taille-femme', label: 'ballerines grande taille femme' },
+      ],
+    },
+  },
   // Extensible : ajouter d'autres catégories ici
 };
 
