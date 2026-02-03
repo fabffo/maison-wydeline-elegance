@@ -4,7 +4,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY")!;
 const RESEND_FROM = Deno.env.get("RESEND_FROM") || "Maison Wydeline <no-reply@maisonwydeline.com>";
 const RESEND_BCC = Deno.env.get("RESEND_BCC") || "";
-const FRONTEND_URL = Deno.env.get("FRONTEND_URL") || "https://wavyservices.fr";
+const FRONTEND_URL = Deno.env.get("FRONTEND_URL") || "https://www.maisonwydeline.com";
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
